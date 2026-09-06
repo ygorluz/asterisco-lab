@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review do Aspirador Robô KaBuM! Smart 100: Uma Solução Prática para Sua Casa - Asterisco Lab</title>
+    <meta name="description" content="
+O Robô Aspirador de Pó KaBuM! Smart 100 se destaca como uma solução inovadora para a limpeza doméstica. Com a capacidade de ser controlado pelo aplicativo KaBu">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <span>Asterisco Lab</span>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Review do Aspirador Robô KaBuM! Smart 100: Uma Solução Prática para Sua Casa</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">
+O Robô Aspirador de Pó KaBuM! Smart 100 se destaca como uma solução inovadora para a limpeza doméstica. Com a capacidade de ser controlado pelo aplicativo KaBu</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/alex-kerber/" style="color: var(--accent-color);">Alex Kerber</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2024-12-18" style="color: var(--text-muted);">
+                        18/12/2024 23:22
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/RobO-KaBuM-Smart-100.webp" alt="Review do Aspirador Robô KaBuM! Smart 100: Uma Solução Prática para Sua Casa">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p><!-- wp:paragraph --></p>
+<p>O <strong>Robô Aspirador de Pó KaBuM! Smart 100</strong> se destaca como uma solução inovadora para a limpeza doméstica. Com a capacidade de ser controlado pelo aplicativo KaBuM! Smart, este dispositivo traz praticidade ao seu dia a dia, permitindo que você acione o robô diretamente do seu smartphone. Além disso, a compatibilidade com assistentes virtuais como Amazon Alexa e Google Assistant facilita ainda mais o uso, permitindo comandos de voz para iniciar a limpeza.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2 class="wp-block-heading">Características e Funcionalidades</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading">Autonomia e Carregamento</h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Um dos grandes atrativos do <strong>Smart 100</strong> é sua bateria duradoura, que proporciona cerca de <strong>90 minutos de autonomia</strong>. Quando a carga está baixa, o robô retorna automaticamente à base de carregamento, garantindo que ele esteja sempre pronto para o próximo ciclo de limpeza.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading">Sistema Anticolisão</h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>O <strong>KaBuM! Smart 100</strong> possui um <strong>sistema anticolisão inteligente</strong>, capaz de detectar obstáculos durante a limpeza e redirecionar sua rota, evitando colisões. Isso é especialmente útil para lares com móveis e outros objetos que possam atrapalhar a passagem do robô.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading">Modos de Limpeza</h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Este modelo oferece quatro diferentes funções de limpeza: <strong>Zigue-Zague, Cantos, Local e Aleatória</strong>. Essa versatilidade permite que o robô se adapte a diversos tipos de pisos, incluindo madeira, carpete e piso frio, garantindo uma limpeza eficiente em qualquer ambiente.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading">Filtros HEPA para um Ar Mais Limpo</h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Para promover um lar mais saudável, o <a href="https://www.roboaspiradortech.com.br/post/robo-aspirador-kabum-smart-100-e-bom" target="_blank" rel="noreferrer noopener">Kabum Smart 100</a> é equipado com <strong>filtros HEPA</strong> de alta eficiência, eficazes na remoção de alérgenos como mofo, poeira e ácaros. Além disso, ele opera de maneira silenciosa, com um baixo nível de ruído, tornando a limpeza menos intrusiva.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading">Controle via Aplicativo e Remoto</h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Você pode gerenciar o <strong>Robô Aspirador KaBuM! Smart 100</strong> através do aplicativo dedicado, onde é possível visualizar os níveis de bateria, ajustar a potência de sucção e programar horários de limpeza. Para maior comodidade, ele também acompanha um controle remoto, garantindo que você possa operá-lo mesmo sem o smartphone por perto.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2 class="wp-block-heading">Considerações na Escolha do Robô Aspirador</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Ao escolher o robô aspirador ideal, é fundamental considerar suas necessidades e preferências pessoais. Aqui estão alguns pontos importantes a serem avaliados:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading">1. Recursos e Funcionalidades</h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Analise os recursos disponíveis, como mapeamento inteligente, sensores anti-colisão e anti-quedas, controle remoto e opções de programação.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading">2. Capacidade de Sucção e Autonomia</h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Verifique a potência de sucção do robô e a duração da bateria para assegurar que atendam às suas necessidades de limpeza.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading">3. Tamanho e Design</h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Certifique-se de que as dimensões do robô permitem o acesso a todos os cantos da sua casa. Escolha um design que complemente a decoração do seu lar.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading">4. Reputação da Marca</h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Pesquise sobre a marca do robô aspirador, leia avaliações de consumidores e verifique a qualidade do suporte ao cliente.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading">5. Orçamento</h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Defina um orçamento e busque um robô aspirador que ofereça um bom custo-benefício dentro da sua faixa de preço.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2 class="wp-block-heading">Conclusão</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>O <strong>KaBuM! Smart 100</strong> é uma excelente opção para quem busca um robô aspirador prático e eficiente. Com recursos como controle via aplicativo, modos de limpeza versáteis e filtros HEPA, ele se destaca no mercado. Avalie suas necessidades e compare com outras opções disponíveis para encontrar o robô que melhor se adapta à sua rotina.</p>
+<p><!-- /wp:paragraph --></p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

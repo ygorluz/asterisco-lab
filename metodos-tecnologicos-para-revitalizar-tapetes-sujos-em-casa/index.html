@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Métodos tecnológicos para revitalizar tapetes sujos em casa - Asterisco Lab</title>
+    <meta name="description" content="Descubra métodos tecnológicos eficazes para revitalizar tapetes sujos em casa e deixe seu ambiente limpo e renovado com praticidade!">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/outros/" style="color:#ffffff;">Outros</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Métodos tecnológicos para revitalizar tapetes sujos em casa</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">Descubra métodos tecnológicos eficazes para revitalizar tapetes sujos em casa e deixe seu ambiente limpo e renovado com praticidade!</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-05-05" style="color: var(--text-muted);">
+                        05/05/2026 00:00
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/metodos-tecnologicos-para-revitalizar-tapetes-sujos-em-casa.jpg" alt="Métodos tecnológicos para revitalizar tapetes sujos em casa">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>Tapetes s&atilde;o elementos essenciais na decora&ccedil;&atilde;o e no conforto de ambientes residenciais. Eles absorvem sujeira, poeira e manchas com o tempo, perdendo o brilho e a maciez originais. A manuten&ccedil;&atilde;o tradicional, muitas vezes, pode ser dif&iacute;cil e ineficaz para recuperar a apar&ecirc;ncia dos tapetes mais sujos ou encardidos. Felizmente, a <strong>tecnologia aplicada &agrave; limpeza dom&eacute;stica</strong> tem avan&ccedil;ado rapidamente, oferecendo solu&ccedil;&otilde;es inovadoras para revitalizar tapetes no conforto do lar.</p>
+<p>Este conte&uacute;do apresenta uma vis&atilde;o detalhada dos m&eacute;todos tecnol&oacute;gicos que ajudam a restaurar tapetes sujos, com dicas pr&aacute;ticas para aplicar essas t&eacute;cnicas e manter o ambiente mais limpo, saud&aacute;vel e agrad&aacute;vel, aprenda agora a <strong><a href="https://mkhigienizacao.com.br/como-limpar-tapete-encardido-sem-danificar/" target="_blank" rel="noopener">Como Limpar Tapete Encardido?</a></strong></p>
+<h2>Por Que A Limpeza Tradicional Pode N&atilde;o Ser Suficiente?</h2>
+<p>A limpeza convencional com aspirador de p&oacute; e lavagem artesanal nem sempre elimina manchas profundas ou sujeiras impregnadas, especialmente em tapetes de fibras naturais ou sint&eacute;ticas que acumulam poeira e &aacute;caros. Al&eacute;m disso, o uso incorreto de produtos qu&iacute;micos pode desgastar as fibras e alterar as cores do tapete.</p>
+<p>Com a ajuda de tecnologias modernas, &eacute; poss&iacute;vel realizar uma <strong>limpeza mais profunda, eficiente e segura</strong>, prolongando a vida &uacute;til do tapete e preservando sua est&eacute;tica.</p>
+<h2>Principais Tecnologias Para Revitalizar Tapetes Em Casa</h2>
+<h3>1. Vaporiza&ccedil;&atilde;o a alta press&atilde;o para limpeza eficaz</h3>
+<p>A limpeza a vapor &eacute; uma das t&eacute;cnicas tecnol&oacute;gicas mais populares para revitalizar tapetes. M&aacute;quinas de limpeza a vapor geram alta press&atilde;o e temperatura, eliminando sujeiras, bact&eacute;rias, fungos e &aacute;caros sem a necessidade de produtos qu&iacute;micos agressivos.</p>
+<p>- <strong>Benef&iacute;cios:</strong></p>
+<p>- Desinfec&ccedil;&atilde;o profunda</p>
+<p>- Remo&ccedil;&atilde;o eficaz de manchas e odores</p>
+<p>- Secagem r&aacute;pida</p>
+<p>- Preserva&ccedil;&atilde;o das fibras do tapete</p>
+<p>- <strong>Como usar:</strong></p>
+<p>Aparafuse um aparelho de limpeza a vapor com acess&oacute;rios espec&iacute;ficos para tapetes, passe lentamente sobre a superf&iacute;cie e deixe o tapete secar em um local arejado.</p>
+<h3>2. M&aacute;quinas de limpeza com extra&ccedil;&atilde;o de &aacute;gua</h3>
+<p>Tamb&eacute;m conhecidas como extratoras de &aacute;gua, essas m&aacute;quinas aplicam uma solu&ccedil;&atilde;o de limpeza diretamente no tapete e a removem simultaneamente, extraindo sujeira e res&iacute;duos.</p>
+<p>- <strong>Por que s&atilde;o eficazes?</strong></p>
+<p>A combina&ccedil;&atilde;o de suc&ccedil;&atilde;o forte e aplica&ccedil;&atilde;o controlada de detergentes espec&iacute;ficos promove limpeza profunda, retirando at&eacute; manchas dif&iacute;ceis.</p>
+<p>- <strong>Dicas para o uso dom&eacute;stico:</strong></p>
+<p>- Escolha detergentes biodegrad&aacute;veis e adequados para o tipo de fibra do tapete.</p>
+<p>- Fa&ccedil;a movimentos lentos e uniformes para garantir cobertura total.</p>
+<p>- Deixe o tapete secar completamente para evitar mofo.</p>
+<h3>3. Rob&ocirc;s aspiradores com fun&ccedil;&atilde;o de lavagem</h3>
+<p>Os rob&ocirc;s aspiradores evolu&iacute;ram e muitos modelos oferecem fun&ccedil;&otilde;es combinadas de aspira&ccedil;&atilde;o e lavagem leve. Embora n&atilde;o substituam m&eacute;todos mais intensos, s&atilde;o excelentes para manuten&ccedil;&atilde;o di&aacute;ria e para evitar o ac&uacute;mulo excessivo de sujeira.</p>
+<p>- <strong>Vantagens:</strong></p>
+<p>- Limpeza automatizada sem esfor&ccedil;o.</p>
+<p>- Programa&ccedil;&atilde;o para limpeza frequente.</p>
+<p>- Sensores que evitam obst&aacute;culos e quedas.</p>
+<p>- <strong>Limita&ccedil;&otilde;es:</strong></p>
+<p>- N&atilde;o substituem uma limpeza profunda para tapetes muito sujos ou encardidos.</p>
+<p>- Indicado para tapetes de pelo baixo e m&eacute;dio.</p>
+<h3>4. Ultrassom para limpeza de tapetes delicados</h3>
+<p>A tecnologia de limpeza por ultrassom, comumente utilizada em ind&uacute;strias e laborat&oacute;rios, come&ccedil;a a ganhar espa&ccedil;o em aparelhos dom&eacute;sticos para tecidos delicados.</p>
+<p>- <strong>Como funciona:</strong></p>
+<p>Ondas sonoras de alta frequ&ecirc;ncia criam microbolhas que explodem, removendo part&iacute;culas de sujeira sem danificar as fibras.</p>
+<p>- <strong>Aplica&ccedil;&otilde;es:</strong></p>
+<p>Ideal para tapetes com tecidos sens&iacute;veis, como seda ou l&atilde; fina, que n&atilde;o suportam &aacute;gua em excesso ou abras&atilde;o mec&acirc;nica.</p>
+<h3>5. Aplica&ccedil;&atilde;o de oz&ocirc;nio para desodoriza&ccedil;&atilde;o e higieniza&ccedil;&atilde;o</h3>
+<p>O oz&ocirc;nio &eacute; um poderoso agente oxidante que elimina odores, bact&eacute;rias e fungos. Equipamentos geradores de oz&ocirc;nio podem ser usados para tratar tapetes sujos ap&oacute;s a limpeza, potencializando a higieniza&ccedil;&atilde;o e prolongando a sensa&ccedil;&atilde;o de frescor.</p>
+<p>- <strong>Cuidados:</strong></p>
+<p>- Deve ser utilizado em ambientes ventilados e sem pessoas ou animais presentes durante o processo.</p>
+<p>- Tempo de exposi&ccedil;&atilde;o controlado para evitar danos ao tecido.</p>
+<h2>Passo A Passo Para Revitalizar Tapetes Em Casa Com Tecnologia</h2>
+<h3>Prepara&ccedil;&atilde;o do ambiente e do tapete</h3>
+<p>Antes de iniciar qualquer procedimento, remova m&oacute;veis e objetos que possam atrapalhar a limpeza. Aspire o tapete para eliminar o excesso de poeira e part&iacute;culas soltas.</p>
+<h3>Escolha do m&eacute;todo tecnol&oacute;gico adequado</h3>
+<p>- <strong>Tapetes com sujeira leve:</strong> rob&ocirc; aspirador com fun&ccedil;&atilde;o de lavagem ou limpeza a vapor.</p>
+<p>- <strong>Manchas dif&iacute;ceis e sujeira impregnada:</strong> m&aacute;quinas de extra&ccedil;&atilde;o de &aacute;gua ou vaporiza&ccedil;&atilde;o a alta press&atilde;o.</p>
+<p>- <strong>Tapetes delicados:</strong> limpeza ultrass&ocirc;nica ou vaporiza&ccedil;&atilde;o suave.</p>
+<p>- <strong>Para eliminar odores e garantir higieniza&ccedil;&atilde;o:</strong> utiliza&ccedil;&atilde;o de oz&ocirc;nio ap&oacute;s a limpeza.</p>
+<h3>Execu&ccedil;&atilde;o da limpeza</h3>
+<p>Siga as instru&ccedil;&otilde;es dos equipamentos, respeitando o tipo de fibra e a intensidade recomendada para n&atilde;o danificar o tapete.</p>
+<h3>Secagem correta</h3>
+<p>A secagem adequada &eacute; fundamental para evitar mofo e odores desagrad&aacute;veis. Use ventiladores, abra janelas ou utilize desumidificadores para acelerar o processo.</p>
+<h2>Como Limpar Tapete Encardido?</h2>
+<p>Para tapetes encardidos, que apresentam manchas profundas e perda de cor, o ideal &eacute; combinar a limpeza a vapor com a extra&ccedil;&atilde;o de &aacute;gua. Primeiro, aplique a vaporiza&ccedil;&atilde;o para soltar a sujeira incrustada, depois utilize a extratora para remover completamente os res&iacute;duos. Evite esfregar com for&ccedil;a para n&atilde;o danificar as fibras. Em casos extremos, pode ser necess&aacute;rio um tratamento profissional, mas as tecnologias dom&eacute;sticas atuais j&aacute; conseguem excelentes resultados.</p>
+<h2>Cuidados Espec&iacute;ficos Para Diferentes Tipos De Tapetes</h2>
+<h3>Tapetes de l&atilde;</h3>
+<p>A l&atilde; &eacute; delicada e sens&iacute;vel &agrave; umidade excessiva. Prefira m&eacute;todos com vapor controlado ou ultrassom, evitando encharcar o tecido.</p>
+<h3>Tapetes sint&eacute;ticos</h3>
+<p>S&atilde;o mais resistentes e suportam limpezas mais intensas, como extra&ccedil;&atilde;o de &aacute;gua e vaporiza&ccedil;&atilde;o a alta press&atilde;o.</p>
+<h3>Tapetes orientais e artesanais</h3>
+<p>Devido &agrave; sua fragilidade e valor, a limpeza deve ser feita com equipamentos que ofere&ccedil;am controle preciso da temperatura e umidade, priorizando a preserva&ccedil;&atilde;o das cores.</p>
+<h2>Manuten&ccedil;&atilde;o Tecnol&oacute;gica Para Prolongar A Vida &Uacute;til Do Tapete</h2>
+<p>Al&eacute;m da limpeza profunda, investir em aparelhos tecnol&oacute;gicos para manuten&ccedil;&atilde;o di&aacute;ria &eacute; uma forma inteligente de proteger o tapete.</p>
+<p>- <strong>Aspiradores rob&oacute;ticos:</strong> evitam o ac&uacute;mulo de sujeira.</p>
+<p>- <strong>Purificadores de ar com filtros HEPA:</strong> reduzem a poeira no ambiente.</p>
+<p>- <strong>Desumidificadores:</strong> previnem mofo e odores em ambientes &uacute;midos.</p>
+<h2>Vantagens Da Tecnologia Na Limpeza Dom&eacute;stica De Tapetes</h2>
+<p>- <strong>Efici&ecirc;ncia:</strong> maior poder de remo&ccedil;&atilde;o de sujeira e manchas.</p>
+<p>- <strong>Praticidade:</strong> redu&ccedil;&atilde;o do esfor&ccedil;o f&iacute;sico e do tempo gasto.</p>
+<p>- <strong>Sustentabilidade:</strong> uso reduzido de produtos qu&iacute;micos nocivos.</p>
+<p>- <strong>Sa&uacute;de:</strong> elimina&ccedil;&atilde;o de &aacute;caros, fungos e bact&eacute;rias que afetam a qualidade do ar e a sa&uacute;de dos moradores.</p>
+<h2>Considera&ccedil;&otilde;es Finais</h2>
+<p>A revitaliza&ccedil;&atilde;o de tapetes sujos em casa nunca foi t&atilde;o acess&iacute;vel e eficaz gra&ccedil;as &agrave;s inova&ccedil;&otilde;es tecnol&oacute;gicas. Equipamentos modernos proporcionam uma <strong>limpeza profunda e segura</strong>, preservando a beleza e o conforto dos tapetes por muito mais tempo. Escolher o m&eacute;todo correto e cuidar adequadamente do tapete resulta em ambientes mais saud&aacute;veis, bonitos e acolhedores.</p>
+<p>Investir em tecnologia para a limpeza dom&eacute;stica &eacute; uma maneira inteligente de combinar praticidade, efici&ecirc;ncia e sustentabilidade, garantindo que seus tapetes continuem sendo um destaque na decora&ccedil;&atilde;o da sua casa.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

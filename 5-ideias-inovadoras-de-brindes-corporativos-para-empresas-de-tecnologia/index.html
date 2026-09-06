@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5 ideias inovadoras de brindes corporativos para empresas de tecnologia - Asterisco Lab</title>
+    <meta name="description" content="Descubra 5 ideias inovadoras de brindes corporativos para empresas de tecnologia e surpreenda clientes com presentes criativos e exclusivos!">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/outros/" style="color:#ffffff;">Outros</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">5 ideias inovadoras de brindes corporativos para empresas de tecnologia</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">Descubra 5 ideias inovadoras de brindes corporativos para empresas de tecnologia e surpreenda clientes com presentes criativos e exclusivos!</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-05-12" style="color: var(--text-muted);">
+                        12/05/2026 19:00
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/5-ideias-inovadoras-de-brindes-corporativos-para-empresas-de-tecnologia.jpg" alt="5 ideias inovadoras de brindes corporativos para empresas de tecnologia">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>No universo competitivo das <strong>empresas de tecnologia</strong>, destacar-se n&atilde;o &eacute; uma tarefa simples. Uma das estrat&eacute;gias que tem ganhado destaque &eacute; o uso de brindes corporativos criativos e inovadores. S&atilde;o itens que, al&eacute;m de promoverem a marca, fortalecem o relacionamento com clientes, parceiros e colaboradores, gerando uma percep&ccedil;&atilde;o positiva e duradoura. Pensando nisso, reunimos cinco ideias inovadoras de brindes corporativos que combinam utilidade, design e tecnologia, perfeitos para empresas que desejam surpreender e fidelizar seu p&uacute;blico.</p>
+<h2>Por Que Investir Em Brindes Corporativos Inovadores No Setor Tecnol&oacute;gico?</h2>
+<p>O mercado tecnol&oacute;gico &eacute; din&acirc;mico e exige constante atualiza&ccedil;&atilde;o e criatividade. Os brindes tradicionais, como canetas e blocos de anota&ccedil;&otilde;es, ainda funcionam, mas podem n&atilde;o causar aquele impacto memor&aacute;vel. Itens que agregam valor, s&atilde;o &uacute;teis no dia a dia e alinhados &agrave; identidade tecnol&oacute;gica da empresa tendem a gerar maior engajamento.</p>
+<p>Al&eacute;m disso, brindes inovadores refor&ccedil;am a imagem da empresa como uma marca moderna e antenada &agrave;s tend&ecirc;ncias, o que &eacute; fundamental para conquistar clientes e parceiros em um setor t&atilde;o competitivo. Quando bem escolhidos, esses presentes funcionam como uma extens&atilde;o do branding e da cultura corporativa.</p>
+<h2>1. Gadgets Tecnol&oacute;gicos Personalizados</h2>
+<h3>Power banks com design exclusivo</h3>
+<p>Um <strong>power bank</strong> &eacute; um dos brindes mais &uacute;teis para profissionais que dependem de dispositivos m&oacute;veis o tempo todo. Personalizar esse gadget com a identidade visual da empresa, como logotipo e cores, &eacute; uma forma eficaz de manter a marca sempre presente.</p>
+<p>Al&eacute;m do design, apostar em modelos com tecnologia avan&ccedil;ada, como carregamento r&aacute;pido ou m&uacute;ltiplas entradas, agrega ainda mais valor ao brinde. Essa funcionalidade &eacute; especialmente apreciada em eventos, reuni&otilde;es ou no dia a dia, onde a praticidade faz toda a diferen&ccedil;a.</p>
+<h3>Pendrives com formatos criativos</h3>
+<p>Os <strong>pendrives</strong> continuam sendo um brinde cl&aacute;ssico no setor de tecnologia, mas ganharam uma nova cara com formatos personalizados. Empresas podem criar modelos que remetam ao seu core business, como chip de computador, rob&ocirc;, ou qualquer s&iacute;mbolo relacionado &agrave; inova&ccedil;&atilde;o.</p>
+<p>Al&eacute;m da personaliza&ccedil;&atilde;o visual, vale a pena investir em pendrives com alta capacidade de armazenamento e velocidades de transfer&ecirc;ncia r&aacute;pidas, tornando o brinde n&atilde;o apenas bonito, mas tamb&eacute;m funcional.</p>
+<h2>2. Kits De Escrit&oacute;rio Tecnol&oacute;gicos</h2>
+<h3>Suportes inteligentes para celulares e tablets</h3>
+<p>Com o aumento do trabalho remoto e reuni&otilde;es virtuais, um suporte para celular ou tablet que facilite a visualiza&ccedil;&atilde;o da tela &eacute; um item bastante &uacute;til. Existem modelos com carregamento wireless integrado, ajuste de &acirc;ngulo e design compacto, perfeitos para a mesa do escrit&oacute;rio ou home office.</p>
+<p>Personalizar esses suportes com a marca da empresa &eacute; uma forma de tornar o ambiente de trabalho mais tecnol&oacute;gico e organizado, al&eacute;m de manter a presen&ccedil;a da empresa sempre vis&iacute;vel.</p>
+<h3>Teclados e mouses ergon&ocirc;micos</h3>
+<p>Brindar colaboradores e parceiros com acess&oacute;rios ergon&ocirc;micos, como teclados e mouses, demonstra preocupa&ccedil;&atilde;o com a sa&uacute;de e o bem-estar. Modelos wireless e compactos s&atilde;o ideais para quem busca praticidade e conforto.</p>
+<p>Para empresas de tecnologia, esses gadgets tamb&eacute;m podem ser personalizados com cores da marca, oferecendo uma experi&ecirc;ncia alinhada &agrave; identidade visual corporativa.</p>
+<h2>3. Wearables E Acess&oacute;rios Tecnol&oacute;gicos</h2>
+<h3>Pulseiras fitness com monitoramento de sa&uacute;de</h3>
+<p>As <strong>pulseiras fitness</strong> s&atilde;o brindes modernos e bastante valorizados, pois incentivam h&aacute;bitos saud&aacute;veis e conectam o usu&aacute;rio ao universo tecnol&oacute;gico. Muitas delas possuem monitoramento de passos, batimentos card&iacute;acos e qualidade do sono.</p>
+<p>Al&eacute;m de promover a sa&uacute;de, esses dispositivos s&atilde;o uma excelente forma de associar a marca a inova&ccedil;&atilde;o e cuidado com o cliente. Personaliza&ccedil;&atilde;o com o logo da empresa pode ser feita na pulseira ou na embalagem, tornando o brinde memor&aacute;vel.</p>
+<h3>Fones de ouvido sem fio personalizados</h3>
+<p>Os <strong>fones de ouvido Bluetooth</strong> s&atilde;o acess&oacute;rios indispens&aacute;veis para profissionais de tecnologia, que frequentemente participam de videoconfer&ecirc;ncias ou escutam m&uacute;sica durante o trabalho. Um modelo compacto, com boa qualidade de som, &eacute; um presente que certamente ser&aacute; usado.</p>
+<p>Personalizar os fones com o nome ou logo da empresa, al&eacute;m de um estojo exclusivo, refor&ccedil;a o valor do brinde e a imagem da marca como moderna e atenta &agrave;s necessidades do p&uacute;blico.</p>
+<h2>4. Produtos Sustent&aacute;veis E Tecnol&oacute;gicos</h2>
+<h3>Carregadores solares port&aacute;teis</h3>
+<p>A sustentabilidade &eacute; uma pauta cada vez mais importante para empresas de tecnologia que desejam se posicionar de forma respons&aacute;vel. Um <strong>carregador solar port&aacute;til</strong> &eacute; um brinde que une tecnologia e consci&ecirc;ncia ambiental.</p>
+<p>Esse dispositivo &eacute; ideal para quem est&aacute; em constante movimento, permitindo carregar smartphones e outros gadgets usando energia solar. Al&eacute;m da personaliza&ccedil;&atilde;o visual, comunicar que o brinde &eacute; sustent&aacute;vel fortalece a imagem da empresa como inovadora e engajada.</p>
+<h3>Cadernos inteligentes reutiliz&aacute;veis</h3>
+<p>Outra op&ccedil;&atilde;o sustent&aacute;vel que alia tecnologia e praticidade s&atilde;o os <strong>cadernos inteligentes</strong> que podem ser apagados e reutilizados diversas vezes. Eles s&atilde;o compat&iacute;veis com aplicativos que digitalizam as anota&ccedil;&otilde;es, facilitando o armazenamento e compartilhamento de informa&ccedil;&otilde;es.</p>
+<p>Personalizar esses cadernos com a marca da empresa refor&ccedil;a o compromisso com o meio ambiente e oferece um brinde que alia tradi&ccedil;&atilde;o e inova&ccedil;&atilde;o.</p>
+<h2>5. Experi&ecirc;ncias Digitais Personalizadas</h2>
+<h3>Acesso a plataformas exclusivas e cursos online</h3>
+<p>Oferecer uma experi&ecirc;ncia digital como brinde pode ser uma estrat&eacute;gia diferenciada e de alto valor percebido. Parcerias com plataformas de cursos online, softwares ou ferramentas exclusivas s&atilde;o brindes que agregam conhecimento e desenvolvimento profissional.</p>
+<p>Essa modalidade pode ser customizada para o p&uacute;blico-alvo da empresa, proporcionando aprendizado alinhado ao segmento tecnol&oacute;gico e fortalecendo o relacionamento.</p>
+<h3>Realidade aumentada e virtual para apresenta&ccedil;&atilde;o de produtos</h3>
+<p>Brindes que envolvem <strong>realidade aumentada (AR)</strong> ou <strong>realidade virtual (VR)</strong> s&atilde;o incr&iacute;veis para criar experi&ecirc;ncias imersivas. Pode-se desenvolver aplicativos ou &oacute;culos VR personalizados que apresentem os produtos ou servi&ccedil;os da empresa de forma inovadora.</p>
+<p>Esse tipo de brinde &eacute; ideal para eventos, feiras e demonstra&ccedil;&otilde;es, criando um impacto memor&aacute;vel e destacando a empresa como refer&ecirc;ncia em tecnologia.</p>
+<h2>Como Escolher Os Melhores Brindes Corporativos Para Sua Empresa De Tecnologia</h2>
+<h3>Conhe&ccedil;a o perfil do p&uacute;blico-alvo</h3>
+<p>O sucesso do brinde depende da sua adequa&ccedil;&atilde;o ao perfil e necessidades do p&uacute;blico. Entender quem s&atilde;o os clientes, parceiros e colaboradores &eacute; fundamental para escolher itens que realmente sejam &uacute;teis e valorizados.</p>
+<h3>Alinhe com a identidade da marca</h3>
+<p>Os brindes devem refletir a cultura e os valores da empresa. Itens que transmitam inova&ccedil;&atilde;o, sustentabilidade ou praticidade refor&ccedil;am a imagem desejada e geram maior identifica&ccedil;&atilde;o.</p>
+<h3>Invista em qualidade e personaliza&ccedil;&atilde;o</h3>
+<p>Produtos de qualidade com uma identidade visual bem aplicada causam boa impress&atilde;o e duram mais tempo, aumentando a visibilidade da marca. A personaliza&ccedil;&atilde;o deve ser feita com cuidado para garantir que o brinde seja elegante e funcional.</p>
+<h3>Pense na utilidade e inova&ccedil;&atilde;o</h3>
+<p>Brindes que unem utilidade e inova&ccedil;&atilde;o tendem a ser mais utilizados e compartilhados, aumentando o alcance da marca. Itens tecnol&oacute;gicos, pr&aacute;ticos e alinhados &agrave;s tend&ecirc;ncias do mercado s&atilde;o sempre uma boa escolha.</p>
+<h2>Considera&ccedil;&otilde;es Finais</h2>
+<p>Os <strong>brindes corporativos para empresas de tecnologia</strong> s&atilde;o ferramentas poderosas para construir relacionamentos duradouros e fortalecer a reputa&ccedil;&atilde;o da marca. Investir em itens inovadores, pr&aacute;ticos e personalizados faz toda a diferen&ccedil;a na percep&ccedil;&atilde;o do p&uacute;blico.</p>
+<p>A variedade de op&ccedil;&otilde;es, desde gadgets tecnol&oacute;gicos at&eacute; experi&ecirc;ncias digitais, permite que cada empresa encontre o brinde ideal para seu p&uacute;blico e objetivos. Al&eacute;m disso, a preocupa&ccedil;&atilde;o com sustentabilidade e bem-estar agrega valor e mostra que a empresa est&aacute; atenta &agrave;s demandas atuais.</p>
+<p>Para resultados ainda melhores, vale a pena considerar <a href="https://www.larabrindes.com.br" target="_blank" rel="noopener">Brindes Personalizados para empresa</a> que unam design, funcionalidade e inova&ccedil;&atilde;o. Assim, o presente corporativo se torna uma extens&atilde;o da cultura organizacional, promovendo a marca de forma eficaz e memor&aacute;vel.</p>
+<p>---</p>
+<p>Com essas ideias inovadoras, empresas de tecnologia podem transformar simples brindes em poderosos canais de comunica&ccedil;&atilde;o e fideliza&ccedil;&atilde;o, consolidando sua posi&ccedil;&atilde;o no mercado e conquistando novos p&uacute;blicos com criatividade e intelig&ecirc;ncia.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

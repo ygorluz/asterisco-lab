@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asterisco Lab</title>
+    <meta name="description" content="">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <span>Asterisco Lab</span>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main style="max-width: 1400px; margin: 0 auto; overflow: hidden; padding-bottom: 3rem;">
+    
+        
+        <div class="gs-hero-carousel-wrapper">
+            <button class="gs-carousel-btn gs-carousel-prev" onclick="document.getElementById('main-carousel').scrollBy({left: -window.innerWidth * 0.7, behavior: 'smooth'})" aria-label="Anterior">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+            <button class="gs-carousel-btn gs-carousel-next" onclick="document.getElementById('main-carousel').scrollBy({left: window.innerWidth * 0.7, behavior: 'smooth'})" aria-label="Próximo">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+            <div class="gs-hero-carousel" id="main-carousel">
+                
+                <article class="gs-hero-slide">
+                    <a href="/declaracao-de-saida-definitiva-do-pais-retroativa-guia-completo/">
+                        
+                            <img src="/static/uploads/declaracao-de-saida-definitiva-do-pais-retroativa-guia-completo.jpg" alt="Declaração de saída definitiva do país retroativa: guia completo">
+                        
+                        <div class="gs-hero-slide__content">
+                            
+                                <span class="gs-category-pill">Notícias</span>
+                            
+                            <br>
+                            <h2 class="hero-title-box">
+                                <span>Declaração de saída definitiva do país retroativa: guia completo</span>
+                            </h2>
+                        </div>
+                    </a>
+                </article>
+                
+                <article class="gs-hero-slide">
+                    <a href="/5-solucoes-tecnologicas-para-prontuarios-digitais-sem-custo/">
+                        
+                            <img src="/static/uploads/5-solucoes-tecnologicas-para-prontuarios-digitais-sem-custo.jpg" alt="5 soluções tecnológicas para prontuários digitais sem custo">
+                        
+                        <div class="gs-hero-slide__content">
+                            
+                                <span class="gs-category-pill">Lançamentos</span>
+                            
+                            <br>
+                            <h2 class="hero-title-box">
+                                <span>5 soluções tecnológicas para prontuários digitais sem custo</span>
+                            </h2>
+                        </div>
+                    </a>
+                </article>
+                
+                <article class="gs-hero-slide">
+                    <a href="/descubra-os-custos-reais-para-obter-um-certificado-digital-seguro/">
+                        
+                            <img src="/static/uploads/descubra-os-custos-reais-para-obter-um-certificado-digital-seguro.jpg" alt="Descubra os custos reais para obter um certificado digital seguro">
+                        
+                        <div class="gs-hero-slide__content">
+                            
+                                <span class="gs-category-pill">Notícias</span>
+                            
+                            <br>
+                            <h2 class="hero-title-box">
+                                <span>Descubra os custos reais para obter um certificado digital seguro</span>
+                            </h2>
+                        </div>
+                    </a>
+                </article>
+                
+                <article class="gs-hero-slide">
+                    <a href="/quais-fatores-tecnologicos-considerar-ao-comprar-escovas-rotativas/">
+                        
+                            <img src="/static/uploads/quais-fatores-tecnologicos-considerar-ao-comprar-escovas-rotativas.jpg" alt="Quais fatores tecnológicos considerar ao comprar escovas rotativas">
+                        
+                        <div class="gs-hero-slide__content">
+                            
+                                <span class="gs-category-pill">Notícias</span>
+                            
+                            <br>
+                            <h2 class="hero-title-box">
+                                <span>Quais fatores tecnológicos considerar ao comprar escovas rotativas</span>
+                            </h2>
+                        </div>
+                    </a>
+                </article>
+                
+                <article class="gs-hero-slide">
+                    <a href="/casos-reais-agentes-de-ia-com-n8n-em-vendas-e-atendimento/">
+                        
+                            <img src="/static/uploads/casos-reais-agentes-de-ia-com-n8n-em-vendas-e-atendimento.jpg" alt="Casos Reais: Agentes de IA com n8n em Vendas e Atendimento">
+                        
+                        <div class="gs-hero-slide__content">
+                            
+                                <span class="gs-category-pill">Mundo Digital</span>
+                            
+                            <br>
+                            <h2 class="hero-title-box">
+                                <span>Casos Reais: Agentes de IA com n8n em Vendas e Atendimento</span>
+                            </h2>
+                        </div>
+                    </a>
+                </article>
+                
+            </div>
+        </div>
+
+        <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 1rem;">
+            
+            
+
+            
+            
+            
+                <h3 class="gs-highlight-header" style="border-left-color: #555; margin-top: 3rem;">Últimas Notícias</h3>
+                <div class="gs-feed-list">
+                    
+                    <article class="gs-feed-item">
+                        <a href="/como-a-inovacao-digital-transforma-credito-consignado-hoje/" style="display: flex; gap: 1rem; width: 100%; text-decoration: none; color: inherit;">
+                            <div class="gs-feed-item__img">
+                                
+                                    <img src="/static/uploads/como-a-inovacao-digital-transforma-credito-consignado-hoje.jpg" alt="Como a inovação digital transforma crédito consignado hoje" loading="lazy">
+                                
+                            </div>
+                            <div class="gs-feed-item__content">
+                                
+                                    <span style="color: var(--accent-color); font-weight: 800; text-transform: uppercase; font-size: 0.75rem; margin-bottom: 0.3rem; display: block;">Mundo Digital</span>
+                                
+                                <h3 class="gs-feed-item__title">Como a inovação digital transforma crédito consignado hoje</h3>
+                                
+                                    <p class="gs-feed-item__excerpt">Descubra como a inovação digital está revolucionando o crédito consignado, tornando processos mais rápidos, seguros e acessíveis para você.</p>
+                                
+                            </div>
+                        </a>
+                    </article>
+                    
+                    <article class="gs-feed-item">
+                        <a href="/como-impulsionar-anuncios-digitais-sem-complicacoes/" style="display: flex; gap: 1rem; width: 100%; text-decoration: none; color: inherit;">
+                            <div class="gs-feed-item__img">
+                                
+                                    <img src="/static/uploads/como-impulsionar-anuncios-digitais-sem-complicacoes.jpg" alt="Como impulsionar anúncios digitais sem complicações" loading="lazy">
+                                
+                            </div>
+                            <div class="gs-feed-item__content">
+                                
+                                    <span style="color: var(--accent-color); font-weight: 800; text-transform: uppercase; font-size: 0.75rem; margin-bottom: 0.3rem; display: block;">Fixo</span>
+                                
+                                <h3 class="gs-feed-item__title">Como impulsionar anúncios digitais sem complicações</h3>
+                                
+                                    <p class="gs-feed-item__excerpt">Descubra estratégias simples e eficazes para impulsionar seus anúncios digitais e aumentar resultados sem complicação. Comece agora!</p>
+                                
+                            </div>
+                        </a>
+                    </article>
+                    
+                    <article class="gs-feed-item">
+                        <a href="/e-melhor-headset-p2-ou-usb/" style="display: flex; gap: 1rem; width: 100%; text-decoration: none; color: inherit;">
+                            <div class="gs-feed-item__img">
+                                
+                                    <img src="/static/uploads/e-melhor-headset-p2-ou-usb.jpg" alt="É melhor headset P2 ou USB?" loading="lazy">
+                                
+                            </div>
+                            <div class="gs-feed-item__content">
+                                
+                                    <span style="color: var(--accent-color); font-weight: 800; text-transform: uppercase; font-size: 0.75rem; margin-bottom: 0.3rem; display: block;">Análises</span>
+                                
+                                <h3 class="gs-feed-item__title">É melhor headset P2 ou USB?</h3>
+                                
+                                    <p class="gs-feed-item__excerpt">Descubra qual é o melhor headset para você: P2 ou USB? Compare qualidade, compatibilidade e desempenho para fazer a escolha certa!</p>
+                                
+                            </div>
+                        </a>
+                    </article>
+                    
+                    <article class="gs-feed-item">
+                        <a href="/como-medir-resultados-e-roi-no-trafego-pago/" style="display: flex; gap: 1rem; width: 100%; text-decoration: none; color: inherit;">
+                            <div class="gs-feed-item__img">
+                                
+                                    <img src="/static/uploads/como-medir-resultados-e-roi-no-trafego-pago.jpg" alt="Como Medir Resultados e ROI no Tráfego Pago" loading="lazy">
+                                
+                            </div>
+                            <div class="gs-feed-item__content">
+                                
+                                    <span style="color: var(--accent-color); font-weight: 800; text-transform: uppercase; font-size: 0.75rem; margin-bottom: 0.3rem; display: block;">Mundo Digital</span>
+                                
+                                <h3 class="gs-feed-item__title">Como Medir Resultados e ROI no Tráfego Pago</h3>
+                                
+                                    <p class="gs-feed-item__excerpt">Aprenda a medir resultados e otimizar o ROI no tráfego pago com estratégias eficazes. Maximize seus investimentos e aumente suas conversões!</p>
+                                
+                            </div>
+                        </a>
+                    </article>
+                    
+                    <article class="gs-feed-item">
+                        <a href="/onde-encontrar-suporte-tecnico-dell-para-notebooks-no-rio/" style="display: flex; gap: 1rem; width: 100%; text-decoration: none; color: inherit;">
+                            <div class="gs-feed-item__img">
+                                
+                                    <img src="/static/uploads/onde-encontrar-suporte-tecnico-dell-para-notebooks-no-rio.jpg" alt="Onde encontrar suporte técnico Dell para notebooks no Rio" loading="lazy">
+                                
+                            </div>
+                            <div class="gs-feed-item__content">
+                                
+                                    <span style="color: var(--accent-color); font-weight: 800; text-transform: uppercase; font-size: 0.75rem; margin-bottom: 0.3rem; display: block;">Aplicativos</span>
+                                
+                                <h3 class="gs-feed-item__title">Onde encontrar suporte técnico Dell para notebooks no Rio</h3>
+                                
+                                    <p class="gs-feed-item__excerpt">Encontre suporte técnico Dell para notebooks no Rio de Janeiro com atendimento rápido e especializado. Saiba onde obter ajuda confiável perto de você!</p>
+                                
+                            </div>
+                        </a>
+                    </article>
+                    
+                </div>
+            
+        </div>
+    
+
+    
+    <nav class="pagination" style="margin-top: 4rem; text-align: center;">
+        
+            <a href="/page/7/" style="padding: 0.8rem 1.5rem; background: #eee; border-radius: 4px; font-weight: 700; margin-right: 1rem; color: #333; text-decoration: none;">Anterior</a>
+        
+        
+            <a href="/page/9/" style="padding: 0.8rem 1.5rem; background: var(--accent-color); color: #fff; border-radius: 4px; font-weight: 700; text-decoration: none;">Próxima</a>
+        
+    </nav>
+    
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

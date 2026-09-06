@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quais fatores tecnológicos considerar ao comprar escovas rotativas - Asterisco Lab</title>
+    <meta name="description" content="Descubra os principais fatores tecnológicos para escolher a escova rotativa ideal e garantir performance, durabilidade e resultados perfeitos.">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/noticias/" style="color:#ffffff;">Notícias</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Quais fatores tecnológicos considerar ao comprar escovas rotativas</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">Descubra os principais fatores tecnológicos para escolher a escova rotativa ideal e garantir performance, durabilidade e resultados perfeitos.</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-03-11" style="color: var(--text-muted);">
+                        11/03/2026 00:00
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/quais-fatores-tecnologicos-considerar-ao-comprar-escovas-rotativas.jpg" alt="Quais fatores tecnológicos considerar ao comprar escovas rotativas">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>As <strong>escovas rotativas</strong> tornaram-se ferramentas indispens&aacute;veis para cuidados pessoais, especialmente para quem busca praticidade e efici&ecirc;ncia na rotina de beleza. Com o avan&ccedil;o da tecnologia, o mercado oferece uma variedade impressionante de modelos, cada um com caracter&iacute;sticas espec&iacute;ficas que podem influenciar diretamente na experi&ecirc;ncia de uso e nos resultados obtidos. Para garantir a escolha certa, &eacute; fundamental entender os principais aspectos tecnol&oacute;gicos que diferenciam esses produtos.</p>
+<h2>Import&acirc;ncia Da Tecnologia Nas Escovas Rotativas</h2>
+<p>A tecnologia aplicada nas <strong>escovas rotativas</strong> n&atilde;o est&aacute; presente apenas no design ou na est&eacute;tica do aparelho, mas principalmente nas funcionalidades que proporcionam maior conforto, versatilidade e efic&aacute;cia. Desde a pot&ecirc;ncia do motor at&eacute; os materiais das cerdas, cada detalhe tecnol&oacute;gico pode impactar no desempenho, durabilidade e facilidade de uso da escova.</p>
+<h3>Benef&iacute;cios de investir em tecnologia avan&ccedil;ada</h3>
+<p>- <strong>Melhor performance</strong>: motores mais potentes e precisos garantem resultados mais r&aacute;pidos e uniformes.</p>
+<p>- <strong>Durabilidade</strong>: componentes de qualidade superior aumentam a vida &uacute;til do produto.</p>
+<p>- <strong>Conforto e seguran&ccedil;a</strong>: tecnologias de controle de temperatura e ajustes de velocidade evitam danos aos fios e &agrave; pele.</p>
+<p>- <strong>Versatilidade</strong>: m&uacute;ltiplas fun&ccedil;&otilde;es e acess&oacute;rios ampliam as possibilidades de uso, adaptando-se a diferentes tipos de cabelo e estilos.</p>
+<h2>Tipos De Motores E Sua Import&acirc;ncia</h2>
+<p>Um dos componentes mais cr&iacute;ticos em uma escova rotativa &eacute; o motor. Ele determina a velocidade, a for&ccedil;a da rota&ccedil;&atilde;o e a capacidade de lidar com diferentes tipos de cabelo.</p>
+<h3>Motor AC vs. Motor DC</h3>
+<p>- <strong>Motor AC (corrente alternada)</strong>: geralmente mais potente e dur&aacute;vel. Ideal para uso profissional ou para quem possui cabelos muito grossos e volumosos. Estes motores costumam oferecer uma rota&ccedil;&atilde;o mais constante e r&aacute;pida.</p>
+<p>- <strong>Motor DC (corrente cont&iacute;nua)</strong>: mais leve e silencioso, com menor consumo de energia. Indicado para uso dom&eacute;stico, adequado para cabelos finos a m&eacute;dios.</p>
+<h3>Velocidades e controle</h3>
+<p>Modelos com m&uacute;ltiplas velocidades possibilitam ajustar a intensidade da rota&ccedil;&atilde;o de acordo com a necessidade, evitando danos e proporcionando maior controle. Alguns aparelhos contam ainda com controle autom&aacute;tico de temperatura, que &eacute; essencial para proteger os fios do calor excessivo.</p>
+<h2>Materiais Das Cerdas E Sua Tecnologia</h2>
+<p>As cerdas s&atilde;o o ponto de contato direto com o cabelo, e suas caracter&iacute;sticas tecnol&oacute;gicas influenciam diretamente no conforto e na efic&aacute;cia da escova.</p>
+<h3>Tipos de cerdas mais comuns</h3>
+<p>- <strong>Cerdas de n&aacute;ilon</strong>: flex&iacute;veis e resistentes, s&atilde;o indicadas para desembara&ccedil;ar cabelos sem quebrar os fios.</p>
+<p>- <strong>Cerdas de cerdas naturais (p&ecirc;lo de javali, por exemplo)</strong>: ajudam a distribuir os &oacute;leos naturais do cabelo, promovendo brilho e maciez.</p>
+<p>- <strong>Cerdas mistas</strong>: combinam a resist&ecirc;ncia do n&aacute;ilon com a suavidade das naturais, oferecendo um equil&iacute;brio entre desembara&ccedil;o e cuidado.</p>
+<h3>Inova&ccedil;&otilde;es tecnol&oacute;gicas nas cerdas</h3>
+<p>Algumas escovas rotativas incorporam cerdas com revestimento de &iacute;ons negativos ou turmalina, que ajudam a reduzir o frizz e o efeito est&aacute;tico, promovendo um acabamento mais suave e brilhante. A tecnologia de aquecimento das cerdas tamb&eacute;m &eacute; um diferencial, permitindo que o calor seja distribu&iacute;do uniformemente para evitar danos.</p>
+<h2>Sistema De Aquecimento E Controle De Temperatura</h2>
+<p>O calor &eacute; um elemento crucial para modelar e alisar os cabelos, mas deve ser controlado para evitar quebras e ressecamento.</p>
+<h3>Tipos de aquecimento</h3>
+<p>- <strong>Aquecimento cer&acirc;mico</strong>: oferece distribui&ccedil;&atilde;o uniforme do calor, reduzindo os pontos de alta temperatura que podem queimar os fios.</p>
+<p>- <strong>Aquecimento de turmalina</strong>: emite &iacute;ons negativos que neutralizam a eletricidade est&aacute;tica, diminuindo o frizz e deixando os cabelos mais sedosos.</p>
+<p>- <strong>Aquecimento infravermelho</strong>: penetra profundamente no cabelo, hidratando e protegendo os fios durante o processo de modelagem.</p>
+<h3>Ajustes de temperatura</h3>
+<p>Modelos com v&aacute;rias op&ccedil;&otilde;es de temperatura permitem adaptar o uso para diferentes tipos de cabelo &mdash; desde os mais delicados at&eacute; os mais resistentes. O controle digital ou por bot&otilde;es facilita a sele&ccedil;&atilde;o da temperatura ideal.</p>
+<h3>Tecnologia de desligamento autom&aacute;tico</h3>
+<p>Para seguran&ccedil;a, muitas escovas rotativas contam com o desligamento autom&aacute;tico ap&oacute;s determinado tempo de inatividade, prevenindo acidentes e economizando energia.</p>
+<h2>Design Ergon&ocirc;mico E Facilidade De Uso</h2>
+<p>Al&eacute;m da tecnologia interna, o design da escova rotativa influencia na experi&ecirc;ncia do usu&aacute;rio.</p>
+<h3>Peso e tamanho</h3>
+<p>Modelos mais leves e compactos s&atilde;o ideais para quem deseja praticidade e conforto durante o uso di&aacute;rio. Um design ergon&ocirc;mico facilita o manuseio, evitando cansa&ccedil;o nas m&atilde;os e pulsos.</p>
+<h3>Cabo girat&oacute;rio</h3>
+<p>Um cabo com rota&ccedil;&atilde;o 360&deg; evita emaranhados e facilita a movimenta&ccedil;&atilde;o, especialmente para quem utiliza a escova para modelar diferentes partes do cabelo.</p>
+<h3>Display digital e indicadores luminosos</h3>
+<p>Displays que mostram a temperatura, velocidade e estado da bateria (no caso de modelos sem fio) ajudam a monitorar o funcionamento e ajustar as configura&ccedil;&otilde;es com precis&atilde;o.</p>
+<h2>Alimenta&ccedil;&atilde;o: Fio Vs. Bateria</h2>
+<p>A forma de alimenta&ccedil;&atilde;o tamb&eacute;m &eacute; um ponto tecnol&oacute;gico relevante ao comprar uma escova rotativa.</p>
+<h3>Modelos com fio</h3>
+<p>Garantem pot&ecirc;ncia constante, sem a preocupa&ccedil;&atilde;o de recarregar. S&atilde;o indicados para uso prolongado e profissional, mas podem limitar a mobilidade.</p>
+<h3>Modelos sem fio (bateria recarreg&aacute;vel)</h3>
+<p>Oferecem liberdade de movimento e praticidade, sendo ideais para viagens ou uso r&aacute;pido. A autonomia da bateria e o tempo de recarga s&atilde;o fatores importantes a considerar.</p>
+<h2>Recursos Adicionais Tecnol&oacute;gicos</h2>
+<p>Algumas escovas rotativas apresentam funcionalidades extras que podem agregar valor ao produto.</p>
+<h3>Tecnologia i&ocirc;nica</h3>
+<p>Como mencionado, a emiss&atilde;o de &iacute;ons negativos ajuda a reduzir o frizz e a eletricidade est&aacute;tica, tornando o cabelo mais alinhado e brilhante.</p>
+<h3>Sensor de umidade</h3>
+<p>Alguns modelos modernos possuem sensores que ajustam automaticamente a temperatura e a velocidade conforme o n&iacute;vel de umidade do cabelo, prevenindo o ressecamento.</p>
+<h3>Acess&oacute;rios intercambi&aacute;veis</h3>
+<p>Escovas com cabe&ccedil;as remov&iacute;veis e diferentes tipos de cerdas permitem personalizar o uso para v&aacute;rios estilos e necessidades.</p>
+<h2>Crit&eacute;rios Para Diferentes Tipos De Cabelo</h2>
+<p>Cada tipo de cabelo exige uma aten&ccedil;&atilde;o especial na escolha da escova rotativa.</p>
+<h3>Cabelos finos e delicados</h3>
+<p>Recomenda-se escovas com ajustes de baixa temperatura, cerdas suaves e motor menos potente para evitar danos e quebras.</p>
+<h3>Cabelos grossos e volumosos</h3>
+<p>Modelos com motor AC, m&uacute;ltiplas velocidades e cerdas resistentes s&atilde;o mais indicados para garantir efic&aacute;cia e rapidez na finaliza&ccedil;&atilde;o.</p>
+<h3>Cabelos cacheados e ondulados</h3>
+<p>Escovas com tecnologia i&ocirc;nica e aquecimento cer&acirc;mico ajudam a definir os cachos e reduzir o frizz sem agredir a estrutura dos fios.</p>
+<h2>Como Escolher Uma Escova Rotativa Ideal Para Suas Necessidades</h2>
+<p>Para tomar uma decis&atilde;o acertada sobr<strong>e&nbsp;<a href="https://escovasinovadoras.com/" target="_blank" rel="noopener">Como Escolher Uma Escova Rotativa</a></strong> &eacute; fundamental avaliar o equil&iacute;brio entre tecnologia, custo-benef&iacute;cio e adequa&ccedil;&atilde;o ao seu tipo de cabelo. Entender as funcionalidades tecnol&oacute;gicas dispon&iacute;veis, como o tipo de motor, sistema de aquecimento, material das cerdas e recursos extras, permite selecionar um produto que n&atilde;o apenas facilite o cuidado di&aacute;rio, mas que tamb&eacute;m preserve a sa&uacute;de dos fios a longo prazo.</p>
+<h2>Manuten&ccedil;&atilde;o E Cuidados Tecnol&oacute;gicos</h2>
+<p>Para garantir que a tecnologia da escova rotativa funcione sempre de forma eficiente, a manuten&ccedil;&atilde;o adequada &eacute; essencial.</p>
+<h3>Limpeza das cerdas</h3>
+<p>Remover res&iacute;duos de cabelo e produtos dos fios regularmente evita entupimentos e mant&eacute;m a efici&ecirc;ncia da escova.</p>
+<h3>Verifica&ccedil;&atilde;o de cabos e carregadores</h3>
+<p>Em modelos com fio, &eacute; importante inspecionar o cabo para evitar curtos e garantir seguran&ccedil;a. J&aacute; em modelos sem fio, utilizar carregadores originais prolonga a vida &uacute;til da bateria.</p>
+<h3>Armazenamento correto</h3>
+<p>Guardar a escova em local seco e protegido evita danos aos componentes eletr&ocirc;nicos e &agrave;s cerdas.</p>
+<h2>Conclus&atilde;o</h2>
+<p>Investir em uma <strong>escova rotativa</strong> com tecnologia avan&ccedil;ada pode transformar a rotina de cuidados capilares, proporcionando resultados profissionais e maior praticidade. Conhecer os principais fatores tecnol&oacute;gicos, como o tipo de motor, sistema de aquecimento, materiais das cerdas e funcionalidades adicionais, &eacute; o caminho para uma compra consciente e satisfat&oacute;ria. A escolha adequada n&atilde;o s&oacute; otimiza o desempenho do aparelho, mas tamb&eacute;m contribui para a sa&uacute;de e beleza dos cabelos, garantindo um estilo impec&aacute;vel a cada uso.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

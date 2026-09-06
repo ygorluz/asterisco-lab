@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preços do Office 365: Guia Completo para Escolher a Melhor Opção - Asterisco Lab</title>
+    <meta name="description" content="Descubra os preços do Office 365 e escolha o plano ideal para você. Guia completo com opções e benefícios para você acertar na escolha!">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/lancamentos/" style="color:#ffffff;">Lançamentos</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Preços do Office 365: Guia Completo para Escolher a Melhor Opção</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">Descubra os preços do Office 365 e escolha o plano ideal para você. Guia completo com opções e benefícios para você acertar na escolha!</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-06-30" style="color: var(--text-muted);">
+                        30/06/2026 00:00
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/precos-do-office-365-guia-completo-para-escolher-a-melhor-opcao.jpg" alt="Preços do Office 365: Guia Completo para Escolher a Melhor Opção">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>Com a crescente digitaliza&ccedil;&atilde;o das empresas e a necessidade de ferramentas eficientes para produtividade, o <strong>Office 365</strong> tornou-se uma das solu&ccedil;&otilde;es mais demandadas do mercado. Seja para uso pessoal, acad&ecirc;mico ou profissional, entender os diferentes planos, funcionalidades e, principalmente, os valores envolvidos &eacute; fundamental para garantir que o investimento seja adequado ao perfil do usu&aacute;rio ou da organiza&ccedil;&atilde;o.</p>
+<p>Este guia completo sobre<strong>&nbsp;<a href="https://casadosoftware.com.br/blog/quanto-custa-a-licenca-office-365" target="_blank" rel="noopener">Quanto Custa A Licen&ccedil;a Office 365 E O Que Avaliar</a>&nbsp;</strong>apresenta todas as informa&ccedil;&otilde;es essenciais para quem busca escolher a melhor op&ccedil;&atilde;o, destacando os principais planos dispon&iacute;veis, suas caracter&iacute;sticas, vantagens e o que considerar antes de fechar a compra.</p>
+<p>---</p>
+<h2>O Que &Eacute; O Office 365?</h2>
+<p>Antes de falar sobre os valores, &eacute; importante compreender o que &eacute; o <strong>Office 365</strong>. Trata-se de um conjunto de servi&ccedil;os e aplicativos da Microsoft baseados na nuvem, que inclui programas cl&aacute;ssicos como Word, Excel, PowerPoint e Outlook, al&eacute;m de ferramentas colaborativas como Teams, SharePoint e OneDrive.</p>
+<p>O Office 365 est&aacute; dispon&iacute;vel em diferentes vers&otilde;es, adaptadas para uso pessoal, empresarial e educacional, o que influencia diretamente nos pre&ccedil;os e nos recursos oferecidos.</p>
+<p>---</p>
+<h2>Principais Planos Do Office 365</h2>
+<h3>1. Office 365 para uso pessoal e familiar</h3>
+<p>Voltado para usu&aacute;rios individuais e fam&iacute;lias, esses planos s&atilde;o ideais para quem busca produtividade em casa, estudos ou atividades pessoais.</p>
+<p>- <strong>Microsoft 365 Pessoal</strong>: permite a instala&ccedil;&atilde;o do pacote Office em at&eacute; 1 PC ou Mac, 1 tablet e 1 smartphone, incluindo 1 TB de armazenamento no OneDrive.</p>
+<p>- <strong>Microsoft 365 Fam&iacute;lia</strong>: oferece o mesmo benef&iacute;cio para at&eacute; 6 pessoas, perfeito para fam&iacute;lias que desejam compartilhar recursos e assinaturas.</p>
+<h3>2. Office 365 para estudantes e educadores</h3>
+<p>A Microsoft oferece vers&otilde;es gratuitas ou com desconto para institui&ccedil;&otilde;es de ensino e seus alunos, facilitando o acesso &agrave; tecnologia para aprendizado.</p>
+<p>- <strong>Microsoft 365 Educa&ccedil;&atilde;o</strong>: inclui Word, Excel, PowerPoint, OneNote e Microsoft Teams, al&eacute;m de ferramentas espec&iacute;ficas para o ambiente acad&ecirc;mico.</p>
+<h3>3. Office 365 para pequenas empresas</h3>
+<p>Planos voltados para pequenas e m&eacute;dias empresas geralmente incluem recursos adicionais de colabora&ccedil;&atilde;o e seguran&ccedil;a.</p>
+<p>- <strong>Microsoft 365 Business Basic</strong>: oferece acesso &agrave;s vers&otilde;es online dos aplicativos e servi&ccedil;os como Teams e OneDrive.</p>
+<p>- <strong>Microsoft 365 Business Standard</strong>: inclui as vers&otilde;es instal&aacute;veis dos aplicativos e servi&ccedil;os online.</p>
+<p>- <strong>Microsoft 365 Business Premium</strong>: adiciona recursos avan&ccedil;ados de seguran&ccedil;a e gerenciamento.</p>
+<h3>4. Office 365 para grandes empresas e corpora&ccedil;&otilde;es</h3>
+<p>Planos corporativos s&atilde;o altamente customiz&aacute;veis, com foco em seguran&ccedil;a, conformidade e integra&ccedil;&atilde;o com sistemas empresariais.</p>
+<p>- <strong>Microsoft 365 E3 e E5</strong>: oferecem recursos avan&ccedil;ados de produtividade, seguran&ccedil;a, an&aacute;lise e compliance.</p>
+<p>---</p>
+<h2>Quanto Custa A Licen&ccedil;a Office 365 E O Que Avaliar</h2>
+<p>Um dos pontos mais importantes na hora de adquirir um plano do <strong>Office 365</strong> &eacute; entender os valores cobrados e quais aspectos devem ser considerados para fazer a escolha correta.</p>
+<h3>Fatores que influenciam no pre&ccedil;o</h3>
+<p>- <strong>Tipo de plano</strong>: pessoal, familiar, empresarial ou educacional.</p>
+<p>- <strong>N&uacute;mero de usu&aacute;rios</strong>: planos familiares e corporativos cobram por usu&aacute;rio.</p>
+<p>- <strong>Funcionalidades inclu&iacute;das</strong>: vers&otilde;es online ou instal&aacute;veis dos aplicativos, armazenamento em nuvem, ferramentas de colabora&ccedil;&atilde;o, seguran&ccedil;a, entre outros.</p>
+<p>- <strong>Dura&ccedil;&atilde;o da assinatura</strong>: mensal ou anual, sendo que o pagamento anual geralmente oferece desconto.</p>
+<p>- <strong>Suporte t&eacute;cnico e atualiza&ccedil;&otilde;es</strong>: algumas vers&otilde;es incluem suporte dedicado e atualiza&ccedil;&otilde;es autom&aacute;ticas.</p>
+<h3>Faixa de pre&ccedil;o m&eacute;dia (valores aproximados)</h3>
+<p>- <strong>Plano Pessoal</strong>: a partir de R$ 30 a R$ 40 por m&ecirc;s.</p>
+<p>- <strong>Plano Fam&iacute;lia</strong>: cerca de R$ 70 a R$ 90 por m&ecirc;s para at&eacute; 6 usu&aacute;rios.</p>
+<p>- <strong>Planos para pequenas empresas</strong>: variam entre R$ 35 e R$ 120 por usu&aacute;rio/m&ecirc;s, dependendo do pacote.</p>
+<p>- <strong>Planos corporativos</strong>: podem ultrapassar R$ 150 por usu&aacute;rio/m&ecirc;s, conforme os recursos contratados.</p>
+<p>---</p>
+<h2>Comparativo Entre Os Principais Planos Do Office 365</h2>
+<p>| Plano | Pre&ccedil;o Mensal (aprox.) | Usu&aacute;rios Permitidos | Aplicativos Inclu&iacute;dos | Armazenamento no OneDrive | Recursos Adicionais |</p>
+<p>|-----------------------------|-----------------------|---------------------|-------------------------------|---------------------------|------------------------------------------|</p>
+<p>| Microsoft 365 Pessoal | R$ 35 | 1 | Word, Excel, PowerPoint, etc. | 1 TB | Atualiza&ccedil;&otilde;es e suporte |</p>
+<p>| Microsoft 365 Fam&iacute;lia | R$ 80 | At&eacute; 6 | Mesmo que pessoal | 1 TB por usu&aacute;rio | Compartilhamento familiar |</p>
+<p>| Business Basic | R$ 40 | Por usu&aacute;rio | Vers&otilde;es online | 1 TB por usu&aacute;rio | Teams, Email corporativo |</p>
+<p>| Business Standard | R$ 90 | Por usu&aacute;rio | Vers&otilde;es instal&aacute;veis | 1 TB por usu&aacute;rio | Ferramentas colaborativas e seguran&ccedil;a |</p>
+<p>| Business Premium | R$ 120 | Por usu&aacute;rio | Completo + seguran&ccedil;a avan&ccedil;ada | 1 TB por usu&aacute;rio | Prote&ccedil;&atilde;o contra amea&ccedil;as, gerenciamento |</p>
+<p>| Microsoft 365 E3/E5 | A partir de R$ 150 | Por usu&aacute;rio | Completo + an&aacute;lises e compliance | 1 TB por usu&aacute;rio | Seguran&ccedil;a, compliance e an&aacute;lise avan&ccedil;ada |</p>
+<p>---</p>
+<h2>Vantagens E Desvantagens Dos Diferentes Planos</h2>
+<h3>Planos pessoais e familiares</h3>
+<p><strong>Vantagens:</strong></p>
+<p>- Custo-benef&iacute;cio para uso dom&eacute;stico.</p>
+<p>- F&aacute;cil instala&ccedil;&atilde;o em v&aacute;rios dispositivos.</p>
+<p>- Armazenamento em nuvem generoso.</p>
+<p>- Atualiza&ccedil;&otilde;es constantes sem custo adicional.</p>
+<p><strong>Desvantagens:</strong></p>
+<p>- Recursos limitados para uso corporativo.</p>
+<p>- Aus&ecirc;ncia de suporte para m&uacute;ltiplos usu&aacute;rios em planos pessoais.</p>
+<h3>Planos empresariais</h3>
+<p><strong>Vantagens:</strong></p>
+<p>- Ferramentas espec&iacute;ficas para neg&oacute;cios.</p>
+<p>- Seguran&ccedil;a avan&ccedil;ada para dados corporativos.</p>
+<p>- Suporte t&eacute;cnico dedicado.</p>
+<p>- Integra&ccedil;&atilde;o com outras solu&ccedil;&otilde;es Microsoft.</p>
+<p><strong>Desvantagens:</strong></p>
+<p>- Custo mais elevado, principalmente para pequenas empresas.</p>
+<p>- Complexidade na escolha do plano ideal devido &agrave; variedade de op&ccedil;&otilde;es.</p>
+<p>---</p>
+<h2>Como Escolher O Plano Ideal Do Office 365 Para Voc&ecirc; Ou Sua Empresa</h2>
+<h3>Avalie o n&uacute;mero de usu&aacute;rios</h3>
+<p>Se for para uso pessoal, o plano individual pode ser suficiente. J&aacute; para fam&iacute;lias ou equipes pequenas, o plano familiar ou empresarial s&atilde;o mais indicados, considerando a quantidade de usu&aacute;rios.</p>
+<h3>Considere as necessidades de aplicativos</h3>
+<p>Para quem utiliza apenas os aplicativos b&aacute;sicos (Word, Excel, PowerPoint), os planos mais simples atendem bem. Se houver necessidade de ferramentas avan&ccedil;adas como Teams, SharePoint ou seguran&ccedil;a refor&ccedil;ada, os planos empresariais s&atilde;o mais adequados.</p>
+<h3>Pense no armazenamento e colabora&ccedil;&atilde;o</h3>
+<p>O espa&ccedil;o em nuvem e as funcionalidades colaborativas s&atilde;o importantes para quem trabalha em grupo ou precisa acessar arquivos de diferentes dispositivos.</p>
+<h3>Analise o or&ccedil;amento dispon&iacute;vel</h3>
+<p>Equilibrar custo e benef&iacute;cio &eacute; fundamental. Planos empresariais mais completos podem ter um custo maior, mas oferecem funcionalidades que podem aumentar a produtividade e seguran&ccedil;a, compensando o investimento.</p>
+<p>---</p>
+<h2>Como Adquirir E Instalar O Office 365</h2>
+<p>A assinatura pode ser feita diretamente no site oficial da Microsoft ou atrav&eacute;s de revendedores autorizados. Ap&oacute;s a compra, o usu&aacute;rio recebe um login para acessar os servi&ccedil;os e baixar os aplicativos em seus dispositivos.</p>
+<p>A instala&ccedil;&atilde;o &eacute; simples e compat&iacute;vel com Windows, Mac, Android e iOS, permitindo flexibilidade para uso em m&uacute;ltiplas plataformas.</p>
+<p>---</p>
+<h2>D&uacute;vidas Frequentes Sobre Pre&ccedil;os E Planos Do Office 365</h2>
+<h3>Posso cancelar a assinatura a qualquer momento?</h3>
+<p>Sim, as assinaturas mensais podem ser canceladas a qualquer momento, sem multa. Assinaturas anuais podem ter regras espec&iacute;ficas para cancelamento, dependendo do contrato.</p>
+<h3>Existe diferen&ccedil;a entre Office 365 e Microsoft 365?</h3>
+<p>O Microsoft 365 &eacute; a evolu&ccedil;&atilde;o do Office 365, com mais recursos integrados e uma oferta mais ampla de servi&ccedil;os. Atualmente, a Microsoft utiliza o termo Microsoft 365 para as assinaturas que incluem o pacote Office e outras funcionalidades.</p>
+<h3>O que acontece se eu n&atilde;o renovar a assinatura?</h3>
+<p>O acesso aos aplicativos e servi&ccedil;os ser&aacute; limitado at&eacute; que a assinatura seja renovada. Documentos salvos localmente permanecem acess&iacute;veis, mas n&atilde;o ser&aacute; poss&iacute;vel editar arquivos no Office at&eacute; a renova&ccedil;&atilde;o.</p>
+<p>---</p>
+<h2>Conclus&atilde;o</h2>
+<p>Com tantas op&ccedil;&otilde;es dispon&iacute;veis, entender os <strong>pre&ccedil;os do Office 365</strong> e as caracter&iacute;sticas de cada plano &eacute; essencial para tomar uma decis&atilde;o informada e adequada &agrave;s suas necessidades. Al&eacute;m do custo, fatores como n&uacute;mero de usu&aacute;rios, funcionalidades, armazenamento e seguran&ccedil;a precisam ser avaliados com cuidado.</p>
+<p>Lembre-se que o investimento em uma solu&ccedil;&atilde;o como o Office 365 pode impactar diretamente na produtividade e efici&ecirc;ncia, seja no ambiente pessoal ou na empresa.</p>
+<p>Para quem deseja esclarecer d&uacute;vidas ou comparar planos, acessar o site oficial da Microsoft e consultar especialistas pode ajudar a escolher o pacote ideal.</p>
+<p>---</p>
+<p><strong>Quanto custa a licen&ccedil;a Office 365 e o que avaliar</strong> s&atilde;o quest&otilde;es que devem ser respondidas com base no perfil de uso e nas prioridades de cada usu&aacute;rio ou organiza&ccedil;&atilde;o, garantindo que o investimento traga o m&aacute;ximo retorno em produtividade e seguran&ccedil;a.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

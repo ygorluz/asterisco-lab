@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outros - Asterisco Lab</title>
+    <meta name="description" content="">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/outros/" style="color:#ffffff;">Outros</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container">
+    <header style="margin-bottom: 3rem; text-align: center;">
+        <h1 class="page-title" style="border: none; padding: 0;">Outros</h1>
+        <p style="color: var(--text-muted); font-size: 1.2rem;">Veja todas as notícias desta categoria.</p>
+    </header>
+
+    <div class="gs-grid">
+        
+            
+            <article class="gs-card" style="grid-column: span 12; @media(min-width: 768px){ grid-column: span 4; }">
+                <a href="/direitos-trabalhistas-para-profissionais-de-ti-em-duque-de-caxias/">
+                    <div class="gs-card__img-wrapper">
+                        
+                            <img src="/static/uploads/direitos-trabalhistas-para-profissionais-de-ti-em-duque-de-caxias.jpg" alt="Direitos trabalhistas para profissionais de TI em Duque de Caxias" loading="lazy">
+                        
+                    </div>
+                    <h3 class="gs-card__title">Direitos trabalhistas para profissionais de TI em Duque de Caxias</h3>
+                    <div class="gs-card__meta">
+                        24/08/2026
+                    </div>
+                </a>
+            </article>
+            
+            <article class="gs-card" style="grid-column: span 12; @media(min-width: 768px){ grid-column: span 4; }">
+                <a href="/guia-completo-para-desenvolver-um-site-profissional-eficiente/">
+                    <div class="gs-card__img-wrapper">
+                        
+                            <img src="/static/uploads/guia-completo-para-desenvolver-um-site-profissional-eficiente.jpg" alt="Guia completo para desenvolver um site profissional eficiente" loading="lazy">
+                        
+                    </div>
+                    <h3 class="gs-card__title">Guia completo para desenvolver um site profissional eficiente</h3>
+                    <div class="gs-card__meta">
+                        29/07/2026
+                    </div>
+                </a>
+            </article>
+            
+            <article class="gs-card" style="grid-column: span 12; @media(min-width: 768px){ grid-column: span 4; }">
+                <a href="/guia-pratico-para-regularizar-sistemas-digitais-no-ambiente-corporativo/">
+                    <div class="gs-card__img-wrapper">
+                        
+                            <img src="/static/uploads/guia-pratico-para-regularizar-sistemas-digitais-no-ambiente-corporativo.jpg" alt="Guia prático para regularizar sistemas digitais no ambiente corporativo" loading="lazy">
+                        
+                    </div>
+                    <h3 class="gs-card__title">Guia prático para regularizar sistemas digitais no ambiente corporativo</h3>
+                    <div class="gs-card__meta">
+                        18/07/2026
+                    </div>
+                </a>
+            </article>
+            
+            <article class="gs-card" style="grid-column: span 12; @media(min-width: 768px){ grid-column: span 4; }">
+                <a href="/quais-apps-gratis-facilitam-a-organizacao-de-clinicas-odontologicas/">
+                    <div class="gs-card__img-wrapper">
+                        
+                            <img src="/static/uploads/quais-apps-gratis-facilitam-a-organizacao-de-clinicas-odontologicas.jpg" alt="Quais apps grátis facilitam a organização de clínicas odontológicas?" loading="lazy">
+                        
+                    </div>
+                    <h3 class="gs-card__title">Quais apps grátis facilitam a organização de clínicas odontológicas?</h3>
+                    <div class="gs-card__meta">
+                        21/05/2026
+                    </div>
+                </a>
+            </article>
+            
+            <article class="gs-card" style="grid-column: span 12; @media(min-width: 768px){ grid-column: span 4; }">
+                <a href="/5-ideias-inovadoras-de-brindes-corporativos-para-empresas-de-tecnologia/">
+                    <div class="gs-card__img-wrapper">
+                        
+                            <img src="/static/uploads/5-ideias-inovadoras-de-brindes-corporativos-para-empresas-de-tecnologia.jpg" alt="5 ideias inovadoras de brindes corporativos para empresas de tecnologia" loading="lazy">
+                        
+                    </div>
+                    <h3 class="gs-card__title">5 ideias inovadoras de brindes corporativos para empresas de tecnologia</h3>
+                    <div class="gs-card__meta">
+                        12/05/2026
+                    </div>
+                </a>
+            </article>
+            
+            <article class="gs-card" style="grid-column: span 12; @media(min-width: 768px){ grid-column: span 4; }">
+                <a href="/como-a-tecnologia-revoluciona-a-higienizacao-de-estofados-modernos/">
+                    <div class="gs-card__img-wrapper">
+                        
+                            <img src="/static/uploads/como-a-tecnologia-revoluciona-a-higienizacao-de-estofados-modernos.jpg" alt="Como a tecnologia revoluciona a higienização de estofados modernos" loading="lazy">
+                        
+                    </div>
+                    <h3 class="gs-card__title">Como a tecnologia revoluciona a higienização de estofados modernos</h3>
+                    <div class="gs-card__meta">
+                        05/05/2026
+                    </div>
+                </a>
+            </article>
+            
+            <article class="gs-card" style="grid-column: span 12; @media(min-width: 768px){ grid-column: span 4; }">
+                <a href="/metodos-tecnologicos-para-revitalizar-tapetes-sujos-em-casa/">
+                    <div class="gs-card__img-wrapper">
+                        
+                            <img src="/static/uploads/metodos-tecnologicos-para-revitalizar-tapetes-sujos-em-casa.jpg" alt="Métodos tecnológicos para revitalizar tapetes sujos em casa" loading="lazy">
+                        
+                    </div>
+                    <h3 class="gs-card__title">Métodos tecnológicos para revitalizar tapetes sujos em casa</h3>
+                    <div class="gs-card__meta">
+                        05/05/2026
+                    </div>
+                </a>
+            </article>
+            
+            <article class="gs-card" style="grid-column: span 12; @media(min-width: 768px){ grid-column: span 4; }">
+                <a href="/o-que-sao-correias-e-para-que-servem/">
+                    <div class="gs-card__img-wrapper">
+                        
+                            <img src="/static/uploads/o-que-sao-correias-e-para-que-servem.jpg" alt="O que são correias e para que servem" loading="lazy">
+                        
+                    </div>
+                    <h3 class="gs-card__title">O que são correias e para que servem</h3>
+                    <div class="gs-card__meta">
+                        04/05/2026
+                    </div>
+                </a>
+            </article>
+            
+            <article class="gs-card" style="grid-column: span 12; @media(min-width: 768px){ grid-column: span 4; }">
+                <a href="/tecnologia-avancada-para-recuperacao-capilar-na-capital-do-espirito-santo/">
+                    <div class="gs-card__img-wrapper">
+                        
+                            <img src="/static/uploads/tecnologia-avancada-para-recuperacao-capilar-na-capital-do-espirito-santo.jpg" alt="Tecnologia avançada para recuperação capilar na capital do Espírito Santo" loading="lazy">
+                        
+                    </div>
+                    <h3 class="gs-card__title">Tecnologia avançada para recuperação capilar na capital do Espírito Santo</h3>
+                    <div class="gs-card__meta">
+                        23/04/2026
+                    </div>
+                </a>
+            </article>
+            
+            <article class="gs-card" style="grid-column: span 12; @media(min-width: 768px){ grid-column: span 4; }">
+                <a href="/estrategias-de-compra-e-seguranca-digital-como-aproveitar-a-promocao-xiaomi-na-black-friday-sem-cair-em-golpes-2/">
+                    <div class="gs-card__img-wrapper">
+                        
+                            <div style="width: 100%; height: 100%; background: #333;"></div>
+                        
+                    </div>
+                    <h3 class="gs-card__title">Estratégias de Compra e Segurança Digital: Como Aproveitar a Promoção Xiaomi na Black Friday sem Cair em Golpes</h3>
+                    <div class="gs-card__meta">
+                        17/12/2025
+                    </div>
+                </a>
+            </article>
+            
+        
+    </div>
+
+    
+    <nav class="pagination">
+        
+        
+            <a href="/categoria/outros/page/2/">Próxima</a>
+        
+    </nav>
+    
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

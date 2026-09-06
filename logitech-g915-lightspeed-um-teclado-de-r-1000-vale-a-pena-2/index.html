@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logitech G915 Lightspeed: Um teclado de R$ 1.000 vale a pena? - Asterisco Lab</title>
+    <meta name="description" content="
+Testamos o Logitech G915 Lightspeed e não há como ignorar seu preço impressionante. Mas será que um teclado tão caro realmente vale a pena?
+
+
+
+Propagandeado co">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/analises/" style="color:#ffffff;">Análises</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Logitech G915 Lightspeed: Um teclado de R$ 1.000 vale a pena?</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">
+Testamos o Logitech G915 Lightspeed e não há como ignorar seu preço impressionante. Mas será que um teclado tão caro realmente vale a pena?
+
+
+
+Propagandeado co</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2024-07-26" style="color: var(--text-muted);">
+                        26/07/2024 22:03
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/Logitech-G915-Lightspeed.webp" alt="Logitech G915 Lightspeed: Um teclado de R$ 1.000 vale a pena?">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p><!-- wp:paragraph --></p>
+<p><strong>Testamos o Logitech G915 Lightspeed e não há como ignorar seu preço impressionante. Mas será que um teclado tão caro realmente vale a pena?</strong></p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Propagandeado como um "teclado mecânico para jogos", o Logitech G915 Lightspeed é promovido com "materiais superiores" e alto desempenho garantido pela empresa. Mas gastar mais de R$ 1.000 em um teclado é justificado? A fabricante cumpre o que promete pelo valor cobrado?</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Passei alguns dias com o G915 da Logitech para avaliar se ele é realmente tudo o que dizem. Testei o produto tanto no trabalho na redação do Buscapé quanto em jogos, afinal, se ele é um teclado mecânico para jogos, esse é o teste mais importante.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>A seguir, veja as principais funcionalidades do teclado, minha opinião sobre o G915 Lightspeed e se vale a pena gastar tanto em um teclado!</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading">Teclado Gamer Mecânico Sem fio G915 Lightspeed - Logitech</h3>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:embed {"url":"https://www.youtube.com/watch?v=GaYFrXXuGS8","type":"video","providerNameSlug":"youtube","responsive":true,"className":"wp-embed-aspect-16-9 wp-has-aspect-ratio"} --></p>
+<figure class="wp-block-embed is-type-video is-provider-youtube wp-block-embed-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio">
+<div class="wp-block-embed__wrapper">
+https://www.youtube.com/watch?v=GaYFrXXuGS8
+</div>
+</figure>
+<p>
+<!-- /wp:embed --></p>
+<p><!-- wp:paragraph --></p>
+<p>Além do preço, o nome Lightspeed chama atenção. Mas será que é só um nome comercial bonito ou tem significado?</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Lightspeed não é novidade nos periféricos da Logitech. Significa um tempo de resposta baixo, mesmo sem fio. Enquanto teclados sem fio geralmente têm tempos de resposta maiores, o G915 atinge 1ms de tempo de resposta via receptor wireless.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Vale mencionar que o teclado também pode se conectar por Bluetooth, mas a tecnologia Lightspeed só está disponível via USB. Não há um modo 100% seguro de testar o tempo de resposta, mas, em jogos de tiro, não senti atrasos nos comandos, inclusive nas teclas personalizáveis. Como não sou jogador profissional de eSports, sugiro pesquisar se algum atleta que você acompanha utiliza esse modelo.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading">Design e construção</h3>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>A página do Logitech G915 Lightspeed destaca que ele é fino e fabricado com liga de alumínio 5052, conferindo resistência, durabilidade e leveza. Nos poucos dias de teste, pude notar sua construção robusta e impressionante leveza.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Embora fino, o teclado é pesado, indicando uma construção robusta. Sua cor acinzentada é discreta até a iluminação RGB ser ligada, proporcionando um show à parte.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading">Lightsync RGB: como funciona a iluminação?</h3>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Apesar de inicialmente achar a iluminação RGB um exagero, fiquei impressionado com o Lightsync RGB do G915. Com 16,9 milhões de cores disponíveis, é possível personalizar a cor de cada tecla usando o software Logitech G Hub.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>O efeito das cores e a possibilidade de ajuste de brilho diretamente no teclado me convenceram da utilidade dessa "frescura". Meu saldo bancário é que já está me olhando meio torto...</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading">Baixo perfil mecânico avançado: o que é isso e como funciona?</h3>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>O termo "baixo perfil mecânico avançado" refere-se ao menor ruído das teclas mecânicas, devido à menor distância entre teclas e switches. No entanto, notei que o teclado não é tão silencioso assim, o que não considero um problema, pois gosto do feedback sonoro ao digitar.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>O G915 possui três opções de switches: GL Tactile (marrom), GL Linear (vermelho) e GL Clicky (azul). Testei o modelo com switch GL Tactile. Além disso, as teclas são removíveis, facilitando a limpeza e a troca.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading">Centro de comando do PC: fato ou fake?</h3>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>A Logitech afirma que o G915 pode se tornar o centro de comando do seu PC. Com o Logitech G Hub, é possível configurar teclas para abrir programas e jogos específicos e criar macros.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>O teclado tem cinco teclas personalizáveis e permite alternar entre conexões sem fio e Bluetooth, ativar o modo jogo e ajustar a intensidade do brilho da iluminação RGB.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading">A bateria dura bastante tempo?</h3>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>A Logitech garante 30 horas de bateria. Em um dia completo de trabalho (8 horas ativas e 1 hora de pausa) com brilho máximo, a bateria caiu de 100% para 86%. Portanto, a bateria do teclado pode durar uma semana inteira de uso.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading">Vale a pena gastar R$ 1.000 no Logitech G915 Lightspeed?</h3>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Adorei o Logitech G915 Lightspeed, mas ele vale mais de R$ 1.000? Minha resposta é não. A não ser que você seja um jogador profissional, há teclados mecânicos mais baratos que atendem bem a necessidades de trabalho e jogos simples. O Logitech G Hub oferece personalização para vários modelos da marca, não apenas para o G915.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Se você busca o "top do top" para melhorar sua performance nos jogos ou para montar o setup dos sonhos, o Logitech G915 Lightspeed é uma excelente escolha. Caso contrário, há opções mais econômicas disponíveis.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>
+<!-- /wp:paragraph --></p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

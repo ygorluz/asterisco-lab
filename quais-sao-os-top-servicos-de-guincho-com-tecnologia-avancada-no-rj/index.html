@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quais são os top serviços de guincho com tecnologia avançada no RJ? - Asterisco Lab</title>
+    <meta name="description" content="Descubra os melhores serviços de guincho com tecnologia avançada no RJ. Agilidade, segurança e inovação para o seu veículo onde estiver!">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/fixo/" style="color:#ffffff;">Fixo</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Quais são os top serviços de guincho com tecnologia avançada no RJ?</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">Descubra os melhores serviços de guincho com tecnologia avançada no RJ. Agilidade, segurança e inovação para o seu veículo onde estiver!</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-06-09" style="color: var(--text-muted);">
+                        09/06/2026 00:00
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/quais-sao-os-top-servicos-de-guincho-com-tecnologia-avancada-no-rj.jpg" alt="Quais são os top serviços de guincho com tecnologia avançada no RJ?">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>O mercado de <strong>servi&ccedil;os de guincho</strong> no Rio de Janeiro tem se modernizado rapidamente, acompanhando as demandas crescentes por efici&ecirc;ncia, seguran&ccedil;a e rapidez no atendimento com o<strong> <a href="https://guinchorj.com/" target="_blank" rel="noopener">melhor reboque do Rio de Janeiro</a>,</strong>. Com a evolu&ccedil;&atilde;o tecnol&oacute;gica, v&aacute;rias empresas incorporaram equipamentos de &uacute;ltima gera&ccedil;&atilde;o, sistemas digitais e processos automatizados que garantem um servi&ccedil;o mais &aacute;gil e confi&aacute;vel para os motoristas cariocas.</p>
+<p>Para quem busca um atendimento diferenciado, entender quais s&atilde;o os <strong>top servi&ccedil;os de guincho com tecnologia avan&ccedil;ada no RJ</strong> pode fazer toda a diferen&ccedil;a, seja em casos de emerg&ecirc;ncia, transporte de ve&iacute;culos especiais ou at&eacute; mesmo em servi&ccedil;os de manuten&ccedil;&atilde;o preventiva. A seguir, detalhamos o que torna esses servi&ccedil;os t&atilde;o inovadores e quais empresas lideram esse segmento na capital fluminense.</p>
+<h2>A Import&acirc;ncia Da Tecnologia Nos Servi&ccedil;os De Guincho</h2>
+<p>O setor de guinchos tradicionalmente dependia de equipamentos mec&acirc;nicos b&aacute;sicos e processos manuais, o que muitas vezes resultava em atrasos, riscos de danos ao ve&iacute;culo e dificuldades na comunica&ccedil;&atilde;o com o cliente. A incorpora&ccedil;&atilde;o da tecnologia transformou essa realidade, proporcionando:</p>
+<p>- <strong>Atendimento 24 horas via aplicativo e plataformas digitais</strong></p>
+<p>- <strong>Monitoramento em tempo real da localiza&ccedil;&atilde;o do guincho</strong></p>
+<p>- <strong>Equipamentos com sensores de seguran&ccedil;a e sistemas autom&aacute;ticos de engate</strong></p>
+<p>- <strong>Comunica&ccedil;&atilde;o instant&acirc;nea entre cliente e equipe operacional</strong></p>
+<p>- <strong>Gest&atilde;o eficiente de frota e otimiza&ccedil;&atilde;o de rotas</strong></p>
+<p>Esses avan&ccedil;os garantem n&atilde;o apenas a agilidade, mas tamb&eacute;m a seguran&ccedil;a do transporte, minimizando riscos e oferecendo mais transpar&ecirc;ncia para o usu&aacute;rio.</p>
+<h2>Equipamentos De &Uacute;ltima Gera&ccedil;&atilde;o Nos Guinchos Do Rio De Janeiro</h2>
+<h3>Guinchos eletr&ocirc;nicos e sistemas de controle automatizado</h3>
+<p>Os guinchos modernos dispon&iacute;veis no Rio de Janeiro utilizam sistemas eletr&ocirc;nicos que permitem o controle preciso do processo de engate, levantamento e transporte do ve&iacute;culo. Esses sistemas ajudam a evitar danos durante o manuseio, especialmente em carros de luxo, ve&iacute;culos el&eacute;tricos e motos.</p>
+<h3>Plataforma hidr&aacute;ulica e guinchos flatbed</h3>
+<p>Outra inova&ccedil;&atilde;o comum &eacute; a utiliza&ccedil;&atilde;o de plataformas hidr&aacute;ulicas que eliminam a necessidade de puxar o ve&iacute;culo, reduzindo riscos de arranh&otilde;es e danos na parte inferior do autom&oacute;vel. O guincho flatbed, ou reboque de plataforma, &eacute; ideal para transportar ve&iacute;culos com problemas mec&acirc;nicos graves ou que n&atilde;o podem ser movidos pelas pr&oacute;prias rodas.</p>
+<h3>Sensores inteligentes para seguran&ccedil;a</h3>
+<p>Sensores instalados nos guinchos monitoram a estabilidade do ve&iacute;culo durante o transporte, detectam varia&ccedil;&otilde;es de peso e alertam o operador sobre poss&iacute;veis riscos. Essa tecnologia &eacute; fundamental para garantir que o ve&iacute;culo chegue ao destino sem avarias.</p>
+<h2>Servi&ccedil;os Digitais E Atendimento Online</h2>
+<h3>Aplicativos para solicita&ccedil;&atilde;o instant&acirc;nea</h3>
+<p>Muitas empresas no Rio de Janeiro oferecem aplicativos que permitem aos usu&aacute;rios solicitar um guincho com poucos cliques. Esses apps informam o tempo estimado de chegada, o valor do servi&ccedil;o e permitem acompanhar o trajeto do guincho em tempo real.</p>
+<h3>Central de atendimento com intelig&ecirc;ncia artificial</h3>
+<p>Sistemas de atendimento automatizado com intelig&ecirc;ncia artificial agilizam o registro da ocorr&ecirc;ncia, levantam informa&ccedil;&otilde;es b&aacute;sicas e encaminham o chamado para a equipe mais pr&oacute;xima, reduzindo o tempo de resposta.</p>
+<h3>Pagamentos digitais e transpar&ecirc;ncia</h3>
+<p>A integra&ccedil;&atilde;o com plataformas de pagamento digital facilita o processo para o cliente, que pode pagar pelo servi&ccedil;o diretamente no aplicativo ou via transfer&ecirc;ncia online, evitando burocracias e garantindo transpar&ecirc;ncia nos valores cobrados.</p>
+<h2>Empresas De Guincho Com Tecnologia Avan&ccedil;ada No Rio De Janeiro</h2>
+<h3>1. **Guincho R&aacute;pido RJ**</h3>
+<p>Reconhecida pelo uso intensivo de tecnologia, a Guincho R&aacute;pido RJ oferece uma frota moderna equipada com guinchos flatbed e sensores inteligentes. Seu aplicativo exclusivo permite que o cliente solicite o servi&ccedil;o, acompanhe a chegada do guincho e fa&ccedil;a o pagamento de forma segura e r&aacute;pida. O atendimento 24 horas e a cobertura em toda a cidade fazem dela uma das l&iacute;deres do mercado.</p>
+<h3>2. **Auto Rescue Tech**</h3>
+<p>Especializada em ve&iacute;culos el&eacute;tricos e h&iacute;bridos, a Auto Rescue Tech utiliza equipamentos espec&iacute;ficos para garantir o transporte seguro desses modelos sens&iacute;veis. Com tecnologia de monitoramento remoto e sensores que evitam curto-circuitos, a empresa &eacute; refer&ecirc;ncia em servi&ccedil;os para esse nicho no Rio de Janeiro.</p>
+<h3>3. **Reboque Express**</h3>
+<p>A Reboque Express destaca-se pela integra&ccedil;&atilde;o de intelig&ecirc;ncia artificial em sua central de atendimento, que reduz o tempo de resposta em at&eacute; 50%. Al&eacute;m disso, investe em guinchos com plataforma hidr&aacute;ulica e sistemas de seguran&ccedil;a avan&ccedil;ados, assegurando o transporte sem danos dos ve&iacute;culos.</p>
+<h3>4. **Guincho Digital RJ**</h3>
+<p>Com foco na experi&ecirc;ncia do usu&aacute;rio, o Guincho Digital RJ oferece um aplicativo intuitivo que permite o agendamento antecipado, al&eacute;m de suporte 24 horas por chat e telefone. A frota conta com guinchos flatbed e sistemas autom&aacute;ticos de engate, garantindo agilidade e seguran&ccedil;a.</p>
+<h3>5. **Tech Tow Carioca**</h3>
+<p>A Tech Tow Carioca se destaca pelo uso de sistemas de geolocaliza&ccedil;&atilde;o avan&ccedil;ados que otimizam as rotas dos guinchos, reduzindo o tempo de espera dos clientes. A empresa tamb&eacute;m oferece relat&oacute;rios digitais p&oacute;s-servi&ccedil;o, detalhando o percurso e o estado do ve&iacute;culo durante o transporte.</p>
+<h2>Benef&iacute;cios De Contratar Guinchos Com Tecnologia Avan&ccedil;ada</h2>
+<h3>Rapidez no atendimento</h3>
+<p>A tecnologia digital permite que os chamados sejam recebidos e processados em segundos, com direcionamento autom&aacute;tico para o guincho mais pr&oacute;ximo, reduzindo significativamente o tempo de espera.</p>
+<h3>Seguran&ccedil;a aprimorada</h3>
+<p>Equipamentos com sensores e sistemas autom&aacute;ticos minimizam riscos de acidentes e danos aos ve&iacute;culos transportados, oferecendo mais tranquilidade para o propriet&aacute;rio.</p>
+<h3>Transpar&ecirc;ncia e controle</h3>
+<p>A possibilidade de acompanhar o guincho em tempo real e receber informa&ccedil;&otilde;es detalhadas sobre o servi&ccedil;o aumenta a confian&ccedil;a do cliente e evita surpresas desagrad&aacute;veis.</p>
+<h3>Flexibilidade e comodidade</h3>
+<p>Solicitar um guincho pelo smartphone, escolher formas de pagamento digital e receber suporte online tornam o processo muito mais pr&aacute;tico e acess&iacute;vel.</p>
+<h2>Como Escolher O Melhor Servi&ccedil;o De Guincho Com Tecnologia No Rj?</h2>
+<h3>Verifique a frota e os equipamentos</h3>
+<p>Priorize empresas que utilizem guinchos flatbed, plataformas hidr&aacute;ulicas e sistemas eletr&ocirc;nicos de controle, pois esses recursos s&atilde;o essenciais para um transporte seguro.</p>
+<h3>Avalie o atendimento digital</h3>
+<p>Confira se a empresa oferece aplicativo, atendimento via chat, suporte 24 horas e acompanhamento em tempo real, garantindo mais comodidade e seguran&ccedil;a.</p>
+<h3>Pesquise a reputa&ccedil;&atilde;o e avalia&ccedil;&otilde;es</h3>
+<p>Leia opini&otilde;es de outros clientes em plataformas online para entender a qualidade do servi&ccedil;o oferecido e o n&iacute;vel de satisfa&ccedil;&atilde;o.</p>
+<h3>Considere a especializa&ccedil;&atilde;o</h3>
+<p>Se o ve&iacute;culo &eacute; el&eacute;trico, de luxo ou uma moto, escolha empresas que tenham experi&ecirc;ncia e equipamentos espec&iacute;ficos para esses tipos de transporte.</p>
+<h2>Dicas Para Evitar Problemas Ao Contratar Um Guincho No Rio De Janeiro</h2>
+<p>- <strong>Confirme a identifica&ccedil;&atilde;o do guincho e do motorista</strong> antes do embarque.</p>
+<p>- <strong>Solicite um or&ccedil;amento detalhado</strong> para evitar cobran&ccedil;as extras inesperadas.</p>
+<p>- <strong>Informe as condi&ccedil;&otilde;es do ve&iacute;culo</strong> para que a empresa possa enviar o equipamento adequado.</p>
+<p>- <strong>Guarde todos os comprovantes e protocolos</strong> relacionados ao servi&ccedil;o.</p>
+<p>- <strong>Evite contratar guinchos de proced&ecirc;ncia duvidosa ou via indica&ccedil;&otilde;es n&atilde;o confi&aacute;veis.</strong></p>
+<h2>O Futuro Dos Servi&ccedil;os De Guincho No Rio De Janeiro</h2>
+<p>A tend&ecirc;ncia &eacute; que a tecnologia continue transformando esse setor, com inova&ccedil;&otilde;es como:</p>
+<p>- <strong>Ve&iacute;culos aut&ocirc;nomos para guinchos</strong>, capazes de chegar ao local sem motorista.</p>
+<p>- <strong>Integra&ccedil;&atilde;o com sistemas inteligentes de tr&acirc;nsito</strong> para otimizar rotas.</p>
+<p>- <strong>Uso de drones para avalia&ccedil;&atilde;o preliminar do local do acidente</strong>.</p>
+<p>- <strong>Plataformas digitais integradas com seguradoras e oficinas mec&acirc;nicas</strong> para agilizar processos de assist&ecirc;ncia.</p>
+<p>Essas novidades prometem elevar ainda mais o padr&atilde;o de qualidade e efici&ecirc;ncia dos servi&ccedil;os de guincho no RJ.</p>
+<h2>Conclus&atilde;o</h2>
+<p>Para quem busca o <strong>melhor reboque do Rio de Janeiro,</strong> a escolha de um servi&ccedil;o que utiliza tecnologia avan&ccedil;ada faz toda a diferen&ccedil;a. Os equipamentos modernos, o atendimento digitalizado e a seguran&ccedil;a proporcionada por sensores inteligentes garantem um servi&ccedil;o &aacute;gil, confi&aacute;vel e transparente. Conhecer as principais empresas que investem em inova&ccedil;&atilde;o e entender como a tecnologia aprimora cada etapa do processo s&atilde;o passos essenciais para garantir uma experi&ecirc;ncia positiva em momentos de necessidade.</p>
+<p>Seja para emerg&ecirc;ncias, transporte de ve&iacute;culos especiais ou servi&ccedil;os agendados, o Rio de Janeiro conta com op&ccedil;&otilde;es de guinchos que aliam tradi&ccedil;&atilde;o e modernidade, oferecendo o que h&aacute; de mais avan&ccedil;ado no mercado para proteger seu ve&iacute;culo e facilitar a sua vida.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

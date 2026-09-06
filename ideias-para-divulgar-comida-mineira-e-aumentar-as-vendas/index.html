@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ideias para Divulgar Comida Mineira e Aumentar as Vendas - Asterisco Lab</title>
+    <meta name="description" content="Descubra estratégias eficazes para divulgar comida mineira e aumentar suas vendas. Dicas práticas que conquistam clientes e impulsionam seu negócio!">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/mundo-digital/" style="color:#ffffff;">Mundo Digital</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Ideias para Divulgar Comida Mineira e Aumentar as Vendas</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">Descubra estratégias eficazes para divulgar comida mineira e aumentar suas vendas. Dicas práticas que conquistam clientes e impulsionam seu negócio!</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-04-29" style="color: var(--text-muted);">
+                        29/04/2026 00:00
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/ideias-para-divulgar-comida-mineira-e-aumentar-as-vendas.jpg" alt="Ideias para Divulgar Comida Mineira e Aumentar as Vendas">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>A <strong>culin&aacute;ria mineira</strong> &eacute; uma das mais tradicionais e apreciadas do Brasil, marcada por sabores intensos, ingredientes frescos e uma hist&oacute;ria rica que encanta turistas e moradores locais.</p>
+<p>Se voc&ecirc; possui um restaurante, food truck ou uma pequena produ&ccedil;&atilde;o de alimentos t&iacute;picos de Minas Gerais, saber como divulgar essa gastronomia pode ser o diferencial para aumentar suas vendas e consolidar sua marca no mercado.</p>
+<p>A seguir, s&atilde;o apresentadas diversas estrat&eacute;gias eficazes para promover a <strong>comida mineira</strong> e conquistar um p&uacute;blico fiel.</p>
+<h2>A Import&acirc;ncia Da Divulga&ccedil;&atilde;o Da Comida Mineira</h2>
+<p>A <strong>comida mineira</strong> possui um apelo cultural e afetivo forte, sendo reconhecida por pratos como o p&atilde;o de queijo, tutu de feij&atilde;o, frango com quiabo, e claro, o famoso feij&atilde;o tropeiro. No entanto, a concorr&ecirc;ncia no setor aliment&iacute;cio &eacute; acirrada, e s&oacute; a qualidade do prato pode n&atilde;o ser suficiente para destacar seu neg&oacute;cio. Investir em divulga&ccedil;&atilde;o &eacute; essencial para que o p&uacute;blico conhe&ccedil;a, valorize e retorne para consumir mais.</p>
+<h3>Conhe&ccedil;a o seu p&uacute;blico-alvo</h3>
+<p>Antes de definir as estrat&eacute;gias, &eacute; fundamental entender quem &eacute; o seu p&uacute;blico. Pessoas que apreciam <strong>comida mineira</strong> podem estar em diferentes perfis: turistas em busca de experi&ecirc;ncias culturais, moradores locais que valorizam a tradi&ccedil;&atilde;o, ou mesmo jovens que buscam uma culin&aacute;ria mais caseira e aut&ecirc;ntica. Conhecer os h&aacute;bitos, prefer&ecirc;ncias e canais de comunica&ccedil;&atilde;o do seu p&uacute;blico facilitar&aacute; a cria&ccedil;&atilde;o de campanhas direcionadas e eficazes.</p>
+<h2>Estrat&eacute;gias Digitais Para Divulgar Comida Mineira</h2>
+<p>A internet &eacute; uma ferramenta poderosa para alcan&ccedil;ar um p&uacute;blico amplo e engajado. Confira algumas a&ccedil;&otilde;es que podem ser adotadas para aumentar a visibilidade da sua <strong>comida mineira</strong>.</p>
+<h3>Cria&ccedil;&atilde;o de Conte&uacute;do Atraente nas Redes Sociais</h3>
+<p>As redes sociais s&atilde;o o principal canal de divulga&ccedil;&atilde;o para restaurantes e neg&oacute;cios de alimenta&ccedil;&atilde;o. Invista em fotos de alta qualidade, v&iacute;deos curtos e receitas que despertem o interesse do p&uacute;blico. Mostrar o preparo do prato, os ingredientes frescos e a hist&oacute;ria por tr&aacute;s de cada receita cria uma conex&atilde;o emocional.</p>
+<p>- <strong>Instagram</strong>: Utilize o Instagram Stories para mostrar o dia a dia da cozinha, bastidores e novidades. Os Reels s&atilde;o &oacute;timos para apresentar receitas r&aacute;pidas, como a <a href="https://receitinhadavovo.com.br/feijao-tropeiro-mineiro-sabor-e-tradicao-na-sua-mesa/" target="_blank" rel="noopener">receita feij&atilde;o tropeiro mineiro</a>, de forma din&acirc;mica e atrativa.</p>
+<p>- <strong>Facebook</strong>: Grupos locais e p&aacute;ginas tem&aacute;ticas s&atilde;o espa&ccedil;os para divulgar promo&ccedil;&otilde;es, eventos e receber feedback dos clientes.</p>
+<p>- <strong>TikTok</strong>: V&iacute;deos descontra&iacute;dos com dicas culin&aacute;rias e desafios relacionados &agrave; gastronomia mineira podem viralizar e atrair um p&uacute;blico mais jovem.</p>
+<h3>Marketing de Influ&ecirc;ncia Local</h3>
+<p>Parcerias com influenciadores digitais que residem na regi&atilde;o ou que tenham afinidade com o tema gastron&ocirc;mico podem ampliar o alcance da sua marca. Convide-os para experimentar seus pratos e compartilhar a experi&ecirc;ncia com seus seguidores. Essa a&ccedil;&atilde;o gera prova social e aumenta a confian&ccedil;a dos consumidores.</p>
+<h3>Otimiza&ccedil;&atilde;o para Motores de Busca (SEO)</h3>
+<p>Ter um site bem estruturado e otimizado para SEO &eacute; crucial para atrair clientes que buscam por <strong>comida mineira</strong> na internet. Utilize palavras-chave relevantes em t&iacute;tulos, descri&ccedil;&otilde;es e conte&uacute;dos, como "restaurante de comida mineira", "pratos t&iacute;picos de Minas Gerais" e outras varia&ccedil;&otilde;es.</p>
+<p>Al&eacute;m disso, investir em um blog com artigos informativos sobre a cultura, receitas e curiosidades da culin&aacute;ria mineira ajuda a posicionar seu site nas primeiras p&aacute;ginas do Google. Isso aumenta o tr&aacute;fego org&acirc;nico e gera autoridade para sua marca.</p>
+<h3>Aplicativos de Delivery e Avalia&ccedil;&otilde;es Online</h3>
+<p>Estar presente em aplicativos de entrega &eacute; fundamental para ampliar as vendas, especialmente em grandes centros urbanos. Mantenha seu card&aacute;pio atualizado, com fotos atrativas e descri&ccedil;&otilde;es detalhadas. Incentive os clientes a deixarem avalia&ccedil;&otilde;es positivas, pois elas influenciam diretamente a decis&atilde;o de novos consumidores.</p>
+<h2>Estrat&eacute;gias Offline Para Fortalecer A Marca</h2>
+<p>Apesar do crescimento do digital, a&ccedil;&otilde;es presenciais continuam sendo eficazes para criar v&iacute;nculos e fortalecer a reputa&ccedil;&atilde;o do seu neg&oacute;cio.</p>
+<h3>Participa&ccedil;&atilde;o em Feiras e Eventos Gastron&ocirc;micos</h3>
+<p>Feiras locais, festivais e eventos culturais s&atilde;o excelentes oportunidades para apresentar a <strong>comida mineira</strong> a um p&uacute;blico diversificado. Montar um estande com os pratos mais tradicionais e oferecer degusta&ccedil;&otilde;es gr&aacute;tis atrai visitantes e potenciais clientes.</p>
+<p>Al&eacute;m disso, eventos tem&aacute;ticos sobre culin&aacute;ria regional ajudam a destacar a autenticidade do seu neg&oacute;cio e a valorizar a cultura mineira.</p>
+<h3>Parcerias com Com&eacute;rcios Locais</h3>
+<p>Estabelecer parcerias com lojas de produtos locais, mercados municipais e at&eacute; mesmo pousadas pode ampliar a divulga&ccedil;&atilde;o. Por exemplo, oferecer seu p&atilde;o de queijo em cafeterias ou vender produtos prontos em emp&oacute;rios cria novas fontes de receita e visibilidade.</p>
+<h3>Cartazes e Flyers em Pontos Estrat&eacute;gicos</h3>
+<p>Distribuir flyers em academias, universidades, centros culturais e &aacute;reas de grande circula&ccedil;&atilde;o pode atingir um p&uacute;blico diversificado. Utilize imagens apetitosas e destaque promo&ccedil;&otilde;es ou eventos especiais. Certifique-se de que o contato e o endere&ccedil;o estejam claros.</p>
+<h2>Diferenciais Para Valorizar A Comida Mineira</h2>
+<p>Para que a divulga&ccedil;&atilde;o seja eficiente, &eacute; importante que o produto tenha um diferencial competitivo que conquiste o p&uacute;blico. Veja algumas ideias para valorizar seus pratos.</p>
+<h3>Ingredientes de Qualidade e Origem Regional</h3>
+<p>Utilizar ingredientes frescos e, sempre que poss&iacute;vel, de produtores locais, agrega valor ao prato. Isso n&atilde;o s&oacute; garante um sabor mais aut&ecirc;ntico, como tamb&eacute;m refor&ccedil;a o compromisso com a economia da regi&atilde;o.</p>
+<h3>Hist&oacute;ria e Tradi&ccedil;&atilde;o na Comunica&ccedil;&atilde;o</h3>
+<p>Contar a origem dos pratos, suas hist&oacute;rias e a import&acirc;ncia cultural da culin&aacute;ria mineira agrega significado ao consumo. Essa narrativa pode ser inclu&iacute;da no card&aacute;pio, nas redes sociais e no atendimento, tornando a experi&ecirc;ncia completa.</p>
+<h3>Variedade e Inova&ccedil;&atilde;o no Card&aacute;pio</h3>
+<p>Embora a tradi&ccedil;&atilde;o seja importante, oferecer vers&otilde;es inovadoras dos pratos cl&aacute;ssicos pode atrair um p&uacute;blico mais amplo. Por exemplo, criar uma vers&atilde;o vegetariana do frango com quiabo ou um p&atilde;o de queijo recheado com ingredientes diferentes.</p>
+<h3>Atendimento Personalizado e Ambiente Aconchegante</h3>
+<p>Um atendimento caloroso e um ambiente que remeta &agrave; cultura mineira fazem com que o cliente se sinta em casa, aumentando as chances de fideliza&ccedil;&atilde;o. Investir em decora&ccedil;&atilde;o tem&aacute;tica, m&uacute;sica regional e treinamento da equipe s&atilde;o a&ccedil;&otilde;es que fazem a diferen&ccedil;a.</p>
+<h2>Promo&ccedil;&otilde;es E Programas De Fidelidade</h2>
+<p>Programas que incentivam o cliente a retornar s&atilde;o fundamentais para aumentar as vendas de forma consistente.</p>
+<h3>Cart&atilde;o Fidelidade</h3>
+<p>Ofere&ccedil;a um cart&atilde;o fidelidade onde, a cada compra, o cliente acumula pontos que podem ser trocados por descontos ou produtos gr&aacute;tis. Essa estrat&eacute;gia estimula a frequ&ecirc;ncia e o engajamento.</p>
+<h3>Promo&ccedil;&otilde;es Tem&aacute;ticas</h3>
+<p>Realize promo&ccedil;&otilde;es relacionadas a datas especiais da cultura mineira, como o Dia da Gastronomia Mineira, oferecendo descontos ou combos exclusivos que valorizem a tradi&ccedil;&atilde;o.</p>
+<h3>Kits e Combos Especiais</h3>
+<p>Monte kits com produtos t&iacute;picos para consumo em casa, como um combo de p&atilde;o de queijo, doce de leite e caf&eacute; mineiro. Essa pr&aacute;tica aumenta o ticket m&eacute;dio e atende &agrave; demanda por conveni&ecirc;ncia.</p>
+<h2>Investimento Em Marketing Visual</h2>
+<p>A forma como a comida &eacute; apresentada influencia diretamente a percep&ccedil;&atilde;o do cliente. Algumas dicas visuais ajudam a valorizar seus pratos.</p>
+<h3>Fotografia Profissional</h3>
+<p>Invista em fotos profissionais que realcem as cores, texturas e detalhes dos pratos. Imagens bem feitas transmitem qualidade e despertam o apetite.</p>
+<h3>Identidade Visual Coerente</h3>
+<p>Crie uma identidade visual que remeta &agrave; cultura mineira, utilizando cores, fontes e elementos gr&aacute;ficos que representem a tradi&ccedil;&atilde;o e o aconchego regional. Isso ajuda a memorizar a marca e a criar uma conex&atilde;o emocional.</p>
+<h3>Embalagens Personalizadas</h3>
+<p>Para delivery e vendas externas, utilize embalagens que reforcem a identidade do seu neg&oacute;cio e que sejam funcionais, mantendo a qualidade dos alimentos.</p>
+<h2>Considera&ccedil;&otilde;es Finais</h2>
+<p>A divulga&ccedil;&atilde;o da <strong>comida mineira</strong> &eacute; um desafio que pode ser superado com estrat&eacute;gias integradas, que envolvam o digital e o presencial, valorizando a tradi&ccedil;&atilde;o e inovando no atendimento e na comunica&ccedil;&atilde;o. Conhecer o p&uacute;blico, investir em conte&uacute;dos relevantes, criar parcerias locais e oferecer uma experi&ecirc;ncia &uacute;nica s&atilde;o passos fundamentais para aumentar as vendas e consolidar sua marca no mercado gastron&ocirc;mico.</p>
+<p>A autenticidade dos sabores, aliada a a&ccedil;&otilde;es de marketing bem planejadas, pode transformar um simples prato em uma experi&ecirc;ncia cultural inesquec&iacute;vel para seus clientes. Portanto, colocar em pr&aacute;tica essas ideias certamente contribuir&aacute; para o sucesso do seu neg&oacute;cio e para a valoriza&ccedil;&atilde;o da rica culin&aacute;ria de Minas Gerais.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

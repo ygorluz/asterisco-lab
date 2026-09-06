@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Como plataformas de skins estão revolucionando o mercado digital - Asterisco Lab</title>
+    <meta name="description" content="Descubra como plataformas de skins estão transformando o mercado digital com inovação, segurança e oportunidades únicas para jogadores e colecionadores.">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/mundo-digital/" style="color:#ffffff;">Mundo Digital</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Como plataformas de skins estão revolucionando o mercado digital</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">Descubra como plataformas de skins estão transformando o mercado digital com inovação, segurança e oportunidades únicas para jogadores e colecionadores.</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-02-19" style="color: var(--text-muted);">
+                        19/02/2026 20:00
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/como-plataformas-de-skins-estao-revolucionando-o-mercado-digital.jpg" alt="Como plataformas de skins estão revolucionando o mercado digital">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>O mercado digital est&aacute; em constante transforma&ccedil;&atilde;o, impulsionado por inova&ccedil;&otilde;es tecnol&oacute;gicas e mudan&ccedil;as no comportamento dos consumidores.</p>
+<p>Uma das tend&ecirc;ncias que mais tem ganhado destaque nos &uacute;ltimos anos &eacute; o crescimento das&nbsp;<strong>plataformas de skins</strong>, que v&ecirc;m revolucionando a forma como jogadores e entusiastas interagem com jogos digitais e ativos virtuais.</p>
+<p>Essas plataformas n&atilde;o apenas criaram um novo ecossistema econ&ocirc;mico dentro dos jogos, mas tamb&eacute;m abriram portas para oportunidades de neg&oacute;cios, investimentos e socializa&ccedil;&atilde;o.</p>
+<h2>O Que S&atilde;o Skins E Por Que S&atilde;o T&atilde;o Valorizadas?</h2>
+<p><strong>Skins</strong> s&atilde;o itens digitais que alteram a apar&ecirc;ncia de personagens, armas, ve&iacute;culos ou outros elementos dentro de um jogo, sem afetar diretamente a jogabilidade. Apesar de n&atilde;o oferecerem vantagens competitivas, elas t&ecirc;m valor significativo para os jogadores que buscam personaliza&ccedil;&atilde;o e exclusividade.</p>
+<h3>Origem e evolu&ccedil;&atilde;o das skins</h3>
+<p>O conceito de skins surgiu com jogos multiplayer, onde a personaliza&ccedil;&atilde;o visual passou a ser um diferencial para express&atilde;o individual e status social dentro do jogo. T&iacute;tulos como <strong>Counter-Strike: Global Offensive (CS:GO)</strong> e <strong>Fortnite</strong> foram pioneiros em criar mercados s&oacute;lidos para skins, estimulando a demanda por itens raros e exclusivos.</p>
+<p>Com o passar do tempo, o valor das skins ultrapassou o universo dos jogos, tornando-se ativos digitais que podem ser comprados, vendidos e negociados em plataformas especializadas. Essa evolu&ccedil;&atilde;o impulsionou o surgimento das <strong>plataformas de skins</strong>, que oferecem um ambiente seguro e eficiente para transa&ccedil;&otilde;es entre usu&aacute;rios.</p>
+<h2>Como Funcionam As Plataformas De Skins</h2>
+<p>As plataformas de skins atuam como marketplaces digitais onde jogadores podem comprar, vender e trocar seus itens virtuais. Elas s&atilde;o respons&aacute;veis por garantir a autenticidade das skins, a seguran&ccedil;a das transa&ccedil;&otilde;es e a transpar&ecirc;ncia dos processos, criando um ambiente confi&aacute;vel para os usu&aacute;rios.</p>
+<h3>Principais funcionalidades das plataformas</h3>
+<p>- <strong>Cat&aacute;logo amplo e diversificado</strong>: As plataformas re&uacute;nem milhares de skins de diferentes jogos, permitindo que os usu&aacute;rios encontrem itens raros e exclusivos.</p>
+<p>- <strong>Sistema de avalia&ccedil;&atilde;o e classifica&ccedil;&atilde;o</strong>: Itens s&atilde;o categorizados por raridade, condi&ccedil;&atilde;o e popularidade, facilitando a busca e a tomada de decis&atilde;o dos compradores.</p>
+<p>- <strong>Seguran&ccedil;a nas transa&ccedil;&otilde;es</strong>: Utilizam tecnologias avan&ccedil;adas para garantir que as negocia&ccedil;&otilde;es sejam protegidas contra fraudes e golpes.</p>
+<p>- <strong>Suporte para m&uacute;ltiplos m&eacute;todos de pagamento</strong>: Aceitam diversas formas de pagamento, incluindo criptomoedas em algumas plataformas, ampliando o alcance dos usu&aacute;rios.</p>
+<h3>Integra&ccedil;&atilde;o com jogos e uso de APIs</h3>
+<p>Para facilitar a negocia&ccedil;&atilde;o e o uso das skins, muitas plataformas oferecem integra&ccedil;&atilde;o direta com os jogos atrav&eacute;s de APIs. Isso permite que os itens adquiridos sejam transferidos automaticamente para as contas dos jogadores, eliminando a necessidade de processos manuais e aumentando a praticidade.</p>
+<h2>Impacto Econ&ocirc;mico Das Plataformas De Skins</h2>
+<p>As plataformas de skins n&atilde;o s&oacute; modificaram a experi&ecirc;ncia dos jogadores, mas tamb&eacute;m criaram um mercado bilion&aacute;rio dentro do setor de jogos digitais. A comercializa&ccedil;&atilde;o de skins movimenta cifras impressionantes, atraindo investidores, colecionadores e at&eacute; mesmo jogadores profissionais.</p>
+<h3>Gera&ccedil;&atilde;o de renda para jogadores e desenvolvedores</h3>
+<p>Jogadores agora t&ecirc;m a possibilidade de transformar o tempo investido nos jogos em lucro real, vendendo skins raras por valores significativos. Por outro lado, desenvolvedores de jogos se beneficiam com a venda direta de skins e o aumento do engajamento da comunidade, que impulsiona a receita de microtransa&ccedil;&otilde;es.</p>
+<h3>Novas oportunidades de neg&oacute;cios</h3>
+<p>Al&eacute;m da compra e venda tradicional, surgiram modelos inovadores dentro das plataformas, como:</p>
+<p>- <strong>Leil&otilde;es online de skins raras</strong></p>
+<p>- <strong>Sistemas de apostas e sorteios</strong></p>
+<p>- <strong>Servi&ccedil;os de personaliza&ccedil;&atilde;o e design de skins</strong></p>
+<p>Essas iniciativas ampliam o ecossistema e criam novas fontes de receita para todos os envolvidos.</p>
+<h2>Seguran&ccedil;a E Regulamenta&ccedil;&atilde;o No Mercado De Skins</h2>
+<p>Com o crescimento acelerado do mercado, a seguran&ccedil;a e a regulamenta&ccedil;&atilde;o tornaram-se temas centrais para manter a confian&ccedil;a dos usu&aacute;rios. Plataformas s&eacute;rias investem em tecnologias para proteger os dados e garantir a legalidade das transa&ccedil;&otilde;es.</p>
+<h3>Principais riscos enfrentados pelos usu&aacute;rios</h3>
+<p>- <strong>Fraudes e golpes</strong>: Tentativas de venda de skins falsas ou de roubo de contas.</p>
+<p>- <strong>Lavagem de dinheiro</strong>: Uso do mercado de skins para opera&ccedil;&otilde;es ilegais devido &agrave; dificuldade inicial de rastreamento.</p>
+<p>- <strong>Problemas legais</strong>: Quest&otilde;es relacionadas &agrave; propriedade intelectual e direitos digitais.</p>
+<h3>Medidas adotadas pelas plataformas</h3>
+<p>Para mitigar esses riscos, as plataformas implementam:</p>
+<p>- <strong>Autentica&ccedil;&atilde;o em m&uacute;ltiplos fatores</strong></p>
+<p>- <strong>Sistemas de escrow (cust&oacute;dia de pagamento at&eacute; confirma&ccedil;&atilde;o da entrega)</strong></p>
+<p>- <strong>Pol&iacute;ticas claras de uso e suporte ao cliente</strong></p>
+<p>- <strong>Parcerias com &oacute;rg&atilde;os reguladores para promover a legalidade</strong></p>
+<h2>O Papel Das Plataformas De Skins Na Economia Digital Global</h2>
+<p>As plataformas de skins representam um fen&ocirc;meno que vai al&eacute;m dos jogos, ilustrando como ativos digitais podem criar novas formas de economia e intera&ccedil;&atilde;o social. Elas s&atilde;o parte da chamada <strong>economia digital</strong>, que integra aspectos tecnol&oacute;gicos, financeiros e culturais.</p>
+<h3>Influ&ecirc;ncia na cultura gamer e al&eacute;m</h3>
+<p>A populariza&ccedil;&atilde;o das skins contribuiu para o fortalecimento da cultura gamer, promovendo identidade, status e comunidade. Fora do ambiente dos jogos, essas tend&ecirc;ncias inspiram setores como moda digital, arte e colecionismo.</p>
+<h3>Conex&atilde;o com tecnologias emergentes</h3>
+<p>O mercado de skins est&aacute; intimamente ligado a outras inova&ccedil;&otilde;es, como:</p>
+<p>- <strong>Blockchain e NFTs</strong>: Garantindo propriedade e autenticidade verific&aacute;veis.</p>
+<p>- <strong>Realidade aumentada e virtual</strong>: Potencializando a experi&ecirc;ncia imersiva com personaliza&ccedil;&atilde;o visual.</p>
+<p>- <strong>Intelig&ecirc;ncia artificial</strong>: Otimizando recomenda&ccedil;&otilde;es e a cria&ccedil;&atilde;o de skins personalizadas.</p>
+<h2>Como As Plataformas Est&atilde;o Inovando Para O Futuro</h2>
+<p>Para manter seu papel central, as plataformas de skins investem constantemente em inova&ccedil;&atilde;o e adapta&ccedil;&atilde;o &agrave;s demandas do mercado.</p>
+<h3>Experi&ecirc;ncias personalizadas</h3>
+<p>A utiliza&ccedil;&atilde;o de intelig&ecirc;ncia artificial permite que as plataformas ofere&ccedil;am recomenda&ccedil;&otilde;es personalizadas, baseadas no hist&oacute;rico de compras e prefer&ecirc;ncias dos usu&aacute;rios. Isso aumenta a satisfa&ccedil;&atilde;o e o engajamento.</p>
+<h3>Expans&atilde;o para novos mercados</h3>
+<p>Novas plataformas est&atilde;o ampliando o cat&aacute;logo para incluir skins de jogos emergentes e at&eacute; ativos digitais n&atilde;o relacionados ao universo gamer, como avatares para redes sociais e itens para metaversos.</p>
+<p>Um exemplo not&aacute;vel de plataforma que tem se destacado nesse cen&aacute;rio &eacute; a <a href="https://skinstrike.io/" target="_blank" rel="noopener">skinstrike.io</a>, que combina seguran&ccedil;a, variedade e inova&ccedil;&atilde;o para oferecer uma experi&ecirc;ncia completa aos seus usu&aacute;rios. A plataforma se destaca pelo atendimento &aacute;gil, interface intuitiva e integra&ccedil;&atilde;o eficiente com jogos populares, consolidando-se como refer&ecirc;ncia no mercado.</p>
+<h2>Dicas Para Quem Deseja Participar Do Mercado De Skins</h2>
+<p>Entrar no mercado de skins pode ser um caminho promissor, seja para lucro, hobby ou socializa&ccedil;&atilde;o. Algumas orienta&ccedil;&otilde;es s&atilde;o essenciais para aproveitar ao m&aacute;ximo essa oportunidade.</p>
+<h3>Conhe&ccedil;a o mercado</h3>
+<p>Entender os jogos, o valor das skins e as tend&ecirc;ncias &eacute; fundamental para fazer boas escolhas. Acompanhar f&oacute;runs, redes sociais e plataformas especializadas ajuda a manter-se atualizado.</p>
+<h3>Invista em seguran&ccedil;a</h3>
+<p>Utilizar plataformas confi&aacute;veis, ativar autentica&ccedil;&atilde;o em dois fatores e desconfiar de ofertas muito vantajosas s&atilde;o pr&aacute;ticas que evitam preju&iacute;zos.</p>
+<h3>Aproveite as oportunidades de neg&oacute;cios</h3>
+<p>Al&eacute;m da compra e venda, considere participar de leil&otilde;es, criar skins personalizadas ou prestar servi&ccedil;os relacionados ao mercado, ampliando suas fontes de renda.</p>
+<h2>Considera&ccedil;&otilde;es Finais</h2>
+<p>As <strong>plataformas de skins</strong> est&atilde;o transformando o mercado digital ao criar um ecossistema vibrante e lucrativo para jogadores, desenvolvedores e investidores. Elas representam uma converg&ecirc;ncia entre tecnologia, entretenimento e economia, que abre caminho para novas formas de intera&ccedil;&atilde;o e gera&ccedil;&atilde;o de valor.</p>
+<p>&Agrave; medida que a tecnologia avan&ccedil;a e a cultura digital se expande, o mercado de skins tende a se consolidar ainda mais, oferecendo cada vez mais inova&ccedil;&atilde;o, seguran&ccedil;a e oportunidades para seus participantes. Integrar-se a esse mercado &eacute;, portanto, uma oportunidade &uacute;nica para quem deseja estar na vanguarda da economia digital global.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

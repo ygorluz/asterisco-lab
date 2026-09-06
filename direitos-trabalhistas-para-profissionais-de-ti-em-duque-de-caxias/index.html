@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direitos trabalhistas para profissionais de TI em Duque de Caxias - Asterisco Lab</title>
+    <meta name="description" content="Conheça seus direitos trabalhistas como profissional de TI em Duque de Caxias e garanta proteção legal e benefícios no seu emprego.">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/outros/" style="color:#ffffff;">Outros</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Direitos trabalhistas para profissionais de TI em Duque de Caxias</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">Conheça seus direitos trabalhistas como profissional de TI em Duque de Caxias e garanta proteção legal e benefícios no seu emprego.</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-08-24" style="color: var(--text-muted);">
+                        24/08/2026 00:00
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/direitos-trabalhistas-para-profissionais-de-ti-em-duque-de-caxias.jpg" alt="Direitos trabalhistas para profissionais de TI em Duque de Caxias">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>O setor de Tecnologia da Informa&ccedil;&atilde;o (TI) tem se expandido rapidamente no Brasil, trazendo consigo uma s&eacute;rie de desafios e oportunidades para os profissionais que atuam nessa &aacute;rea. Em cidades como <strong>Duque de Caxias</strong>, que fazem parte da regi&atilde;o metropolitana do Rio de Janeiro, a demanda por especialistas em TI cresce constantemente, impulsionada por empresas de diversos setores que buscam inova&ccedil;&atilde;o tecnol&oacute;gica. Com esse crescimento, torna-se crucial que os profissionais estejam atentos aos seus <strong>direitos trabalhistas</strong>, garantindo uma rela&ccedil;&atilde;o de trabalho justa e segura.</p>
+<p>O mercado de trabalho para especialistas em TI &eacute; din&acirc;mico e, muitas vezes, marcado por contratos diferenciados, como trabalho remoto, jornada flex&iacute;vel e at&eacute; mesmo contrata&ccedil;&atilde;o por meio de pessoa jur&iacute;dica (PJ). Por isso, conhecer os direitos assegurados pela legisla&ccedil;&atilde;o brasileira, al&eacute;m das particularidades do munic&iacute;pio de Duque de Caxias, &eacute; fundamental para evitar abusos e assegurar um ambiente de trabalho saud&aacute;vel.</p>
+<p>Para profissionais de TI que enfrentam d&uacute;vidas ou situa&ccedil;&otilde;es que envolvem direitos trabalhistas, contar com a orienta&ccedil;&atilde;o de um <a href="https://rodrigofernandesrt.com.br/advogado-trabalhista-em-duque-de-caxias/" target="_blank" rel="noopener">Advogado Trabalhista em Duque de Caxias</a> pode ser um diferencial importante. Esse suporte jur&iacute;dico &eacute; capaz de esclarecer quest&otilde;es relacionadas a contratos, rescis&otilde;es, horas extras, e outras garantias previstas em lei, protegendo tanto o trabalhador quanto o empregador.</p>
+<h2>Legisla&ccedil;&atilde;o Trabalhista Aplic&aacute;vel Aos Profissionais De Ti</h2>
+<p>A Consolida&ccedil;&atilde;o das Leis do Trabalho (CLT) &eacute; o principal instrumento legal que regula as rela&ccedil;&otilde;es de trabalho no Brasil, incluindo as atividades relacionadas &agrave; tecnologia da informa&ccedil;&atilde;o. Apesar de a CLT estabelecer regras gerais, &eacute; importante destacar que o setor de TI pode demandar adapta&ccedil;&otilde;es e interpreta&ccedil;&otilde;es espec&iacute;ficas, dada a natureza t&eacute;cnica e muitas vezes inovadora da profiss&atilde;o.</p>
+<h3>Jornada de trabalho e regime de contrata&ccedil;&atilde;o</h3>
+<p>Profissionais de TI podem atuar em diferentes regimes, como CLT, contrato tempor&aacute;rio, presta&ccedil;&atilde;o de servi&ccedil;os ou PJ. No regime CLT, a jornada de trabalho padr&atilde;o &eacute; de at&eacute; 44 horas semanais, com direito a horas extras remuneradas ou compensadas. No entanto, muitos contratos firmados em Duque de Caxias adotam jornadas diferenciadas, especialmente para cargos que envolvem plant&otilde;es, atendimento 24 horas ou trabalho remoto.</p>
+<p>Para quem &eacute; contratado como PJ, a rela&ccedil;&atilde;o trabalhista &eacute; regida por um contrato de presta&ccedil;&atilde;o de servi&ccedil;os, sem os mesmos direitos da CLT, como f&eacute;rias remuneradas, 13&ordm; sal&aacute;rio e FGTS. Essa modalidade exige aten&ccedil;&atilde;o redobrada para evitar a configura&ccedil;&atilde;o de v&iacute;nculo empregat&iacute;cio disfar&ccedil;ado, situa&ccedil;&atilde;o em que o trabalhador pode reivindicar direitos trabalhistas retroativos.</p>
+<h3>Remunera&ccedil;&atilde;o e benef&iacute;cios</h3>
+<p>A remunera&ccedil;&atilde;o dos profissionais de TI deve respeitar o piso salarial definido para a categoria, quando houver, al&eacute;m das condi&ccedil;&otilde;es negociadas no contrato de trabalho. Em Duque de Caxias, &eacute; comum que empresas ofere&ccedil;am benef&iacute;cios adicionais, como vale-refei&ccedil;&atilde;o, vale-transporte, aux&iacute;lio home office, e planos de sa&uacute;de, que complementam o sal&aacute;rio e contribuem para a qualidade de vida do trabalhador.</p>
+<p>Al&eacute;m disso, profissionais que realizam horas extras t&ecirc;m direito ao pagamento adicional, geralmente de 50% sobre o valor da hora normal, conforme previsto na legisla&ccedil;&atilde;o trabalhista. A correta contabiliza&ccedil;&atilde;o e pagamento dessas horas &eacute; um ponto frequente de conflito e, por isso, merece aten&ccedil;&atilde;o especial.</p>
+<h2>Direitos Espec&iacute;ficos Para Profissionais De Ti</h2>
+<h3>Trabalho remoto e flexibilidade</h3>
+<p>O trabalho remoto, ou home office, tem se tornado uma realidade cada vez mais presente no setor de TI. A Lei n&ordm; 13.467/2017, conhecida como Reforma Trabalhista, trouxe regulamenta&ccedil;&otilde;es espec&iacute;ficas para essa modalidade, que pode ser adotada de forma integral ou h&iacute;brida.</p>
+<p>No trabalho remoto, o empregador deve garantir condi&ccedil;&otilde;es adequadas para o desempenho das fun&ccedil;&otilde;es, enquanto o profissional tem direito a esclarecimentos sobre o uso de equipamentos, reembolso de despesas relacionadas ao trabalho e respeito &agrave; jornada de trabalho para evitar sobrecarga. Em Duque de Caxias, muitas empresas de TI j&aacute; adotam essa pr&aacute;tica, o que exige maior aten&ccedil;&atilde;o quanto ao equil&iacute;brio entre vida pessoal e profissional.</p>
+<h3>Capacita&ccedil;&atilde;o e atualiza&ccedil;&atilde;o profissional</h3>
+<p>O mercado de TI exige constante atualiza&ccedil;&atilde;o t&eacute;cnica, o que torna a capacita&ccedil;&atilde;o um direito e uma necessidade para os profissionais da &aacute;rea. Embora n&atilde;o esteja expressamente previsto na CLT, o investimento em cursos, treinamentos e certifica&ccedil;&otilde;es pelo empregador pode ser negociado em contrato ou acordos coletivos.</p>
+<p>Profissionais que buscam aprimoramento devem estar atentos &agrave; possibilidade de obter licen&ccedil;a remunerada para estudo, ou ao menos condi&ccedil;&otilde;es que incentivem essa evolu&ccedil;&atilde;o, pois isso impacta diretamente na qualidade do trabalho e na competitividade do profissional no mercado.</p>
+<h2>Contratos De Trabalho E Suas Especificidades Em Duque De Caxias</h2>
+<h3>Contrato CLT vs. Contrato PJ</h3>
+<p>Em Duque de Caxias, como em outras cidades, a contrata&ccedil;&atilde;o via <strong>Pessoa Jur&iacute;dica (PJ)</strong> &eacute; comum no setor de TI devido &agrave; flexibilidade e redu&ccedil;&atilde;o de custos para as empresas. Contudo, essa modalidade pode trazer riscos para o trabalhador, que fica sem prote&ccedil;&atilde;o social e benef&iacute;cios garantidos pela CLT.</p>
+<p>O contrato CLT oferece uma s&eacute;rie de garantias, como FGTS, f&eacute;rias remuneradas, 13&ordm; sal&aacute;rio, seguro-desemprego e estabilidade em casos espec&iacute;ficos, enquanto o contrato PJ confere maior autonomia, por&eacute;m sem essas garantias. &Eacute; fundamental avaliar as vantagens e desvantagens de cada modalidade antes da assinatura.</p>
+<h3>Contrato tempor&aacute;rio e terceiriza&ccedil;&atilde;o</h3>
+<p>Outra forma de contrata&ccedil;&atilde;o usada por empresas de TI em Duque de Caxias &eacute; o contrato tempor&aacute;rio, regulado pela Lei n&ordm; 6.019/1974, que permite a contrata&ccedil;&atilde;o por prazo determinado para atender demandas espec&iacute;ficas. Nesses casos, os direitos trabalhistas s&atilde;o preservados, mas com algumas particularidades, como a possibilidade de prorroga&ccedil;&atilde;o do contrato.</p>
+<p>A terceiriza&ccedil;&atilde;o tamb&eacute;m &eacute; uma pr&aacute;tica comum, em que empresas contratam prestadores de servi&ccedil;os especializados para determinados projetos. Nessa situa&ccedil;&atilde;o, o trabalhador deve estar atento aos seus direitos e a quem cabe a responsabilidade por obriga&ccedil;&otilde;es trabalhistas e previdenci&aacute;rias.</p>
+<h2>Jornada De Trabalho E Controle De Horas</h2>
+<h3>Horas extras e banco de horas</h3>
+<p>A jornada de trabalho dos profissionais de TI pode variar conforme o cargo, empresa e contrato. A legisla&ccedil;&atilde;o prev&ecirc; o limite m&aacute;ximo de 2 horas extras di&aacute;rias, que devem ser remuneradas com adicional, salvo acordos que instituam o banco de horas.</p>
+<p>O banco de horas permite a compensa&ccedil;&atilde;o de horas extras com folgas futuras, desde que previsto em acordo coletivo ou individual. Em Duque de Caxias, a ado&ccedil;&atilde;o dessa modalidade tem crescido, principalmente em empresas de TI que trabalham com projetos e prazos flex&iacute;veis.</p>
+<h3>Descanso e intervalos</h3>
+<p>&Eacute; direito do trabalhador ter intervalos para descanso e alimenta&ccedil;&atilde;o, assegurados pela CLT. Para jornadas acima de 6 horas, o intervalo m&iacute;nimo &eacute; de 1 hora, que pode ser reduzido para 30 minutos em jornadas entre 4 e 6 horas. O respeito a esses intervalos &eacute; fundamental para a sa&uacute;de f&iacute;sica e mental dos profissionais.</p>
+<h2>Quest&otilde;es De Sa&uacute;de E Seguran&ccedil;a No Trabalho Para Profissionais De Ti</h2>
+<h3>Ergonomia e preven&ccedil;&atilde;o de doen&ccedil;as ocupacionais</h3>
+<p>Trabalhar muitas horas em frente ao computador pode acarretar problemas de sa&uacute;de, como les&otilde;es por esfor&ccedil;o repetitivo (LER), dist&uacute;rbios osteomusculares relacionados ao trabalho (DORT) e problemas visuais. Por isso, a ergonomia &eacute; um aspecto crucial na preven&ccedil;&atilde;o dessas doen&ccedil;as.</p>
+<p>Empresas de Duque de Caxias devem fornecer condi&ccedil;&otilde;es adequadas de trabalho, incluindo mobili&aacute;rio ergon&ocirc;mico, pausas regulares e orienta&ccedil;&otilde;es para a ado&ccedil;&atilde;o de posturas corretas. O Programa de Controle M&eacute;dico de Sa&uacute;de Ocupacional (PCMSO) &eacute; obrigat&oacute;rio e visa monitorar a sa&uacute;de dos trabalhadores.</p>
+<h3>Sa&uacute;de mental e ambiente de trabalho</h3>
+<p>O setor de TI &eacute; conhecido por seus altos n&iacute;veis de press&atilde;o e estresse, decorrentes de prazos apertados e alta demanda por resultados. Garantir um ambiente de trabalho saud&aacute;vel, com apoio psicol&oacute;gico e pol&iacute;ticas de preven&ccedil;&atilde;o ao burnout, &eacute; uma responsabilidade do empregador.</p>
+<p>Em Duque de Caxias, a conscientiza&ccedil;&atilde;o sobre sa&uacute;de mental tem aumentado, e profissionais devem estar atentos aos seus direitos relacionados a afastamentos m&eacute;dicos e reintegra&ccedil;&atilde;o ao trabalho.</p>
+<h2>Rescis&atilde;o Contratual E Direitos Do Trabalhador</h2>
+<h3>Tipos de rescis&atilde;o e verbas rescis&oacute;rias</h3>
+<p>A rescis&atilde;o do contrato de trabalho pode ocorrer por iniciativa do empregado, do empregador ou por acordo m&uacute;tuo. Em todas as situa&ccedil;&otilde;es, o trabalhador tem direito ao recebimento de verbas rescis&oacute;rias, que incluem saldo de sal&aacute;rio, f&eacute;rias proporcionais, 13&ordm; sal&aacute;rio proporcional, aviso pr&eacute;vio e FGTS, conforme o caso.</p>
+<p>No setor de TI, onde contratos tempor&aacute;rios e PJ s&atilde;o frequentes, &eacute; fundamental entender as diferen&ccedil;as nos direitos aplic&aacute;veis e buscar orienta&ccedil;&atilde;o jur&iacute;dica para garantir o cumprimento das obriga&ccedil;&otilde;es.</p>
+<h3>Estabilidade e indeniza&ccedil;&otilde;es</h3>
+<p>Em algumas situa&ccedil;&otilde;es, o trabalhador pode ter direito &agrave; estabilidade, como em casos de acidente de trabalho, gestantes ou membros da CIPA (Comiss&atilde;o Interna de Preven&ccedil;&atilde;o de Acidentes). Al&eacute;m disso, demiss&otilde;es consideradas injustas podem gerar direito a indeniza&ccedil;&otilde;es.</p>
+<p>Profissionais de TI em Duque de Caxias que enfrentam rescis&otilde;es conflitantes devem buscar aux&iacute;lio para assegurar que seus direitos sejam respeitados.</p>
+<h2>Import&acirc;ncia Da Assessoria Jur&iacute;dica Especializada</h2>
+<p>O campo do direito trabalhista &eacute; complexo e constantemente atualizado, especialmente com as transforma&ccedil;&otilde;es trazidas pelo avan&ccedil;o tecnol&oacute;gico. Para profissionais de TI em Duque de Caxias, ter acesso a uma assessoria jur&iacute;dica especializada pode fazer a diferen&ccedil;a na defesa dos seus direitos e no esclarecimento de d&uacute;vidas relacionadas a contratos, jornadas, benef&iacute;cios e rescis&otilde;es.</p>
+<p>O conhecimento aprofundado da legisla&ccedil;&atilde;o local e das pr&aacute;ticas do mercado &eacute; essencial para garantir que o trabalhador n&atilde;o seja prejudicado e que as rela&ccedil;&otilde;es laborais sejam pautadas pelo respeito m&uacute;tuo e pela legalidade.</p>
+<h2>Considera&ccedil;&otilde;es Finais</h2>
+<p>Os profissionais de TI em Duque de Caxias atuam em um mercado competitivo e din&acirc;mico, que exige constante atualiza&ccedil;&atilde;o e aten&ccedil;&atilde;o aos aspectos legais que regem a rela&ccedil;&atilde;o de trabalho. Conhecer os direitos trabalhistas assegura maior seguran&ccedil;a e tranquilidade para o desenvolvimento da carreira, al&eacute;m de contribuir para um ambiente profissional mais justo e equilibrado.</p>
+<p>A legisla&ccedil;&atilde;o brasileira oferece uma s&eacute;rie de garantias que devem ser respeitadas, independentemente da modalidade de contrata&ccedil;&atilde;o. O acompanhamento jur&iacute;dico especializado &eacute; uma ferramenta indispens&aacute;vel para proteger esses direitos e lidar com eventuais conflitos de forma eficaz. Assim, profissionais e empresas podem construir rela&ccedil;&otilde;es de trabalho mais transparentes e duradouras, beneficiando toda a cadeia do setor de tecnologia da informa&ccedil;&atilde;o em Duque de Caxias.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

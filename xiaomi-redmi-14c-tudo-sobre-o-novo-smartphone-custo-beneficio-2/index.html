@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xiaomi Redmi 14C: Tudo Sobre o Novo Smartphone Custo-Benefício - Asterisco Lab</title>
+    <meta name="description" content="
+
+
+
+
+Introdução
+
+
+
+A Xiaomi lança mais um smartphone acessível para quem busca um bom desempenho sem gastar muito. O Xiaomi Redmi 14C promete ser um dos modelos">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/mundo-digital/" style="color:#ffffff;">Mundo Digital</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Xiaomi Redmi 14C: Tudo Sobre o Novo Smartphone Custo-Benefício</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">
+
+
+
+
+Introdução
+
+
+
+A Xiaomi lança mais um smartphone acessível para quem busca um bom desempenho sem gastar muito. O Xiaomi Redmi 14C promete ser um dos modelos</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2025-03-30" style="color: var(--text-muted);">
+                        30/03/2025 15:38
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/Xiaomi-Redmi-14C.webp" alt="Xiaomi Redmi 14C: Tudo Sobre o Novo Smartphone Custo-Benefício">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p><!-- wp:heading --></p>
+<h2 class="wp-block-heading"></h2>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:heading --></p>
+<h2 class="wp-block-heading" id="introducao"><strong>Introdução</strong></h2>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>A Xiaomi lança mais um smartphone acessível para quem busca um bom desempenho sem gastar muito. O <strong>Xiaomi Redmi 14C</strong> promete ser um dos modelos mais populares do mercado, oferecendo recursos avançados a um preço competitivo. Mas o que ele traz de novo? Vamos explorar!</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:rank-math/toc-block {"headings":[{"key":"5725a502-c453-4f40-938f-dd569c1ae246","content":"","level":2,"link":"#","disable":false,"isUpdated":false,"isGeneratedLink":true},{"key":"4a707cd1-6cef-4d82-9e38-a295cab5b6cd","content":"Introdução","level":2,"link":"#introducao","disable":false,"isUpdated":false,"isGeneratedLink":true},{"key":"667ee3dd-1e25-488c-a382-49bf25ad10e0","content":"1. Design e Construção","level":2,"link":"#1-design-e-construcao","disable":false,"isUpdated":false,"isGeneratedLink":true},{"key":"9ebbf8b0-1cd3-40cf-8640-872785d31d02","content":"2. Tela: Qualidade e Resolução","level":2,"link":"#2-tela-qualidade-e-resolucao","disable":false,"isUpdated":false,"isGeneratedLink":true},{"key":"d9040a25-0dbb-40a4-a03b-fba7f4ef580d","content":"3. Desempenho e Processador","level":2,"link":"#3-desempenho-e-processador","disable":false,"isUpdated":false,"isGeneratedLink":true},{"key":"93d2539c-3655-4b16-8ca9-b3c8134419a8","content":"4. Câmeras: Fotos e Vídeos","level":2,"link":"#4-cameras-fotos-e-videos","disable":false,"isUpdated":false,"isGeneratedLink":true},{"key":"a74bd276-20da-4063-a301-fa890f259dd1","content":"5. Bateria e Carregamento","level":2,"link":"#5-bateria-e-carregamento","disable":false,"isUpdated":false,"isGeneratedLink":true},{"key":"e1322fb3-d130-479f-87e7-5a5c2def0d4b","content":"6. Sistema Operacional e Interface","level":2,"link":"#6-sistema-operacional-e-interface","disable":false,"isUpdated":false,"isGeneratedLink":true},{"key":"b2220ecd-57a6-4af0-a9b2-4c49a08638c8","content":"7. Armazenamento e Memória RAM","level":2,"link":"#7-armazenamento-e-memoria-ram","disable":false,"isUpdated":false,"isGeneratedLink":true},{"key":"65fee1c8-8777-427c-a0f7-a57ceb5de1ea","content":"8. Conectividade e Recursos Extras","level":2,"link":"#8-conectividade-e-recursos-extras","disable":false,"isUpdated":false,"isGeneratedLink":true},{"key":"d00be556-6b71-49b6-a235-f058d57f2765","content":"9. Preço e Disponibilidade","level":2,"link":"#9-preco-e-disponibilidade","disable":false,"isUpdated":false,"isGeneratedLink":true},{"key":"5e0bcf78-a05f-40d2-8375-2c68d688b2c3","content":"10. Vale a Pena Comprar o Xiaomi Redmi 14C?","level":2,"link":"#10-vale-a-pena-comprar-o-xiaomi-redmi-14-c","disable":false,"isUpdated":false,"isGeneratedLink":true},{"key":"fadd5967-b305-42d8-a699-3c08d1f69dc0","content":"FAQs","level":2,"link":"#fa-qs","disable":false,"isUpdated":false,"isGeneratedLink":true},{"key":"960d2589-1cda-4afc-acd5-08eb3c250d2f","content":"1. O Xiaomi Redmi 14C tem suporte para 5G?","level":3,"link":"#1-o-xiaomi-redmi-14-c-tem-suporte-para-5-g","disable":false,"isUpdated":false,"isGeneratedLink":true},{"key":"5b68f5eb-f462-4440-bfa4-675ac2e2f8e7","content":"2. Qual é o processador do Redmi 14C?","level":3,"link":"#2-qual-e-o-processador-do-redmi-14-c","disable":false,"isUpdated":false,"isGeneratedLink":true},{"key":"143661cf-af7e-4e5e-b5fb-c8625308d1f8","content":"3. O Xiaomi Redmi 14C tem carregamento rápido?","level":3,"link":"#3-o-xiaomi-redmi-14-c-tem-carregamento-rapido","disable":false,"isUpdated":false,"isGeneratedLink":true},{"key":"c3a6c79a-8c29-443c-bbfb-1bbc6612c363","content":"4. Qual a capacidade de armazenamento do Redmi 14C?","level":3,"link":"#4-qual-a-capacidade-de-armazenamento-do-redmi-14-c","disable":false,"isUpdated":false,"isGeneratedLink":true},{"key":"56884328-fa1b-4467-856d-b76c5fa5eb94","content":"5. Quando o Xiaomi Redmi 14C será lançado?","level":3,"link":"#5-quando-o-xiaomi-redmi-14-c-sera-lancado","disable":false,"isUpdated":false,"isGeneratedLink":true}],"listStyle":"ul"} --></p>
+<div class="wp-block-rank-math-toc-block" id="rank-math-toc"><nav>
+<ul>
+<li class=""><a href="#introducao">Introdução</a></li>
+<li class=""><a href="#1-design-e-construcao">1. Design e Construção</a></li>
+<li class=""><a href="#2-tela-qualidade-e-resolucao">2. Tela: Qualidade e Resolução</a></li>
+<li class=""><a href="#3-desempenho-e-processador">3. Desempenho e Processador</a></li>
+<li class=""><a href="#4-cameras-fotos-e-videos">4. Câmeras: Fotos e Vídeos</a></li>
+<li class=""><a href="#5-bateria-e-carregamento">5. Bateria e Carregamento</a></li>
+<li class=""><a href="#6-sistema-operacional-e-interface">6. Sistema Operacional e Interface</a></li>
+<li class=""><a href="#7-armazenamento-e-memoria-ram">7. Armazenamento e Memória RAM</a></li>
+<li class=""><a href="#8-conectividade-e-recursos-extras">8. Conectividade e Recursos Extras</a></li>
+<li class=""><a href="#9-preco-e-disponibilidade">9. Preço e Disponibilidade</a></li>
+<li class=""><a href="#10-vale-a-pena-comprar-o-xiaomi-redmi-14-c">10. Vale a Pena Comprar o Xiaomi Redmi 14C?</a></li>
+<li class=""><a href="#fa-qs">FAQs</a>
+<ul>
+<li class=""><a href="#1-o-xiaomi-redmi-14-c-tem-suporte-para-5-g">1. O Xiaomi Redmi 14C tem suporte para 5G?</a></li>
+<li class=""><a href="#2-qual-e-o-processador-do-redmi-14-c">2. Qual é o processador do Redmi 14C?</a></li>
+<li class=""><a href="#3-o-xiaomi-redmi-14-c-tem-carregamento-rapido">3. O Xiaomi Redmi 14C tem carregamento rápido?</a></li>
+<li class=""><a href="#4-qual-a-capacidade-de-armazenamento-do-redmi-14-c">4. Qual a capacidade de armazenamento do Redmi 14C?</a></li>
+<li class=""><a href="#5-quando-o-xiaomi-redmi-14-c-sera-lancado">5. Quando o Xiaomi Redmi 14C será lançado?</a></li>
+</ul>
+</li>
+</ul>
+<p></nav></div>
+<p>
+<!-- /wp:rank-math/toc-block --></p>
+<p><!-- wp:heading --></p>
+<h2 class="wp-block-heading" id="1-design-e-construcao"><strong>1. Design e Construção</strong></h2>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>O <strong><a href="https://revview.com.br/xiaomi-redmi-14c/" data-type="link" data-id="https://revview.com.br/xiaomi-redmi-14c/">Xiaomi Redmi 14C</a></strong> conta com um design moderno e minimalista, construído em materiais resistentes para garantir durabilidade.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2 class="wp-block-heading" id="2-tela-qualidade-e-resolucao"><strong>2. Tela: Qualidade e Resolução</strong></h2>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>O smartphone possui uma tela ampla com resolução <strong>Full HD+</strong>, proporcionando cores vibrantes e uma boa experiência de uso.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2 class="wp-block-heading" id="3-desempenho-e-processador"><strong>3. Desempenho e Processador</strong></h2>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Equipado com um processador eficiente, o <strong>Redmi 14C</strong> promete rodar aplicativos e jogos sem travamentos, garantindo um desempenho fluido.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2 class="wp-block-heading" id="4-cameras-fotos-e-videos"><strong>4. Câmeras: Fotos e Vídeos</strong></h2>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>A Xiaomi investiu em um conjunto de câmeras versátil, com sensor principal de alta resolução para capturar fotos e vídeos com boa qualidade.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2 class="wp-block-heading" id="5-bateria-e-carregamento"><strong>5. Bateria e Carregamento</strong></h2>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Com uma bateria de longa duração, o <strong>Xiaomi Redmi 14C</strong> promete um dia inteiro de uso, além de suporte para carregamento rápido.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":1147,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/static/uploads/Xiaomi-Redmi-14C.jpg" alt="" class="wp-image-1147"/></figure>
+<p>
+<!-- /wp:image --></p>
+<p><!-- wp:heading --></p>
+<h2 class="wp-block-heading" id="6-sistema-operacional-e-interface"><strong>6. Sistema Operacional e Interface</strong></h2>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Rodando a MIUI baseada no Android, o dispositivo traz uma interface intuitiva e recheada de recursos personalizados.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2 class="wp-block-heading" id="7-armazenamento-e-memoria-ram"><strong>7. Armazenamento e Memória RAM</strong></h2>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Disponível em diferentes configurações, o smartphone conta com espaço de armazenamento generoso e opções de <strong>4GB, 6GB ou 8GB de RAM</strong>.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2 class="wp-block-heading" id="8-conectividade-e-recursos-extras"><strong>8. Conectividade e Recursos Extras</strong></h2>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Oferecendo suporte a <strong>5G, Bluetooth, NFC e Wi-Fi de alta velocidade</strong>, o <strong>Redmi 14C</strong> está pronto para qualquer necessidade.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2 class="wp-block-heading" id="9-preco-e-disponibilidade"><strong>9. Preço e Disponibilidade</strong></h2>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>O <strong>Redmi 14C</strong> deve chegar ao mercado com um preço competitivo, sendo uma excelente opção na categoria intermediária.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2 class="wp-block-heading" id="10-vale-a-pena-comprar-o-xiaomi-redmi-14-c"><strong>10. Vale a Pena Comprar o Xiaomi Redmi 14C?</strong></h2>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Para quem busca um <strong>smartphone acessível com bom desempenho</strong>, o <strong>Xiaomi Redmi 14C</strong> é uma escolha interessante e equilibrada.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2 class="wp-block-heading" id="fa-qs"><strong>FAQs</strong></h2>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading" id="1-o-xiaomi-redmi-14-c-tem-suporte-para-5-g">1. O Xiaomi Redmi 14C tem suporte para 5G?</h3>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Sim, o modelo oferece suporte para conexões <strong>5G</strong>, garantindo maior velocidade de internet.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading" id="2-qual-e-o-processador-do-redmi-14-c">2. Qual é o processador do Redmi 14C?</h3>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Ainda não há confirmação oficial, mas espera-se que o aparelho venha com um processador <strong>MediaTek ou Qualcomm intermediário</strong>.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading" id="3-o-xiaomi-redmi-14-c-tem-carregamento-rapido">3. O Xiaomi Redmi 14C tem carregamento rápido?</h3>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Sim, ele conta com tecnologia de <strong>carregamento rápido</strong>, reduzindo o tempo de recarga.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading" id="4-qual-a-capacidade-de-armazenamento-do-redmi-14-c">4. Qual a capacidade de armazenamento do Redmi 14C?</h3>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>O aparelho deve contar com opções de <strong>64GB, 128GB e 256GB</strong>, com suporte para expansão via <strong>microSD</strong>.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading" id="5-quando-o-xiaomi-redmi-14-c-sera-lancado">5. Quando o Xiaomi Redmi 14C será lançado?</h3>
+<p>
+<!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>O lançamento oficial ainda não foi anunciado, mas deve ocorrer nos próximos meses.</p>
+<p>
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Com tantas vantagens, o <strong>Xiaomi Redmi 14C</strong> promete ser um dos smartphones mais equilibrados do ano, entregando boa performance por um preço acessível!</p>
+<p>
+<!-- /wp:paragraph --></p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

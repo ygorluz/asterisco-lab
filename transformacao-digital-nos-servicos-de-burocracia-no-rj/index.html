@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformação digital nos serviços de burocracia no RJ - Asterisco Lab</title>
+    <meta name="description" content="Descubra como a transformação digital está revolucionando os serviços burocráticos no RJ, tornando processos mais rápidos e eficientes.">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/noticias/" style="color:#ffffff;">Notícias</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Transformação digital nos serviços de burocracia no RJ</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">Descubra como a transformação digital está revolucionando os serviços burocráticos no RJ, tornando processos mais rápidos e eficientes.</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-06-15" style="color: var(--text-muted);">
+                        15/06/2026 00:00
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/transformacao-digital-nos-servicos-de-burocracia-no-rj.jpg" alt="Transformação digital nos serviços de burocracia no RJ">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>A <strong>transforma&ccedil;&atilde;o digital</strong> tem revolucionado diversos setores no Brasil, e o Rio de Janeiro n&atilde;o fica atr&aacute;s. Servi&ccedil;os burocr&aacute;ticos, historicamente conhecidos por sua lentid&atilde;o e complexidade, passaram por mudan&ccedil;as significativas, trazendo mais efici&ecirc;ncia, transpar&ecirc;ncia e praticidade para a popula&ccedil;&atilde;o.</p>
+<p>A digitaliza&ccedil;&atilde;o desses processos &eacute; fundamental para diminuir filas, reduzir erros e melhorar a experi&ecirc;ncia do cidad&atilde;o.</p>
+<h2>O Cen&aacute;rio Tradicional Da Burocracia No Rio De Janeiro</h2>
+<p>Antes da era digital, os servi&ccedil;os p&uacute;blicos e privados relacionados &agrave; burocracia no Rio de Janeiro enfrentavam diversos desafios. Filas extensas, excesso de documentos f&iacute;sicos, processos morosos e a necessidade de m&uacute;ltiplas visitas a &oacute;rg&atilde;os p&uacute;blicos eram comuns. Essa situa&ccedil;&atilde;o gerava frustra&ccedil;&atilde;o e perda de tempo para os usu&aacute;rios.</p>
+<p>Al&eacute;m disso, a falta de integra&ccedil;&atilde;o entre diferentes &oacute;rg&atilde;os p&uacute;blicos dificultava o acesso r&aacute;pido &agrave;s informa&ccedil;&otilde;es, prolongando ainda mais os prazos para resolver quest&otilde;es simples, como emiss&atilde;o de documentos, registros e autoriza&ccedil;&otilde;es.</p>
+<h2>Impacto Da Tecnologia Na Burocracia Fluminense</h2>
+<p>A ado&ccedil;&atilde;o de tecnologias digitais tem promovido uma verdadeira revolu&ccedil;&atilde;o nos servi&ccedil;os burocr&aacute;ticos do Rio de Janeiro. Ferramentas como plataformas online, aplicativos m&oacute;veis e sistemas integrados contribu&iacute;ram para simplificar procedimentos e aumentar a efici&ecirc;ncia.</p>
+<h3>Digitaliza&ccedil;&atilde;o de documentos</h3>
+<p>Um dos principais avan&ccedil;os foi a digitaliza&ccedil;&atilde;o de documentos e processos. Com isso, tornou-se poss&iacute;vel enviar documentos eletronicamente, eliminando a necessidade de deslocamento f&iacute;sico at&eacute; os &oacute;rg&atilde;os competentes. Essa mudan&ccedil;a diminuiu custos operacionais e o uso de papel, alinhando-se com pr&aacute;ticas sustent&aacute;veis.</p>
+<h3>Plataformas online e atendimento remoto</h3>
+<p>O desenvolvimento de plataformas digitais para agendamento, consulta e protocolo de documentos facilitou o acesso aos servi&ccedil;os p&uacute;blicos. Por exemplo, alguns &oacute;rg&atilde;os estaduais passaram a oferecer atendimento remoto por meio de v&iacute;deos, chats e formul&aacute;rios digitais, garantindo mais comodidade e seguran&ccedil;a para os usu&aacute;rios, especialmente durante per&iacute;odos de restri&ccedil;&otilde;es sanit&aacute;rias.</p>
+<h3>Integra&ccedil;&atilde;o entre &oacute;rg&atilde;os e bancos de dados</h3>
+<p>A conectividade entre diferentes institui&ccedil;&otilde;es p&uacute;blicas permitiu a cria&ccedil;&atilde;o de bancos de dados integrados, otimizando a troca de informa&ccedil;&otilde;es e evitando a redund&acirc;ncia de dados. Isso agiliza processos como a emiss&atilde;o de alvar&aacute;s, certid&otilde;es e licen&ccedil;as, diminuindo a burocracia e o tempo de espera.</p>
+<h2>Exemplos Pr&aacute;ticos De Transforma&ccedil;&atilde;o Digital Nos Servi&ccedil;os P&uacute;blicos Do Rj</h2>
+<p>O Rio de Janeiro tem investido em diversas iniciativas para modernizar seus servi&ccedil;os burocr&aacute;ticos. Alguns exemplos destacam a efici&ecirc;ncia conquistada com essas mudan&ccedil;as:</p>
+<h3>Sistema Eletr&ocirc;nico de Informa&ccedil;&otilde;es (SEI)</h3>
+<p>O SEI &eacute; uma plataforma que permite a tramita&ccedil;&atilde;o eletr&ocirc;nica de documentos e processos administrativos. Com ele, &oacute;rg&atilde;os p&uacute;blicos do estado do Rio de Janeiro conseguem realizar an&aacute;lise, aprova&ccedil;&atilde;o e arquivamento de documentos de forma digital, eliminando o uso de pap&eacute;is e acelerando os tr&acirc;mites internos.</p>
+<h3>Portal de Servi&ccedil;os do Governo do Estado do Rio de Janeiro</h3>
+<p>Esse portal re&uacute;ne diversos servi&ccedil;os digitais para a popula&ccedil;&atilde;o, incluindo solicita&ccedil;&otilde;es de documentos, consultas e agendamentos. A facilidade de acesso e a interface amig&aacute;vel contribuem para a redu&ccedil;&atilde;o da burocracia e o aumento da satisfa&ccedil;&atilde;o dos usu&aacute;rios.</p>
+<h3>Processo Judicial Eletr&ocirc;nico (PJe)</h3>
+<p>No &acirc;mbito judicial, o Rio de Janeiro adotou o PJe, que permite a tramita&ccedil;&atilde;o eletr&ocirc;nica de processos judiciais. Isso facilita o acesso das partes envolvidas, advogados e ju&iacute;zes, tornando o sistema mais transparente e &aacute;gil.</p>
+<h2>Desafios Enfrentados Na Implementa&ccedil;&atilde;o Da Transforma&ccedil;&atilde;o Digital</h2>
+<p>Apesar dos avan&ccedil;os, a digitaliza&ccedil;&atilde;o dos servi&ccedil;os burocr&aacute;ticos no Rio de Janeiro ainda enfrenta obst&aacute;culos importantes.</p>
+<h3>Inclus&atilde;o digital e acessibilidade</h3>
+<p>Grande parte da popula&ccedil;&atilde;o ainda enfrenta dificuldades para acessar servi&ccedil;os digitais devido &agrave; falta de equipamentos, conex&atilde;o &agrave; internet de qualidade ou conhecimento tecnol&oacute;gico. &Eacute; fundamental que pol&iacute;ticas p&uacute;blicas garantam a inclus&atilde;o digital para que ningu&eacute;m fique exclu&iacute;do dessa moderniza&ccedil;&atilde;o.</p>
+<h3>Resist&ecirc;ncia cultural e capacita&ccedil;&atilde;o</h3>
+<p>Mudar a cultura organizacional e a mentalidade dos servidores p&uacute;blicos pode ser um desafio. Muitos profissionais precisam de capacita&ccedil;&atilde;o para utilizar as novas ferramentas digitais com efici&ecirc;ncia e seguran&ccedil;a, o que demanda investimentos em treinamento e suporte t&eacute;cnico.</p>
+<h3>Seguran&ccedil;a da informa&ccedil;&atilde;o</h3>
+<p>Com o aumento da digitaliza&ccedil;&atilde;o, cresce tamb&eacute;m a preocupa&ccedil;&atilde;o com a prote&ccedil;&atilde;o dos dados pessoais e sigilosos. Investir em sistemas robustos de seguran&ccedil;a cibern&eacute;tica &eacute; essencial para garantir a confian&ccedil;a dos usu&aacute;rios e evitar ataques virtuais.</p>
+<h2>O Papel Do Setor Privado Na Transforma&ccedil;&atilde;o Digital Burocr&aacute;tica</h2>
+<p>O setor privado tem um papel fundamental na moderniza&ccedil;&atilde;o dos servi&ccedil;os burocr&aacute;ticos, atuando como parceiro do poder p&uacute;blico e oferecendo solu&ccedil;&otilde;es tecnol&oacute;gicas inovadoras.</p>
+<h3>Empresas de tecnologia e startups</h3>
+<p>Startups especializadas em solu&ccedil;&otilde;es digitais para o setor p&uacute;blico t&ecirc;m desenvolvido ferramentas que facilitam processos, como sistemas de gest&atilde;o documental, aplicativos para atendimento ao cidad&atilde;o e plataformas de automa&ccedil;&atilde;o.</p>
+<h3>Despachantes digitais e servi&ccedil;os especializados</h3>
+<p>No Rio de Janeiro, a figura do <a href="https://despachanterj.com/" target="_blank" rel="noopener">despachante Rio de Janeiro</a> tamb&eacute;m tem se adaptado a essa nova realidade, oferecendo servi&ccedil;os digitais que agilizam a tramita&ccedil;&atilde;o de documentos e processos burocr&aacute;ticos. Isso representa uma evolu&ccedil;&atilde;o importante para quem busca praticidade e agilidade.</p>
+<h2>Benef&iacute;cios Da Transforma&ccedil;&atilde;o Digital Para O Cidad&atilde;o</h2>
+<p>A moderniza&ccedil;&atilde;o dos servi&ccedil;os burocr&aacute;ticos proporciona diversas vantagens para os moradores do Rio de Janeiro.</p>
+<h3>Agilidade e redu&ccedil;&atilde;o de custos</h3>
+<p>Processos que antes demoravam semanas podem ser conclu&iacute;dos em poucos dias ou at&eacute; horas. A redu&ccedil;&atilde;o da necessidade de deslocamentos f&iacute;sicos tamb&eacute;m gera economia de tempo e dinheiro para os usu&aacute;rios.</p>
+<h3>Transpar&ecirc;ncia e controle</h3>
+<p>Com sistemas digitais, &eacute; poss&iacute;vel acompanhar o andamento dos processos em tempo real, o que aumenta a transpar&ecirc;ncia e o controle social sobre os servi&ccedil;os p&uacute;blicos.</p>
+<h3>Sustentabilidade</h3>
+<p>A diminui&ccedil;&atilde;o do uso de papel e a otimiza&ccedil;&atilde;o de recursos contribuem para pr&aacute;ticas mais sustent&aacute;veis e ambientalmente respons&aacute;veis.</p>
+<h2>Futuro Da Burocracia Digital No Rio De Janeiro</h2>
+<p>O avan&ccedil;o da transforma&ccedil;&atilde;o digital nos servi&ccedil;os burocr&aacute;ticos do Rio de Janeiro promete continuar nos pr&oacute;ximos anos, com tend&ecirc;ncias que incluem intelig&ecirc;ncia artificial, automa&ccedil;&atilde;o de processos e maior integra&ccedil;&atilde;o entre &oacute;rg&atilde;os p&uacute;blicos.</p>
+<h3>Intelig&ecirc;ncia artificial e automa&ccedil;&atilde;o</h3>
+<p>O uso de IA pode automatizar tarefas repetitivas, como an&aacute;lise de documentos, detec&ccedil;&atilde;o de erros e atendimento inicial ao cidad&atilde;o, liberando servidores para atividades que demandam maior expertise.</p>
+<h3>Amplia&ccedil;&atilde;o da interoperabilidade</h3>
+<p>A cria&ccedil;&atilde;o de redes integradas entre diferentes &oacute;rg&atilde;os e esferas de governo possibilitar&aacute; uma experi&ecirc;ncia ainda mais fluida para os usu&aacute;rios, que poder&atilde;o resolver m&uacute;ltiplas quest&otilde;es em um &uacute;nico canal digital.</p>
+<h3>Amplia&ccedil;&atilde;o da inclus&atilde;o digital</h3>
+<p>Investimentos em infraestrutura e programas de capacita&ccedil;&atilde;o digital ser&atilde;o essenciais para garantir que todas as camadas da popula&ccedil;&atilde;o possam usufruir dos benef&iacute;cios da moderniza&ccedil;&atilde;o.</p>
+<h2>Conclus&atilde;o</h2>
+<p>A <strong>transforma&ccedil;&atilde;o digital nos servi&ccedil;os de burocracia no RJ</strong> tem promovido uma s&eacute;rie de melhorias que impactam positivamente a vida dos cidad&atilde;os. A digitaliza&ccedil;&atilde;o dos processos torna o atendimento mais r&aacute;pido, transparente e acess&iacute;vel, contribuindo para a efici&ecirc;ncia do servi&ccedil;o p&uacute;blico e a satisfa&ccedil;&atilde;o da popula&ccedil;&atilde;o.</p>
+<p>Embora ainda existam desafios a serem superados, como a inclus&atilde;o digital e a seguran&ccedil;a da informa&ccedil;&atilde;o, os avan&ccedil;os j&aacute; realizados demonstram um caminho promissor para a moderniza&ccedil;&atilde;o da burocracia no Rio de Janeiro.</p>
+<p>O investimento cont&iacute;nuo em tecnologia, capacita&ccedil;&atilde;o e pol&iacute;ticas p&uacute;blicas inclusivas ser&aacute; fundamental para consolidar essa transforma&ccedil;&atilde;o, garantindo que a burocracia se torne cada vez menos um obst&aacute;culo e mais um facilitador para o desenvolvimento e bem-estar da sociedade carioca.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

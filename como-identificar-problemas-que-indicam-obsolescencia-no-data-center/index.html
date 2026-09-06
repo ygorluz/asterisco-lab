@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Como identificar problemas que indicam obsolescência no data center - Asterisco Lab</title>
+    <meta name="description" content="Descubra como identificar sinais de obsolescência no data center e garanta a eficiência e segurança da sua infraestrutura tecnológica.">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/noticias/" style="color:#ffffff;">Notícias</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Como identificar problemas que indicam obsolescência no data center</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">Descubra como identificar sinais de obsolescência no data center e garanta a eficiência e segurança da sua infraestrutura tecnológica.</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-07-07" style="color: var(--text-muted);">
+                        07/07/2026 00:00
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/como-identificar-problemas-que-indicam-obsolescencia-no-data-center.jpg" alt="Como identificar problemas que indicam obsolescência no data center">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>A infraestrutura de um <strong>data center</strong> &eacute; a espinha dorsal para opera&ccedil;&otilde;es de TI eficazes e seguras. Com o avan&ccedil;o acelerado da tecnologia, manter um data center atualizado &eacute; fundamental para garantir efici&ecirc;ncia, seguran&ccedil;a e escalabilidade. Contudo, muitos gestores enfrentam o desafio de identificar quando seus data centers come&ccedil;am a apresentar <strong>sinais de obsolesc&ecirc;ncia</strong> que podem comprometer o desempenho e a continuidade dos neg&oacute;cios.</p>
+<p>Reconhecer esses problemas a tempo &eacute; essencial para evitar falhas cr&iacute;ticas, perda de dados e altos custos operacionais. Este conte&uacute;do detalha os principais indicadores que apontam para a necessidade de uma atualiza&ccedil;&atilde;o ou moderniza&ccedil;&atilde;o da infraestrutura do data center, ajudando a tomar decis&otilde;es informadas para otimiza&ccedil;&atilde;o tecnol&oacute;gica.</p>
+<p>Identificar os<strong> </strong><a href="https://telequip.com.br/blog/10-sinais-data-center-precisa-modernizacao" target="_blank" rel="noopener"><strong>sinais de que seu data center precisa de moderniza&ccedil;&atilde;o</strong></a> &eacute; o primeiro passo para transformar a infraestrutura em um ambiente robusto, escal&aacute;vel e preparado para os desafios do futuro digital. Priorizar essa atualiza&ccedil;&atilde;o traz vantagens competitivas e contribui para a sustentabilidade dos neg&oacute;cios a longo prazo.</p>
+<h2>O Que &Eacute; Obsolesc&ecirc;ncia Em Data Centers?</h2>
+<p><strong>Obsolesc&ecirc;ncia</strong> em um data center ocorre quando os equipamentos, tecnologias ou processos se tornam ultrapassados e incapazes de suportar as demandas atuais do neg&oacute;cio. Isso pode ser resultado de avan&ccedil;os tecnol&oacute;gicos, mudan&ccedil;as no perfil de uso, crescimento da empresa ou novas exig&ecirc;ncias de seguran&ccedil;a e compliance.</p>
+<p>A obsolesc&ecirc;ncia n&atilde;o significa apenas hardware antigo, mas tamb&eacute;m envolve software desatualizado, falta de integra&ccedil;&atilde;o entre sistemas, inefici&ecirc;ncia energ&eacute;tica e incapacidade de escalabilidade. Identificar esses problemas antecipadamente evita impactos negativos no desempenho e na confiabilidade dos servi&ccedil;os.</p>
+<h2>Principais Problemas Que Indicam Obsolesc&ecirc;ncia No Data Center</h2>
+<h3>1. Alta taxa de falhas em equipamentos</h3>
+<p>Um dos <strong>sinais de obsolesc&ecirc;ncia</strong> mais evidentes &eacute; o aumento frequente de falhas em servidores, switches, unidades de armazenamento e outros equipamentos essenciais. Equipamentos antigos tendem a apresentar mais defeitos, exigindo manuten&ccedil;&otilde;es constantes e provocando interrup&ccedil;&otilde;es inesperadas.</p>
+<p>A alta taxa de falhas pode levar a:</p>
+<p>- Perda de dados</p>
+<p>- Interrup&ccedil;&otilde;es no servi&ccedil;o</p>
+<p>- Aumento dos custos de manuten&ccedil;&atilde;o</p>
+<p>- Dificuldades na garantia e suporte t&eacute;cnico</p>
+<p>Manter um ambiente com alta disponibilidade requer que os componentes estejam atualizados e com suporte ativo dos fabricantes.</p>
+<h3>2. Consumo energ&eacute;tico elevado e inefici&ecirc;ncia t&eacute;rmica</h3>
+<p>Data centers antigos geralmente utilizam tecnologias menos eficientes em termos de consumo energ&eacute;tico e refrigera&ccedil;&atilde;o. O aumento dos custos com energia el&eacute;trica &eacute; um problema recorrente em infraestruturas obsoletas.</p>
+<p>Equipamentos antigos geram mais calor, o que exige sistemas de resfriamento mais potentes e dispendiosos. Al&eacute;m disso, o layout e o design do data center podem n&atilde;o ser otimizados para dissipar o calor de forma eficaz, causando sobrecarga nos sistemas de ar condicionado e risco de superaquecimento.</p>
+<p>Reduzir o consumo energ&eacute;tico e melhorar a efici&ecirc;ncia t&eacute;rmica s&atilde;o metas importantes para data centers modernos e sustent&aacute;veis.</p>
+<h3>3. Capacidade insuficiente para demandas atuais</h3>
+<p>O crescimento exponencial de dados e servi&ccedil;os digitais exige que os data centers tenham capacidade escal&aacute;vel para suportar novas aplica&ccedil;&otilde;es e volumes maiores de processamento.</p>
+<p>Quando a infraestrutura n&atilde;o acompanha esse crescimento, surgem problemas como:</p>
+<p>- Lentid&atilde;o no processamento de dados</p>
+<p>- Gargalos na rede</p>
+<p>- Falhas de armazenamento</p>
+<p>- Dificuldade para implementar novas tecnologias</p>
+<p>A incapacidade de escalar recursos indica que o data center est&aacute; ficando obsoleto e requer moderniza&ccedil;&atilde;o para garantir flexibilidade e agilidade nas opera&ccedil;&otilde;es.</p>
+<h3>4. Dificuldades na manuten&ccedil;&atilde;o e suporte t&eacute;cnico</h3>
+<p>Equipamentos antigos podem n&atilde;o contar mais com suporte t&eacute;cnico ou atualiza&ccedil;&otilde;es de software pelos fabricantes. Isso gera dificuldades para manuten&ccedil;&atilde;o, corre&ccedil;&atilde;o de falhas e aplica&ccedil;&atilde;o de patches de seguran&ccedil;a.</p>
+<p>Al&eacute;m disso, a escassez de pe&ccedil;as de reposi&ccedil;&atilde;o para hardware ultrapassado aumenta o tempo de inatividade em caso de falhas, comprometendo a continuidade dos servi&ccedil;os.</p>
+<p>A depend&ecirc;ncia de tecnologias legadas pode tamb&eacute;m exigir m&atilde;o de obra especializada e mais cara, elevando os custos operacionais.</p>
+<h3>5. Falta de compatibilidade com novas tecnologias</h3>
+<p>A r&aacute;pida evolu&ccedil;&atilde;o das tecnologias de TI exige que os data centers sejam compat&iacute;veis com solu&ccedil;&otilde;es modernas como:</p>
+<p>- Computa&ccedil;&atilde;o em nuvem h&iacute;brida</p>
+<p>- Virtualiza&ccedil;&atilde;o avan&ccedil;ada</p>
+<p>- Intelig&ecirc;ncia artificial e machine learning</p>
+<p>- Seguran&ccedil;a cibern&eacute;tica de &uacute;ltima gera&ccedil;&atilde;o</p>
+<p>Data centers obsoletos geralmente apresentam dificuldades para integrar essas solu&ccedil;&otilde;es, limitando a inova&ccedil;&atilde;o e a competitividade da empresa.</p>
+<h3>6. Problemas de seguran&ccedil;a e conformidade</h3>
+<p>A seguran&ccedil;a da informa&ccedil;&atilde;o &eacute; uma prioridade estrat&eacute;gica para qualquer organiza&ccedil;&atilde;o. Data centers antigos podem n&atilde;o suportar protocolos de seguran&ccedil;a modernos, tornando-os vulner&aacute;veis a ataques cibern&eacute;ticos.</p>
+<p>Al&eacute;m disso, a conformidade com normas e regulamenta&ccedil;&otilde;es espec&iacute;ficas, como LGPD, GDPR e ISO 27001, exige atualiza&ccedil;&otilde;es constantes nos sistemas e processos do data center.</p>
+<p>A falta de recursos para garantir seguran&ccedil;a robusta e compliance &eacute; um forte indicador de que a infraestrutura est&aacute; defasada.</p>
+<h2>Como Diagnosticar A Obsolesc&ecirc;ncia Do Data Center</h2>
+<h3>Avalia&ccedil;&atilde;o do ciclo de vida dos equipamentos</h3>
+<p>Cada componente do data center possui um ciclo de vida &uacute;til recomendado pelos fabricantes. Avaliar a idade dos equipamentos e comparar com esse ciclo ajuda a identificar itens pr&oacute;ximos do fim da vida &uacute;til.</p>
+<p>Equipamentos ultrapassados devem ser priorizados para substitui&ccedil;&atilde;o ou atualiza&ccedil;&atilde;o, garantindo que n&atilde;o causem interrup&ccedil;&otilde;es ou falhas inesperadas.</p>
+<h3>Monitoramento constante de desempenho e incidentes</h3>
+<p>Implementar sistemas de monitoramento que avaliem a performance dos servidores, armazenamento, rede e sistemas de refrigera&ccedil;&atilde;o &eacute; fundamental para detectar anomalias e degrada&ccedil;&atilde;o.</p>
+<p>Analisar relat&oacute;rios de incidentes e tempos de resposta ajuda a entender se os problemas s&atilde;o pontuais ou refletem uma infraestrutura defasada.</p>
+<h3>An&aacute;lise de custos operacionais e energ&eacute;ticos</h3>
+<p>Comparar os custos atuais de opera&ccedil;&atilde;o, manuten&ccedil;&atilde;o e energia com benchmarks do mercado permite identificar se o data center est&aacute; se tornando oneroso devido &agrave; obsolesc&ecirc;ncia.</p>
+<p>Custos elevados indicam inefici&ecirc;ncia e a necessidade de moderniza&ccedil;&atilde;o para reduzir despesas e melhorar o retorno sobre investimento.</p>
+<h3>Revis&atilde;o de requisitos de neg&oacute;cios e TI</h3>
+<p>Alinhar as necessidades atuais e futuras da empresa com a capacidade do data center &eacute; essencial. Se os processos de neg&oacute;cios exigem mais agilidade, escalabilidade ou seguran&ccedil;a, mas a infraestrutura n&atilde;o acompanha, &eacute; hora de agir.</p>
+<p>Conversar com equipes de TI e gestores de neg&oacute;cios ajuda a identificar lacunas e planejar atualiza&ccedil;&otilde;es adequadas.</p>
+<h2>Benef&iacute;cios Da Moderniza&ccedil;&atilde;o Do Data Center</h2>
+<p>Atualizar a infraestrutura traz diversos benef&iacute;cios estrat&eacute;gicos e operacionais, tais como:</p>
+<p>- <strong>Aumento da efici&ecirc;ncia energ&eacute;tica</strong>, reduzindo custos e impacto ambiental.</p>
+<p>- <strong>Melhoria da seguran&ccedil;a da informa&ccedil;&atilde;o</strong>, protegendo dados cr&iacute;ticos contra amea&ccedil;as.</p>
+<p>- <strong>Maior escalabilidade e flexibilidade</strong>, suportando crescimento e novas tecnologias.</p>
+<p>- <strong>Redu&ccedil;&atilde;o de falhas e downtime</strong>, garantindo alta disponibilidade dos servi&ccedil;os.</p>
+<p>- <strong>Facilidade na manuten&ccedil;&atilde;o e suporte</strong>, com equipamentos modernos e suporte ativo.</p>
+<p>- <strong>Conformidade com regulamenta&ccedil;&otilde;es</strong>, evitando multas e riscos legais.</p>
+<p>Com a infraestrutura adequada, o data center torna-se um ativo estrat&eacute;gico para a transforma&ccedil;&atilde;o digital e competitividade da empresa.</p>
+<h2>Estrat&eacute;gias Para Evitar A Obsolesc&ecirc;ncia Do Data Center</h2>
+<h3>Planejamento de ciclo de vida e atualiza&ccedil;&atilde;o cont&iacute;nua</h3>
+<p>Estabelecer um plano de renova&ccedil;&atilde;o peri&oacute;dica dos equipamentos e softwares ajuda a evitar que o data center fique defasado. Isso inclui:</p>
+<p>- Inventariar todos os ativos</p>
+<p>- Definir prazos para substitui&ccedil;&atilde;o</p>
+<p>- Planejar or&ccedil;amento para atualiza&ccedil;&otilde;es regulares</p>
+<h3>Investimento em tecnologias de ponta</h3>
+<p>Adotar tecnologias modernas, como servidores eficientes, sistemas de refrigera&ccedil;&atilde;o inteligentes e solu&ccedil;&otilde;es de automa&ccedil;&atilde;o, torna o data center mais preparado para o futuro.</p>
+<h3>Capacita&ccedil;&atilde;o da equipe de TI</h3>
+<p>Manter a equipe atualizada em novas tecnologias e boas pr&aacute;ticas permite melhor gerenciamento do ambiente e identifica&ccedil;&atilde;o precoce de problemas.</p>
+<h3>Monitoramento e an&aacute;lise proativa</h3>
+<p>Ferramentas de monitoramento e an&aacute;lise cont&iacute;nua possibilitam a identifica&ccedil;&atilde;o de tend&ecirc;ncias e potenciais falhas antes que causem preju&iacute;zos.</p>
+<h2>Conclus&atilde;o</h2>
+<p>Reconhecer os <strong>problemas que indicam obsolesc&ecirc;ncia no data center</strong> &eacute; essencial para garantir opera&ccedil;&otilde;es seguras, eficientes e alinhadas &agrave;s demandas do mercado. A manuten&ccedil;&atilde;o de uma infraestrutura atualizada evita interrup&ccedil;&otilde;es, reduz custos e fortalece a seguran&ccedil;a dos dados.</p>
+<p>A presen&ccedil;a de sinais claros, como falhas frequentes, consumo energ&eacute;tico elevado, falta de capacidade, incompatibilidade tecnol&oacute;gica e dificuldades de manuten&ccedil;&atilde;o, deve ser interpretada como um alerta. Para gestores e profissionais de TI, entender esses indicadores facilita a tomada de decis&otilde;es estrat&eacute;gicas e o planejamento da moderniza&ccedil;&atilde;o.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

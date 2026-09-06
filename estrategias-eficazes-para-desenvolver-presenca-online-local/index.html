@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estratégias Eficazes para Desenvolver Presença Online Local - Asterisco Lab</title>
+    <meta name="description" content="Descubra estratégias eficazes para fortalecer sua presença online local e atrair mais clientes na sua região. Resultados reais e duradouros!">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/analises/" style="color:#ffffff;">Análises</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Estratégias Eficazes para Desenvolver Presença Online Local</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">Descubra estratégias eficazes para fortalecer sua presença online local e atrair mais clientes na sua região. Resultados reais e duradouros!</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-05-05" style="color: var(--text-muted);">
+                        05/05/2026 00:00
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/estrategias-eficazes-para-desenvolver-presenca-online-local.jpg" alt="Estratégias Eficazes para Desenvolver Presença Online Local">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>No cen&aacute;rio digital atual, a <strong>presen&ccedil;a online local</strong> tornou-se fundamental para neg&oacute;cios que desejam atrair clientes pr&oacute;ximos e aumentar sua relev&acirc;ncia em regi&otilde;es espec&iacute;ficas. Seja uma pequena empresa, uma loja f&iacute;sica ou um servi&ccedil;o local, investir em estrat&eacute;gias certeiras pode fazer toda a diferen&ccedil;a na visibilidade e no crescimento do empreendimento. A seguir, ser&atilde;o detalhadas t&eacute;cnicas comprovadas e t&aacute;ticas valiosas para fortalecer a presen&ccedil;a digital em &acirc;mbito local, garantindo que seu neg&oacute;cio seja facilmente encontrado por quem realmente importa: o p&uacute;blico da sua regi&atilde;o.</p>
+<h2>Import&acirc;ncia Da Presen&ccedil;a Online Local</h2>
+<p>Antes de detalhar as estrat&eacute;gias, &eacute; importante entender por que a <strong>presen&ccedil;a online local</strong> &eacute; essencial. Com o avan&ccedil;o da tecnologia e o crescimento do uso de smartphones, consumidores buscam cada vez mais por solu&ccedil;&otilde;es pr&oacute;ximas a eles, usando termos espec&iacute;ficos como "perto de mim" ou nomes de bairros e cidades. Segundo pesquisas, cerca de 80% dos usu&aacute;rios realizam buscas locais antes de visitar uma loja f&iacute;sica, e empresas com forte presen&ccedil;a local t&ecirc;m maior chance de convers&atilde;o e fideliza&ccedil;&atilde;o.</p>
+<p>Al&eacute;m disso, o Google e outros motores de busca priorizam resultados baseados na localiza&ccedil;&atilde;o do usu&aacute;rio, o que torna imprescind&iacute;vel o investimento em t&eacute;cnicas que reforcem o posicionamento local do seu neg&oacute;cio.</p>
+<h2>Otimiza&ccedil;&atilde;o Para Motores De Busca Locais (Seo Local)</h2>
+<h3>Pesquisa de Palavras-Chave Locais</h3>
+<p>O ponto de partida para uma boa estrat&eacute;gia &eacute; a <strong>pesquisa de palavras-chave locais</strong>. &Eacute; fundamental identificar termos que as pessoas da sua regi&atilde;o utilizam para encontrar servi&ccedil;os ou produtos similares aos seus. Por exemplo, se voc&ecirc; atua em Santos, palavras-chave como "restaurante em Santos", "servi&ccedil;os de beleza em Santos" ou "loja de cal&ccedil;ados Santos" s&atilde;o altamente relevantes.</p>
+<p>Ferramentas como Google Keyword Planner, Ubersuggest e SEMrush podem ajudar a descobrir quais termos t&ecirc;m maior volume de buscas e concorr&ecirc;ncia menor, possibilitando uma escolha mais estrat&eacute;gica.</p>
+<h3>Otimiza&ccedil;&atilde;o On-Page com Foco Local</h3>
+<p>Depois de definir as palavras-chave, o conte&uacute;do do seu site deve ser otimizado para elas. Isso inclui:</p>
+<p>- Inserir termos locais nos t&iacute;tulos, descri&ccedil;&otilde;es, URLs, e textos das p&aacute;ginas.</p>
+<p>- Criar p&aacute;ginas espec&iacute;ficas para bairros, cidades ou regi&otilde;es que seu neg&oacute;cio atende.</p>
+<p>- Usar marca&ccedil;&otilde;es estruturadas (Schema.org) para informa&ccedil;&otilde;es locais como endere&ccedil;o, telefone e hor&aacute;rio de funcionamento.</p>
+<p>Essa otimiza&ccedil;&atilde;o ajuda os motores de busca a entenderem melhor o contexto geogr&aacute;fico do seu neg&oacute;cio.</p>
+<h2>Google Meu Neg&oacute;cio: O Pilar Da Presen&ccedil;a Local</h2>
+<h3>Cadastro e Verifica&ccedil;&atilde;o do Perfil</h3>
+<p>O <strong>Google Meu Neg&oacute;cio (Google Business Profile)</strong> &eacute; uma ferramenta gratuita e indispens&aacute;vel para fortalecer a presen&ccedil;a local. O cadastro correto e completo desse perfil aumenta significativamente as chances de aparecer no Google Maps e nos resultados locais.</p>
+<p>Para isso, &eacute; necess&aacute;rio criar ou reivindicar o perfil da empresa, preencher todos os campos com informa&ccedil;&otilde;es atualizadas, como endere&ccedil;o, telefone, hor&aacute;rio de funcionamento e categoria do neg&oacute;cio, al&eacute;m de verificar a propriedade para garantir autenticidade.</p>
+<h3>Publica&ccedil;&atilde;o de Conte&uacute;dos e Atualiza&ccedil;&otilde;es</h3>
+<p>Manter o perfil do Google Meu Neg&oacute;cio ativo &eacute; t&atilde;o importante quanto o cadastro inicial. Publicar fotos, responder avalia&ccedil;&otilde;es, adicionar postagens sobre promo&ccedil;&otilde;es ou eventos e atualizar informa&ccedil;&otilde;es mant&eacute;m o perfil relevante e engaja o p&uacute;blico local.</p>
+<p>Al&eacute;m disso, o engajamento com clientes nas avalia&ccedil;&otilde;es, tanto positivas quanto negativas, demonstra comprometimento e pode influenciar positivamente a decis&atilde;o de novos consumidores.</p>
+<h2>Redes Sociais Com Foco No P&uacute;blico Local</h2>
+<h3>Escolha das Plataformas Certas</h3>
+<p>Para fortalecer a presen&ccedil;a online local, &eacute; vital escolher as redes sociais que mais se conectam com seu p&uacute;blico local. Plataformas como Facebook, Instagram e TikTok s&atilde;o excelentes para neg&oacute;cios que desejam criar relacionamento e engajamento com a comunidade.</p>
+<h3>Conte&uacute;do Relevante e Localizado</h3>
+<p>Produzir conte&uacute;do que dialogue com o cotidiano e interesses da regi&atilde;o ajuda a construir identifica&ccedil;&atilde;o. Isso pode incluir:</p>
+<p>- Postagens sobre eventos locais.</p>
+<p>- Parcerias com influenciadores ou microinfluenciadores da regi&atilde;o.</p>
+<p>- Divulga&ccedil;&atilde;o de promo&ccedil;&otilde;es exclusivas para clientes locais.</p>
+<p>- Conte&uacute;do visual que destaque pontos conhecidos da cidade ou bairro.</p>
+<h3>Publicidade Segmentada</h3>
+<p>As redes sociais oferecem ferramentas robustas de segmenta&ccedil;&atilde;o que permitem direcionar an&uacute;ncios para pessoas em &aacute;reas geogr&aacute;ficas espec&iacute;ficas. Investir em campanhas bem segmentadas aumenta o retorno sobre o investimento, atingindo exatamente quem est&aacute; mais propenso a consumir seus produtos ou servi&ccedil;os.</p>
+<p>Para empresas que buscam uma solu&ccedil;&atilde;o completa e personalizada, a <a href="https://criativaseo.com.br/" target="_blank" rel="noopener">Cria&ccedil;&atilde;o de Sites em Santos</a> &eacute; uma excelente alternativa, pois permite alinhar o desenvolvimento web com as necessidades espec&iacute;ficas do mercado local, garantindo que o site seja n&atilde;o apenas bonito, mas tamb&eacute;m funcional e otimizado para atrair o p&uacute;blico certo.</p>
+<h2>Marketing De Conte&uacute;do Com Enfoque Local</h2>
+<h3>Blog com Temas Regionais</h3>
+<p>Um blog integrado ao site pode ser um poderoso aliado na constru&ccedil;&atilde;o da autoridade local. Criar conte&uacute;dos relacionados &agrave; cultura, eventos, not&iacute;cias e interesses da regi&atilde;o ajuda a atrair visitantes qualificados e a posicionar a empresa como refer&ecirc;ncia.</p>
+<p>Por exemplo, uma loja de artigos esportivos em Santos pode publicar artigos sobre eventos esportivos locais, dicas para quem pratica esportes na regi&atilde;o ou entrevistas com atletas locais.</p>
+<h3>Parcerias e Guest Posts</h3>
+<p>Firmar parcerias com blogs, sites e portais locais para publica&ccedil;&atilde;o de guest posts amplia o alcance e gera backlinks valiosos para SEO. Al&eacute;m disso, essa estrat&eacute;gia fortalece o networking e a reputa&ccedil;&atilde;o do neg&oacute;cio dentro da comunidade.</p>
+<h2>Otimiza&ccedil;&atilde;o Para Dispositivos M&oacute;veis</h2>
+<h3>Import&acirc;ncia da Responsividade</h3>
+<p>Grande parte das buscas locais s&atilde;o realizadas por meio de dispositivos m&oacute;veis. Portanto, garantir que seu site seja totalmente responsivo e carregue rapidamente em smartphones e tablets &eacute; essencial para n&atilde;o perder potenciais clientes.</p>
+<h3>Experi&ecirc;ncia do Usu&aacute;rio (UX)</h3>
+<p>Al&eacute;m da responsividade, o design deve oferecer uma experi&ecirc;ncia intuitiva, com f&aacute;cil acesso a informa&ccedil;&otilde;es importantes como endere&ccedil;o, telefone, hor&aacute;rios e bot&otilde;es de a&ccedil;&atilde;o (ex: "Ligar agora" ou "Enviar mensagem").</p>
+<p>Investir na usabilidade pode aumentar significativamente as convers&otilde;es e reduzir a taxa de rejei&ccedil;&atilde;o do site.</p>
+<h2>Estrat&eacute;gias De Link Building Local</h2>
+<h3>Diret&oacute;rios e Listagens Regionais</h3>
+<p>Cadastrar o neg&oacute;cio em diret&oacute;rios locais e sites de listagem espec&iacute;ficos da regi&atilde;o &eacute; uma forma eficaz de melhorar o SEO local e aumentar a visibilidade. Exemplos incluem sites da prefeitura, associa&ccedil;&otilde;es comerciais e portais de bairro.</p>
+<h3>Participa&ccedil;&atilde;o em Eventos e Comunidades</h3>
+<p>A participa&ccedil;&atilde;o ativa em eventos locais, feiras e grupos comunit&aacute;rios tamb&eacute;m pode gerar oportunidades para obter men&ccedil;&otilde;es e links em sites relevantes da regi&atilde;o, refor&ccedil;ando a autoridade do site junto aos motores de busca.</p>
+<h2>Avalia&ccedil;&otilde;es E Reputa&ccedil;&atilde;o Online</h2>
+<h3>Incentivar Avalia&ccedil;&otilde;es Positivas</h3>
+<p>As avalia&ccedil;&otilde;es online influenciam diretamente a decis&atilde;o de compra dos consumidores locais. Incentivar clientes satisfeitos a deixarem avalia&ccedil;&otilde;es no Google Meu Neg&oacute;cio, Facebook e outros canais fortalece a reputa&ccedil;&atilde;o digital.</p>
+<h3>Gest&atilde;o de Feedback Negativo</h3>
+<p>Responder de forma profissional e construtiva a cr&iacute;ticas mostra transpar&ecirc;ncia e preocupa&ccedil;&atilde;o com a satisfa&ccedil;&atilde;o do cliente. Essa pr&aacute;tica n&atilde;o apenas melhora a imagem do neg&oacute;cio, mas tamb&eacute;m pode transformar experi&ecirc;ncias negativas em oportunidades de fideliza&ccedil;&atilde;o.</p>
+<h2>Uso De Ferramentas De An&aacute;lise E Monitoramento</h2>
+<h3>Monitoramento de Palavras-Chave e Posi&ccedil;&otilde;es</h3>
+<p>Utilizar ferramentas como Google Analytics, Google Search Console e outras plataformas de SEO ajuda a acompanhar o desempenho das palavras-chave locais, o tr&aacute;fego do site e o comportamento dos usu&aacute;rios.</p>
+<h3>Ajustes e Melhorias Cont&iacute;nuas</h3>
+<p>Com base nos dados coletados, &eacute; poss&iacute;vel ajustar estrat&eacute;gias, melhorar conte&uacute;dos e corrigir falhas, garantindo que a presen&ccedil;a online local se mantenha forte e em constante evolu&ccedil;&atilde;o.</p>
+<h2>Considera&ccedil;&otilde;es Finais</h2>
+<p>Desenvolver e manter uma <strong>presen&ccedil;a online local</strong> robusta exige esfor&ccedil;os cont&iacute;nuos e diversificados, que v&atilde;o desde a otimiza&ccedil;&atilde;o do site at&eacute; o engajamento nas redes sociais e a gest&atilde;o da reputa&ccedil;&atilde;o. Cada a&ccedil;&atilde;o bem executada contribui para posicionar o neg&oacute;cio de maneira destacada na mente dos consumidores da regi&atilde;o, resultando em maior tr&aacute;fego, mais clientes e crescimento sustent&aacute;vel.</p>
+<p>&nbsp;</p>
+<p>Investir nessas estrat&eacute;gias &eacute; investir no futuro do neg&oacute;cio, consolidando-se como refer&ecirc;ncia na regi&atilde;o e aproveitando todo o potencial que o ambiente digital oferece para alcan&ccedil;ar clientes pr&oacute;ximos e fideliz&aacute;-los.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

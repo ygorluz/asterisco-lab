@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top 5 sites para se atualizar em novidades tecnológicas - Asterisco Lab</title>
+    <meta name="description" content="Descubra os top 5 sites essenciais para ficar por dentro das últimas novidades tecnológicas e tendências do mercado. Atualize-se agora!">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/noticias/" style="color:#ffffff;">Notícias</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Top 5 sites para se atualizar em novidades tecnológicas</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">Descubra os top 5 sites essenciais para ficar por dentro das últimas novidades tecnológicas e tendências do mercado. Atualize-se agora!</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-05-26" style="color: var(--text-muted);">
+                        26/05/2026 00:00
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/top-5-sites-para-se-atualizar-em-novidades-tecnologicas.jpg" alt="Top 5 sites para se atualizar em novidades tecnológicas">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>No ritmo acelerado do mundo digital, estar antenado nas &uacute;ltimas <strong>novidades tecnol&oacute;gicas</strong> &eacute; essencial para profissionais, entusiastas e empresas que desejam se manter competitivos. A tecnologia evolui a passos largos, trazendo inova&ccedil;&otilde;es que impactam diversos setores, desde a comunica&ccedil;&atilde;o at&eacute; a ind&uacute;stria e o entretenimento. Para n&atilde;o perder nenhuma tend&ecirc;ncia ou lan&ccedil;amento importante, &eacute; fundamental contar com fontes confi&aacute;veis e atualizadas. A seguir, confira uma sele&ccedil;&atilde;o dos <strong>top 5 sites para se atualizar em novidades tecnol&oacute;gicas</strong>, que oferecem conte&uacute;do de qualidade, an&aacute;lises aprofundadas e not&iacute;cias fresquinhas.</p>
+<h2>1. Techcrunch</h2>
+<h3>O que &eacute; o TechCrunch?</h3>
+<p>O <strong>TechCrunch</strong> &eacute; uma das principais refer&ecirc;ncias globais em not&iacute;cias sobre startups, tecnologia e inova&ccedil;&atilde;o. Fundado em 2005, o site se destaca por cobrir lan&ccedil;amentos de produtos, investimentos no setor de tecnologia e entrevistas com fundadores de empresas promissoras.</p>
+<h3>Por que acompanhar o TechCrunch?</h3>
+<p>- <strong>Cobertura de startups e investimentos:</strong> Para quem deseja entender o ecossistema de inova&ccedil;&atilde;o, o TechCrunch &eacute; indispens&aacute;vel. As not&iacute;cias sobre rodadas de investimento e novas empresas ajudam a identificar tend&ecirc;ncias emergentes.</p>
+<p>- <strong>Lan&ccedil;amentos de produtos tecnol&oacute;gicos:</strong> O site divulga rapidamente informa&ccedil;&otilde;es sobre gadgets, aplicativos e servi&ccedil;os digitais.</p>
+<p>- <strong>Eventos e confer&ecirc;ncias:</strong> O TechCrunch organiza eventos importantes, como o Disrupt, conectando profissionais e investidores.</p>
+<h3>Palavras-chave relacionadas</h3>
+<p>- <strong>not&iacute;cias de tecnologia</strong></p>
+<p>- <strong>startups inovadoras</strong></p>
+<p>- <strong>lan&ccedil;amentos tecnol&oacute;gicos</strong></p>
+<h2>2. The Verge</h2>
+<h3>Conhe&ccedil;a o The Verge</h3>
+<p>O <strong>The Verge</strong> &eacute; um portal americano focado em tecnologia, ci&ecirc;ncia, arte e cultura digital. Sua abordagem combina jornalismo aprofundado com uma linguagem acess&iacute;vel, ideal para p&uacute;blicos variados.</p>
+<h3>Destaques do The Verge</h3>
+<p>- <strong>An&aacute;lises detalhadas:</strong> O site apresenta reviews completos de dispositivos como smartphones, laptops, consoles e acess&oacute;rios.</p>
+<p>- <strong>Cobertura de tend&ecirc;ncias tecnol&oacute;gicas:</strong> Intelig&ecirc;ncia artificial, realidade aumentada, automa&ccedil;&atilde;o e muito mais s&atilde;o temas frequentes.</p>
+<p>- <strong>Multim&iacute;dia:</strong> Al&eacute;m de textos, o The Verge produz v&iacute;deos, podcasts e reportagens visuais.</p>
+<h3>Por que o The Verge &eacute; relevante?</h3>
+<p>Se voc&ecirc; busca entender n&atilde;o apenas o que h&aacute; de novo, mas tamb&eacute;m como essas tecnologias impactam nossa vida e cultura, o The Verge oferece um conte&uacute;do diversificado e de alta qualidade.</p>
+<h3>Palavras-chave relacionadas</h3>
+<p>- <strong>an&aacute;lises de tecnologia</strong></p>
+<p>- <strong>tend&ecirc;ncias digitais</strong></p>
+<p>- <strong>reviews de gadgets</strong></p>
+<h2>3. Wired</h2>
+<h3>O que torna o Wired especial?</h3>
+<p>Com uma trajet&oacute;ria de d&eacute;cadas, o <strong>Wired</strong> &eacute; conhecido por sua cobertura aprofundada que vai al&eacute;m das not&iacute;cias superficiais. O foco est&aacute; nas implica&ccedil;&otilde;es sociais, econ&ocirc;micas e pol&iacute;ticas da tecnologia.</p>
+<h3>Conte&uacute;dos oferecidos pelo Wired</h3>
+<p>- <strong>Reportagens investigativas:</strong> O Wired publica mat&eacute;rias detalhadas sobre seguran&ccedil;a digital, privacidade e o futuro da tecnologia.</p>
+<p>- <strong>Entrevistas exclusivas:</strong> Conversas com l&iacute;deres do setor, cientistas e pensadores tecnol&oacute;gicos.</p>
+<p>- <strong>Artigos de opini&atilde;o:</strong> Reflex&otilde;es sobre os desafios e oportunidades gerados pela inova&ccedil;&atilde;o.</p>
+<h3>P&uacute;blico-alvo do Wired</h3>
+<p>Ideal para leitores que desejam compreender o contexto mais amplo da tecnologia, suas consequ&ecirc;ncias e os debates atuais que envolvem o setor.</p>
+<h3>Palavras-chave relacionadas</h3>
+<p>- <strong>tecnologia e sociedade</strong></p>
+<p>- <strong>seguran&ccedil;a digital</strong></p>
+<p>- <strong>inova&ccedil;&atilde;o tecnol&oacute;gica</strong></p>
+<h2>4. Gizmodo</h2>
+<h3>Perfil do Gizmodo</h3>
+<p>O <strong>Gizmodo</strong> &eacute; um site popular que mistura not&iacute;cias, reviews e dicas sobre tecnologia, gadgets e cultura digital. Sua linguagem descontra&iacute;da conquista leitores que buscam informa&ccedil;&atilde;o com entretenimento.</p>
+<h3>O que esperar do Gizmodo?</h3>
+<p>- <strong>Not&iacute;cias r&aacute;pidas e atualizadas:</strong> Cobertura &aacute;gil dos principais lan&ccedil;amentos e acontecimentos do mundo tech.</p>
+<p>- <strong>Guias e tutoriais:</strong> Conte&uacute;do pr&aacute;tico para aproveitar melhor dispositivos e servi&ccedil;os.</p>
+<p>- <strong>Curiosidades tecnol&oacute;gicas:</strong> Mat&eacute;rias sobre inven&ccedil;&otilde;es inusitadas, tend&ecirc;ncias e fen&ocirc;menos da internet.</p>
+<h3>Por que seguir o Gizmodo?</h3>
+<p>Se o objetivo &eacute; se manter informado de forma leve e din&acirc;mica, o Gizmodo oferece uma experi&ecirc;ncia de leitura acess&iacute;vel e divertida.</p>
+<h3>Palavras-chave relacionadas</h3>
+<p>- <strong>novidades em gadgets</strong></p>
+<p>- <strong>dicas de tecnologia</strong></p>
+<p>- <strong>tecnologia para o dia a dia</strong></p>
+<h2>5. Ars Technica</h2>
+<h3>Sobre o Ars Technica</h3>
+<p>O <strong>Ars Technica</strong> &eacute; um portal que se destaca pelo conte&uacute;do t&eacute;cnico e aprofundado, voltado para profissionais de TI, desenvolvedores e entusiastas avan&ccedil;ados.</p>
+<h3>Caracter&iacute;sticas do Ars Technica</h3>
+<p>- <strong>An&aacute;lises t&eacute;cnicas:</strong> Revis&otilde;es detalhadas de hardware, software e sistemas operacionais.</p>
+<p>- <strong>Not&iacute;cias especializadas:</strong> Foco em seguran&ccedil;a, programa&ccedil;&atilde;o, infraestrutura e ci&ecirc;ncia da computa&ccedil;&atilde;o.</p>
+<p>- <strong>Colunas e f&oacute;runs:</strong> Espa&ccedil;o para debates e troca de conhecimento entre especialistas.</p>
+<h3>Para quem o Ars Technica &eacute; indicado?</h3>
+<p>Para quem deseja ir al&eacute;m das not&iacute;cias superficiais e entender o funcionamento e a arquitetura das tecnologias, Ars Technica &eacute; uma fonte valiosa.</p>
+<h3>Palavras-chave relacionadas</h3>
+<p>- <strong>an&aacute;lises t&eacute;cnicas</strong></p>
+<p>- <strong>seguran&ccedil;a da informa&ccedil;&atilde;o</strong></p>
+<p>- <strong>desenvolvimento de software</strong></p>
+<h2>Como Escolher O Melhor Site Para Se Manter Atualizado</h2>
+<p>Ao decidir qual site acompanhar, &eacute; importante considerar alguns aspectos:</p>
+<p>- <strong>Interesse pessoal e profissional:</strong> Se voc&ecirc; &eacute; um desenvolvedor, pode preferir sites mais t&eacute;cnicos, como Ars Technica. J&aacute; quem busca tend&ecirc;ncias culturais pode gostar do The Verge ou do Wired.</p>
+<p>- <strong>Frequ&ecirc;ncia de atualiza&ccedil;&atilde;o:</strong> Sites como TechCrunch e Gizmodo trazem not&iacute;cias quase em tempo real, ideais para quem quer estar sempre na vanguarda.</p>
+<p>- <strong>Formato do conte&uacute;do:</strong> Prefere textos, v&iacute;deos ou podcasts? Cada site oferece formatos variados para facilitar o consumo da informa&ccedil;&atilde;o.</p>
+<p>- <strong>Credibilidade e profundidade:</strong> Avalie se o site apresenta fontes confi&aacute;veis, an&aacute;lises fundamentadas e uma abordagem s&eacute;ria.</p>
+<h2>A Import&acirc;ncia De Se Manter Informado No Mercado Tecnol&oacute;gico</h2>
+<p>O setor tecnol&oacute;gico &eacute; um dos que mais cresce e transforma a economia global. Novas ferramentas, plataformas e conceitos surgem constantemente, impactando o modo como trabalhamos, nos comunicamos e consumimos servi&ccedil;os.</p>
+<p>Estar atualizado nas <strong>novidades tecnol&oacute;gicas</strong> significa:</p>
+<p>- <strong>Tomar decis&otilde;es melhores:</strong> Para empresas, isso pode significar investir em solu&ccedil;&otilde;es inovadoras que aumentem a efici&ecirc;ncia.</p>
+<p>- <strong>Desenvolver habilidades relevantes:</strong> Profissionais que acompanham as tend&ecirc;ncias conseguem aprimorar suas compet&ecirc;ncias e se destacar.</p>
+<p>- <strong>Antecipar mudan&ccedil;as:</strong> Conhecer as tecnologias emergentes permite preparar-se para o futuro e evitar surpresas no mercado.</p>
+<p>Al&eacute;m disso, o acesso a informa&ccedil;&otilde;es confi&aacute;veis ajuda a filtrar o que &eacute; realmente relevante, evitando o excesso de not&iacute;cias superficiais ou sensacionalistas.</p>
+<h2>Dicas Para Potencializar O Aprendizado Tecnol&oacute;gico</h2>
+<p>Para aproveitar ao m&aacute;ximo os recursos oferecidos pelos sites de tecnologia, algumas estrat&eacute;gias podem ajudar:</p>
+<p>- <strong>Configurar alertas e newsletters:</strong> Muitos portais oferecem assinaturas de boletins informativos que entregam as principais not&iacute;cias diretamente no seu e-mail.</p>
+<p>- <strong>Seguir nas redes sociais:</strong> Canais no Twitter, LinkedIn e YouTube proporcionam conte&uacute;do atualizado e interativo.</p>
+<p>- <strong>Participar de comunidades online:</strong> F&oacute;runs, grupos e eventos virtuais s&atilde;o &oacute;timos para trocar experi&ecirc;ncias e tirar d&uacute;vidas.</p>
+<p>- <strong>Praticar a aplica&ccedil;&atilde;o do conhecimento:</strong> Acompanhar novidades deve ser acompanhado da experimenta&ccedil;&atilde;o, seja testando novos apps, dispositivos ou ferramentas.</p>
+<h2>Considera&ccedil;&otilde;es Finais</h2>
+<p>A tecnologia est&aacute; em constante transforma&ccedil;&atilde;o e quem deseja estar &agrave; frente precisa investir tempo e aten&ccedil;&atilde;o na busca por informa&ccedil;&otilde;es de qualidade. Os sites mencionados oferecem uma variedade de perspectivas e abordagens, atendendo a diferentes perfis e necessidades.</p>
+<p>Seja para acompanhar os lan&ccedil;amentos de gadgets, entender o impacto das inova&ccedil;&otilde;es na sociedade ou aprofundar-se em aspectos t&eacute;cnicos, essa lista re&uacute;ne fontes confi&aacute;veis e atualizadas. Para quem quer ampliar ainda mais seu repert&oacute;rio tecnol&oacute;gico, <a href="https://www.magodatecnologia.com.br/" target="_blank" rel="noopener">veja mais em Mago da Tecnologia</a>, uma plataforma que re&uacute;ne conte&uacute;dos relevantes e atualizados sobre o universo digital.</p>
+<p>Manter-se informado nunca foi t&atilde;o f&aacute;cil e essencial. Escolha seus canais favoritos e acompanhe o desenvolvimento tecnol&oacute;gico para estar sempre preparado para o futuro.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

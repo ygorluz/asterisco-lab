@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Por que a segurança nativa é essencial no próximo Windows Pro - Asterisco Lab</title>
+    <meta name="description" content="Descubra por que a segurança nativa é crucial no próximo Windows Pro para proteger seus dados com eficiência e inovação avançada.">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/fixo/" style="color:#ffffff;">Fixo</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Por que a segurança nativa é essencial no próximo Windows Pro</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">Descubra por que a segurança nativa é crucial no próximo Windows Pro para proteger seus dados com eficiência e inovação avançada.</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-09-02" style="color: var(--text-muted);">
+                        02/09/2026 00:00
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/por-que-a-seguranca-nativa-e-essencial-no-proximo-windows-pro.jpg" alt="Por que a segurança nativa é essencial no próximo Windows Pro">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>A evolu&ccedil;&atilde;o constante das amea&ccedil;as digitais torna a <strong>seguran&ccedil;a cibern&eacute;tica</strong> uma prioridade m&aacute;xima para empresas e usu&aacute;rios individuais. Com o avan&ccedil;o das tecnologias e o aumento do trabalho remoto, proteger dados e sistemas tornou-se um desafio complexo. Nesse cen&aacute;rio, o desenvolvimento do <strong>pr&oacute;ximo Windows Pro</strong> destaca a import&acirc;ncia de uma <strong>seguran&ccedil;a nativa robusta</strong>, integrada diretamente ao sistema operacional, como fundamental para garantir a integridade, confidencialidade e disponibilidade das informa&ccedil;&otilde;es.</p>
+<h2>O Que Significa Seguran&ccedil;a Nativa Em Sistemas Operacionais?</h2>
+<p>A <strong>seguran&ccedil;a nativa</strong> refere-se &agrave; implementa&ccedil;&atilde;o de mecanismos de prote&ccedil;&atilde;o embutidos diretamente no n&uacute;cleo do sistema operacional, ao inv&eacute;s de depender exclusivamente de solu&ccedil;&otilde;es de terceiros. Isso significa que o sistema j&aacute; nasce preparado para evitar, detectar e responder a amea&ccedil;as, com ferramentas integradas que trabalham em conjunto para proteger o ambiente digital.</p>
+<h3>Vantagens da seguran&ccedil;a nativa</h3>
+<p>- <strong>Integra&ccedil;&atilde;o profunda:</strong> Como os recursos de seguran&ccedil;a fazem parte do pr&oacute;prio sistema, a comunica&ccedil;&atilde;o entre componentes &eacute; mais eficiente e confi&aacute;vel.</p>
+<p>- <strong>Desempenho otimizado:</strong> Solu&ccedil;&otilde;es nativas geralmente consomem menos recursos do sistema, evitando lentid&atilde;o e melhorando a experi&ecirc;ncia do usu&aacute;rio.</p>
+<p>- <strong>Atualiza&ccedil;&otilde;es cont&iacute;nuas:</strong> A seguran&ccedil;a integrada pode receber atualiza&ccedil;&otilde;es autom&aacute;ticas sincronizadas com o sistema, garantindo prote&ccedil;&atilde;o constante contra novas amea&ccedil;as.</p>
+<p>- <strong>Redu&ccedil;&atilde;o de vulnerabilidades:</strong> Componentes externos podem introduzir falhas; a seguran&ccedil;a nativa minimiza esses riscos ao manter o controle total sobre os mecanismos de prote&ccedil;&atilde;o.</p>
+<h2>Por Que O Pr&oacute;ximo Windows Pro Precisa De Seguran&ccedil;a Nativa Aprimorada?</h2>
+<p>A crescente sofistica&ccedil;&atilde;o dos ataques digitais exige que o Windows Pro, uma das plataformas mais usadas no mundo corporativo, disponha de recursos avan&ccedil;ados de prote&ccedil;&atilde;o incorporados ao sistema. Entre os principais motivos para essa necessidade, destacam-se:</p>
+<h3>Aumento das amea&ccedil;as cibern&eacute;ticas</h3>
+<p>Nos &uacute;ltimos anos, houve um crescimento exponencial em ataques como <strong>ransomware</strong>, phishing, exploits de dia zero e invas&otilde;es a redes corporativas. A complexidade e o volume dessas amea&ccedil;as exigem que o sistema operacional tenha defesas proativas, capazes de identificar e neutralizar ataques antes que causem danos.</p>
+<h3>Prote&ccedil;&atilde;o do ambiente h&iacute;brido e remoto</h3>
+<p>O modelo de trabalho h&iacute;brido e remoto veio para ficar. Com colaboradores acessando recursos da empresa de diferentes locais e dispositivos, o sistema operacional precisa oferecer seguran&ccedil;a nativa que garanta o controle e a prote&ccedil;&atilde;o dos dados, independentemente do ambiente.</p>
+<h3>Necessidade de conformidade regulat&oacute;ria</h3>
+<p>Leis como a <strong>LGPD</strong> (Lei Geral de Prote&ccedil;&atilde;o de Dados) no Brasil, GDPR na Europa e outras regulamenta&ccedil;&otilde;es de privacidade imp&otilde;em regras rigorosas quanto &agrave; prote&ccedil;&atilde;o dos dados pessoais. Ter uma seguran&ccedil;a nativa robusta no Windows Pro facilita o atendimento a essas normas, evitando multas e danos &agrave; reputa&ccedil;&atilde;o.</p>
+<h3>Redu&ccedil;&atilde;o dos custos com seguran&ccedil;a</h3>
+<p>Solu&ccedil;&otilde;es terceirizadas podem ser caras e complexas de administrar. Um sistema operacional que j&aacute; incorpora ferramentas avan&ccedil;adas de seguran&ccedil;a reduz a necessidade de m&uacute;ltiplas camadas de prote&ccedil;&atilde;o externas, diminuindo custos e simplificando a gest&atilde;o.</p>
+<h2>Principais Recursos De Seguran&ccedil;a Nativa Que O Pr&oacute;ximo Windows Pro Deve Oferecer</h2>
+<p>Para garantir a prote&ccedil;&atilde;o efetiva dos usu&aacute;rios e das organiza&ccedil;&otilde;es, o pr&oacute;ximo Windows Pro precisa investir em tecnologias de seguran&ccedil;a nativas que sejam completas, eficientes e f&aacute;ceis de usar.</p>
+<h3>1. Criptografia avan&ccedil;ada integrada</h3>
+<p>A criptografia deve ser uma base do sistema operacional, protegendo os dados armazenados e em tr&acirc;nsito. O Windows Pro pode utilizar tecnologias como o <strong>BitLocker</strong>, que oferece criptografia de disco completo, e protocolos seguros para comunica&ccedil;&atilde;o entre dispositivos e servidores.</p>
+<h3>2. Autentica&ccedil;&atilde;o multifator e biom&eacute;trica</h3>
+<p>A autentica&ccedil;&atilde;o &eacute; a primeira linha de defesa contra acessos n&atilde;o autorizados. O sistema deve suportar m&eacute;todos nativos de autentica&ccedil;&atilde;o multifator (MFA) e biom&eacute;tricos, como reconhecimento facial e leitura de impress&otilde;es digitais, garantindo maior seguran&ccedil;a sem prejudicar a usabilidade.</p>
+<h3>3. Prote&ccedil;&atilde;o contra malware e amea&ccedil;as avan&ccedil;adas</h3>
+<p>O Windows Defender j&aacute; &eacute; um exemplo de antiv&iacute;rus e antimalware nativo que vem evoluindo. O pr&oacute;ximo Windows Pro precisa expandir essas capacidades, incorporando intelig&ecirc;ncia artificial para detectar amea&ccedil;as novas e desconhecidas, bloqueando ataques de forma proativa.</p>
+<h3>4. Sandbox e isolamento de processos</h3>
+<p>Para evitar que c&oacute;digos maliciosos comprometam o sistema, o sistema operacional deve permitir a execu&ccedil;&atilde;o de aplicativos e processos em ambientes isolados (sandbox), limitando o acesso a recursos cr&iacute;ticos e prevenindo a propaga&ccedil;&atilde;o de infec&ccedil;&otilde;es.</p>
+<h3>5. Atualiza&ccedil;&otilde;es autom&aacute;ticas e seguras</h3>
+<p>Manter o sistema atualizado &eacute; crucial para corrigir vulnerabilidades. A seguran&ccedil;a nativa deve incluir mecanismos confi&aacute;veis para realizar atualiza&ccedil;&otilde;es autom&aacute;ticas, garantindo que todos os dispositivos estejam protegidos sem a necessidade de interven&ccedil;&atilde;o constante do usu&aacute;rio.</p>
+<h3>6. Gerenciamento e monitoramento centralizados</h3>
+<p>Especialmente para ambientes corporativos, a capacidade de gerenciar pol&iacute;ticas de seguran&ccedil;a e monitorar eventos em tempo real, diretamente pelo sistema, &eacute; indispens&aacute;vel. Ferramentas integradas facilitam a administra&ccedil;&atilde;o e a resposta r&aacute;pida a incidentes.</p>
+<h2>A Import&acirc;ncia Da Ativa&ccedil;&atilde;o Segura No Windows 11 Pro</h2>
+<p>Um dos avan&ccedil;os significativos em seguran&ccedil;a no ecossistema Windows &eacute; o suporte &agrave; ativa&ccedil;&atilde;o segura, que garante que apenas software leg&iacute;timo seja executado no dispositivo. A frase "<a href="https://casadosoftware.com.br/categoria/windows" target="_blank" rel="noopener">Windows 11 Pro com suporte para ativa&ccedil;&atilde;o segura</a>" representa essa iniciativa, que impede a instala&ccedil;&atilde;o e execu&ccedil;&atilde;o de c&oacute;digos maliciosos ou n&atilde;o autorizados durante o processo de inicializa&ccedil;&atilde;o do sistema.</p>
+<p>Essa funcionalidade protege o sistema contra ataques que tentam modificar o processo de boot, como rootkits e bootkits, que podem comprometer profundamente a seguran&ccedil;a do dispositivo. A ativa&ccedil;&atilde;o segura &eacute; uma camada essencial para refor&ccedil;ar a confian&ccedil;a no ambiente operacional, especialmente em m&aacute;quinas corporativas que lidam com dados sens&iacute;veis.</p>
+<h2>Como A Seguran&ccedil;a Nativa Impacta A Experi&ecirc;ncia Do Usu&aacute;rio E A Produtividade</h2>
+<p>Al&eacute;m da prote&ccedil;&atilde;o, a seguran&ccedil;a nativa no pr&oacute;ximo Windows Pro deve ser transparente para o usu&aacute;rio, evitando interrup&ccedil;&otilde;es desnecess&aacute;rias ou complexidade que possam atrapalhar o trabalho di&aacute;rio.</p>
+<h3>Facilidade de uso e configura&ccedil;&atilde;o</h3>
+<p>Solu&ccedil;&otilde;es integradas permitem que a seguran&ccedil;a seja configurada e mantida com menos esfor&ccedil;o. Interfaces intuitivas e pol&iacute;ticas pr&eacute;-configuradas ajudam a reduzir erros humanos, que s&atilde;o uma das principais causas de falhas de seguran&ccedil;a.</p>
+<h3>Melhor desempenho do sistema</h3>
+<p>Ao contr&aacute;rio de softwares adicionais que podem consumir muitos recursos, a seguran&ccedil;a nativa otimizada garante um funcionamento mais fluido, mantendo a produtividade do usu&aacute;rio, mesmo em m&aacute;quinas com hardware limitado.</p>
+<h3>Confian&ccedil;a para o trabalho remoto</h3>
+<p>Com a seguran&ccedil;a embutida, colaboradores que trabalham fora do escrit&oacute;rio podem acessar arquivos e sistemas com tranquilidade, sabendo que suas atividades est&atilde;o protegidas contra invas&otilde;es e vazamentos.</p>
+<h2>Tend&ecirc;ncias Futuras Em Seguran&ccedil;a Para O Windows Pro</h2>
+<p>A seguran&ccedil;a digital &eacute; um campo em constante transforma&ccedil;&atilde;o. O pr&oacute;ximo Windows Pro deve estar preparado para incorporar inova&ccedil;&otilde;es que reforcem ainda mais sua prote&ccedil;&atilde;o.</p>
+<h3>Uso de intelig&ecirc;ncia artificial e machine learning</h3>
+<p>Ferramentas que analisam comportamentos suspeitos e padr&otilde;es de ataque em tempo real ajudam a detectar amea&ccedil;as desconhecidas e responder rapidamente, minimizando danos.</p>
+<h3>Seguran&ccedil;a baseada em hardware</h3>
+<p>A integra&ccedil;&atilde;o entre software e hardware, como o uso de TPM (Trusted Platform Module) e processadores com recursos de seguran&ccedil;a, fortalece a prote&ccedil;&atilde;o contra ataques f&iacute;sicos e digitais.</p>
+<h3>Zero Trust e pol&iacute;ticas adaptativas</h3>
+<p>Modelos de seguran&ccedil;a que n&atilde;o confiam automaticamente em nenhum usu&aacute;rio ou dispositivo, mesmo dentro da rede corporativa, s&atilde;o essenciais para reduzir riscos em ambientes cada vez mais complexos.</p>
+<h2>Considera&ccedil;&otilde;es Finais</h2>
+<p>Garantir uma <strong>seguran&ccedil;a nativa s&oacute;lida</strong> no pr&oacute;ximo Windows Pro &eacute; crucial para atender &agrave;s demandas atuais e futuras do mercado, protegendo informa&ccedil;&otilde;es, facilitando a gest&atilde;o e promovendo um ambiente confi&aacute;vel para empresas e usu&aacute;rios. A integra&ccedil;&atilde;o de tecnologias avan&ccedil;adas, como a ativa&ccedil;&atilde;o segura e autentica&ccedil;&atilde;o multifator, refor&ccedil;a a posi&ccedil;&atilde;o do sistema como uma plataforma segura e eficiente.</p>
+<p>Ao investir em seguran&ccedil;a desde o n&uacute;cleo do sistema, o Windows Pro oferece uma base s&oacute;lida para enfrentar os desafios da era digital, garantindo que inova&ccedil;&otilde;es e produtividade caminhem lado a lado com a prote&ccedil;&atilde;o essencial para o sucesso em um mundo cada vez mais conectado.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

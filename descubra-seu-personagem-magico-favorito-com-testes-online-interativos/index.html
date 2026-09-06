@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descubra seu personagem mágico favorito com testes online interativos - Asterisco Lab</title>
+    <meta name="description" content="Encontre seu personagem mágico favorito com nossos testes online interativos. Divirta-se e descubra sua essência mágica em poucos minutos!">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/lancamentos/" style="color:#ffffff;">Lançamentos</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Descubra seu personagem mágico favorito com testes online interativos</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">Encontre seu personagem mágico favorito com nossos testes online interativos. Divirta-se e descubra sua essência mágica em poucos minutos!</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-08-08" style="color: var(--text-muted);">
+                        08/08/2026 00:00
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/descubra-seu-personagem-magico-favorito-com-testes-online-interativos.jpg" alt="Descubra seu personagem mágico favorito com testes online interativos">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>No universo dos contos de magia, cada personagem carrega uma hist&oacute;ria &uacute;nica, poderes especiais e uma personalidade que cativa f&atilde;s de todas as idades. Seja voc&ecirc; um entusiasta de livros, filmes ou s&eacute;ries, encontrar o personagem m&aacute;gico que mais se identifica pode transformar sua experi&ecirc;ncia e aprofundar sua conex&atilde;o com esse mundo encantado. Gra&ccedil;as aos <strong>testes online interativos</strong>, essa descoberta ficou muito mais f&aacute;cil, divertida e personalizada.</p>
+<h2>Por Que Fazer Testes Online Para Descobrir Seu Personagem M&aacute;gico?</h2>
+<p>Os <strong>testes online interativos</strong> s&atilde;o ferramentas din&acirc;micas que combinam perguntas sobre gostos pessoais, valores, atitudes e at&eacute; mesmo prefer&ecirc;ncias sobre cen&aacute;rios fict&iacute;cios para apontar qual personagem m&aacute;gico mais se alinha com seu perfil. Eles v&atilde;o al&eacute;m de um simples passatempo, oferecendo uma an&aacute;lise cuidadosa que pode revelar aspectos da sua personalidade atrav&eacute;s da lente do mundo m&aacute;gico.</p>
+<h3>Vantagens dos testes interativos</h3>
+<p>- <strong>Personaliza&ccedil;&atilde;o:</strong> Cada resposta &eacute; considerada para gerar um resultado &uacute;nico.</p>
+<p>- <strong>Engajamento:</strong> S&atilde;o divertidos e mant&ecirc;m o interesse com perguntas criativas.</p>
+<p>- <strong>Autoconhecimento:</strong> Permitem refletir sobre suas escolhas e tra&ccedil;os pessoais.</p>
+<p>- <strong>Conex&atilde;o com a fantasia:</strong> Aproximam voc&ecirc; do universo m&aacute;gico, tornando-o mais real e palp&aacute;vel.</p>
+<p>Al&eacute;m disso, a diversidade de temas e personagens dispon&iacute;veis em diferentes plataformas permite que voc&ecirc; escolha o universo m&aacute;gico que mais gosta, seja ele inspirado em cl&aacute;ssicos da literatura, s&eacute;ries de TV, filmes ou jogos.</p>
+<h2>Principais Universos M&aacute;gicos Para Testes Online</h2>
+<p>Existem diversos universos m&aacute;gicos que atraem f&atilde;s ao redor do mundo. Cada um possui personagens ic&ocirc;nicos que podem ser descobertos por meio de testes personalizados.</p>
+<h3>Harry Potter: a magia da escola de bruxaria</h3>
+<p>O universo de <strong>Harry Potter</strong> &eacute; um dos mais amados e estudados no mundo dos testes de personalidade. Com personagens que v&atilde;o desde o corajoso Harry at&eacute; a s&aacute;bia Hermione e o leal Rony, h&aacute; op&ccedil;&otilde;es que agradam a todos.</p>
+<p>Os testes sobre esse universo costumam analisar caracter&iacute;sticas como bravura, intelig&ecirc;ncia, lealdade e ambi&ccedil;&atilde;o para indicar a casa de Hogwarts que mais combina com voc&ecirc;, ou at&eacute; mesmo qual personagem representa seu estilo e ess&ecirc;ncia. Vale destacar que o <a href="https://quizolimpiano.com/quiz-harry-potter-casas-de-hogwarts/" target="_blank" rel="noopener">quiz harry potter</a> &eacute; uma das buscas mais populares entre f&atilde;s que desejam se aprofundar nesse universo m&aacute;gico.</p>
+<h3>Senhor dos An&eacute;is: a fantasia &eacute;pica da Terra-m&eacute;dia</h3>
+<p>Na Terra-m&eacute;dia, personagens como Gandalf, Frodo e Aragorn possuem tra&ccedil;os bem definidos que refletem coragem, sabedoria e lideran&ccedil;a. Testes que envolvem esse universo ajudam a identificar qual papel voc&ecirc; desempenharia na jornada pela salva&ccedil;&atilde;o do mundo, conectando suas escolhas a valores importantes da saga.</p>
+<h3>As Cr&ocirc;nicas de N&aacute;rnia: a magia da inf&acirc;ncia e da aventura</h3>
+<p>N&aacute;rnia &eacute; um universo repleto de magia, onde crian&ccedil;as comuns se tornam her&oacute;is. Personagens como Aslam, Lucy e Peter s&atilde;o inspira&ccedil;&otilde;es para quem gosta de hist&oacute;rias de bravura e amizade. Testes online que envolvem esses personagens destacam a import&acirc;ncia da coragem, da f&eacute; e da lealdade.</p>
+<h3>Animais Fant&aacute;sticos e Onde Habitam: o mundo m&aacute;gico expandido</h3>
+<p>Para os f&atilde;s do universo expandido de Harry Potter, os testes com personagens de <strong>Animais Fant&aacute;sticos</strong> oferecem uma experi&ecirc;ncia diferente, focando em caracter&iacute;sticas como curiosidade, coragem diante do desconhecido e conex&atilde;o com criaturas m&aacute;gicas.</p>
+<h2>Como Funcionam Os Testes Online Interativos De Personagens M&aacute;gicos?</h2>
+<p>Os testes geralmente s&atilde;o compostos por diversas perguntas que abordam desde prefer&ecirc;ncias pessoais at&eacute; rea&ccedil;&otilde;es em situa&ccedil;&otilde;es hipot&eacute;ticas do universo m&aacute;gico. A seguir, uma explica&ccedil;&atilde;o detalhada do processo para que voc&ecirc; saiba o que esperar.</p>
+<h3>Etapas dos testes</h3>
+<p>1. <strong>Sele&ccedil;&atilde;o do tema:</strong> Escolha o universo m&aacute;gico que deseja conhecer melhor.</p>
+<p>2. <strong>Resposta &agrave;s perguntas:</strong> Escolha as op&ccedil;&otilde;es que mais combinam com voc&ecirc;, que podem envolver gostos, atitudes e valores.</p>
+<p>3. <strong>An&aacute;lise dos resultados:</strong> O sistema compara suas respostas com perfis de personagens para indicar aquele que mais se encaixa.</p>
+<p>4. <strong>Interpreta&ccedil;&atilde;o dos resultados:</strong> Al&eacute;m do nome do personagem, muitos testes oferecem descri&ccedil;&otilde;es detalhadas sobre as caracter&iacute;sticas que justificam a escolha.</p>
+<h3>Tipos de perguntas frequentes</h3>
+<p>- Qual qualidade voc&ecirc; mais valoriza: coragem, intelig&ecirc;ncia, lealdade ou ambi&ccedil;&atilde;o?</p>
+<p>- Como voc&ecirc; reagiria a uma situa&ccedil;&atilde;o de perigo extremo?</p>
+<p>- Qual artefato m&aacute;gico voc&ecirc; escolheria para levar em uma aventura?</p>
+<p>- Que papel voc&ecirc; prefere em um grupo: l&iacute;der, estrategista, protetor ou motivador?</p>
+<p>Essas perguntas ajudam a tra&ccedil;ar um perfil que vai al&eacute;m do superficial, levando em conta como voc&ecirc; pensa, sente e age.</p>
+<h2>Os Melhores Sites Para Encontrar Testes Interativos De Personagens M&aacute;gicos</h2>
+<p>Muitos portais e plataformas especializadas oferecem testes de qualidade para quem quer descobrir seu personagem m&aacute;gico favorito. Abaixo, uma lista com op&ccedil;&otilde;es confi&aacute;veis e divertidas.</p>
+<h3>Pottermore (Wizarding World)</h3>
+<p>O site oficial do universo Harry Potter, <strong>Pottermore</strong>, traz testes que v&atilde;o desde a escolha da casa de Hogwarts at&eacute; a identifica&ccedil;&atilde;o do seu Patrono. &Eacute; uma fonte aut&ecirc;ntica e repleta de conte&uacute;do exclusivo para os f&atilde;s.</p>
+<h3>BuzzFeed</h3>
+<p>Conhecida por seus quizzes variados, a BuzzFeed oferece testes interativos com temas que abrangem diversos universos m&aacute;gicos, incluindo Harry Potter, Senhor dos An&eacute;is e N&aacute;rnia. Os testes s&atilde;o din&acirc;micos e com uma interface amig&aacute;vel.</p>
+<h3>Playbuzz</h3>
+<p>Essa plataforma permite criar e compartilhar testes personalizados, o que resulta em uma grande variedade de quizzes m&aacute;gicos feitos por f&atilde;s. &Eacute; comum encontrar testes que combinam personagens menos conhecidos ou universos alternativos.</p>
+<h3>BrainFall</h3>
+<p>Com foco em testes de personalidade, o BrainFall possui quizzes que conectam suas respostas a personagens de fantasia, ajudando a conhecer melhor sua personalidade e estilo dentro de um cen&aacute;rio m&aacute;gico.</p>
+<h2>Dicas Para Aproveitar Ao M&aacute;ximo Os Testes De Personagens M&aacute;gicos</h2>
+<p>Para que a experi&ecirc;ncia seja divertida e o resultado mais fiel ao seu perfil, algumas dicas s&atilde;o essenciais.</p>
+<h3>Seja sincero nas respostas</h3>
+<p>A autenticidade nas respostas &eacute; fundamental para que o teste consiga identificar seu perfil verdadeiro. Evite escolher respostas baseadas no que voc&ecirc; gostaria de ser, e sim no que realmente sente ou pensa.</p>
+<h3>Refa&ccedil;a testes com temas diferentes</h3>
+<p>Cada teste possui sua pr&oacute;pria metodologia e foco. Repetir o processo com diferentes quizzes pode revelar nuances variadas da sua personalidade m&aacute;gica.</p>
+<h3>Compartilhe os resultados</h3>
+<p>Dividir suas descobertas com amigos e familiares pode ser uma forma de ampliar a divers&atilde;o e at&eacute; mesmo descobrir novos personagens m&aacute;gicos por meio das escolhas deles.</p>
+<h3>Use os resultados para se inspirar</h3>
+<p>Conhecer seu personagem m&aacute;gico favorito pode servir como motiva&ccedil;&atilde;o para desenvolver qualidades e enfrentar desafios com mais confian&ccedil;a.</p>
+<h2>Como Os Testes Online Ajudam A Fortalecer A Comunidade De F&atilde;s</h2>
+<p>Al&eacute;m do aspecto l&uacute;dico, os testes interativos criam uma ponte entre f&atilde;s de diferentes lugares, unindo pessoas por meio da paix&atilde;o pelos mundos m&aacute;gicos. F&oacute;runs, grupos em redes sociais e comunidades online frequentemente discutem os resultados dos testes, permitindo que os participantes troquem experi&ecirc;ncias e aprendam mais sobre seus personagens e universos preferidos.</p>
+<h3>Eventos e desafios online</h3>
+<p>Muitas comunidades organizam eventos e desafios relacionados aos testes, como maratonas de quizzes, debates sobre personagens e at&eacute; competi&ccedil;&otilde;es de cria&ccedil;&atilde;o de conte&uacute;do inspirado nos resultados. Isso fortalece o sentimento de pertencimento e a troca cultural entre f&atilde;s.</p>
+<h2>O Futuro Dos Testes Interativos: Intelig&ecirc;ncia Artificial E Realidade Aumentada</h2>
+<p>Com a evolu&ccedil;&atilde;o da tecnologia, os testes de personalidade e identifica&ccedil;&atilde;o com personagens m&aacute;gicos est&atilde;o se tornando cada vez mais sofisticados. A intelig&ecirc;ncia artificial permite an&aacute;lises mais precisas e personalizadas, enquanto a realidade aumentada pode trazer experi&ecirc;ncias imersivas, como interagir com seu personagem favorito em ambientes virtuais.</p>
+<h3>Testes integrados a jogos e aplicativos</h3>
+<p>Algumas plataformas j&aacute; est&atilde;o integrando testes dentro de jogos e apps, onde suas escolhas influenciam diretamente o desenvolvimento da hist&oacute;ria, tornando a experi&ecirc;ncia ainda mais envolvente.</p>
+<h3>Feedback em tempo real</h3>
+<p>Com o uso de IA, os testes podem oferecer feedback instant&acirc;neo e recomenda&ccedil;&otilde;es personalizadas, sugerindo livros, filmes e conte&uacute;dos relacionados ao personagem descoberto.</p>
+<h2>Conclus&atilde;o: Transforme Sua Paix&atilde;o Pela Magia Em Uma Experi&ecirc;ncia Personalizada</h2>
+<p>A magia dos personagens fant&aacute;sticos ganha vida quando voc&ecirc; consegue se identificar com eles. Os <strong>testes online interativos</strong> s&atilde;o ferramentas acess&iacute;veis e envolventes que possibilitam essa conex&atilde;o de maneira divertida e profunda. Seja para descobrir qual bruxo voc&ecirc; seria, qual aventureiro da Terra-m&eacute;dia mais se parece com voc&ecirc; ou qual criatura m&iacute;stica tem mais afinidade com sua personalidade, esses quizzes oferecem um caminho &uacute;nico para se conhecer e celebrar o universo m&aacute;gico.</p>
+<p>Aproveite as in&uacute;meras op&ccedil;&otilde;es dispon&iacute;veis na internet e permita-se essa viagem m&aacute;gica que pode revelar muito sobre voc&ecirc; e seus her&oacute;is preferidos. Afinal, todo mundo merece descobrir seu personagem m&aacute;gico favorito e viver um pouco da fantasia que tanto encanta cora&ccedil;&otilde;es.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>
