@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onde comprar seu smartwatch Amazfit na região de Campinas - Asterisco Lab</title>
+    <meta name="description" content="Descubra onde comprar seu smartwatch Amazfit em Campinas com as melhores ofertas e garantia. Tecnologia e estilo pertinho de você!">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/noticias/" style="color:#ffffff;">Notícias</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Onde comprar seu smartwatch Amazfit na região de Campinas</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">Descubra onde comprar seu smartwatch Amazfit em Campinas com as melhores ofertas e garantia. Tecnologia e estilo pertinho de você!</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-09-07" style="color: var(--text-muted);">
+                        07/09/2026 00:00
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/onde-comprar-seu-smartwatch-amazfit-na-regiao-de-campinas.jpg" alt="Onde comprar seu smartwatch Amazfit na região de Campinas">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>A popularidade dos smartwatches tem crescido significativamente nos &uacute;ltimos anos, e a <strong>linha Amazfit</strong> se destaca como uma das op&ccedil;&otilde;es mais procuradas para quem busca tecnologia aliada a um bom custo-benef&iacute;cio. Para os moradores da regi&atilde;o de Campinas, a busca por um ponto de venda confi&aacute;vel e que ofere&ccedil;a assist&ecirc;ncia p&oacute;s-compra &eacute; fundamental. Afinal, adquirir um smartwatch &eacute; investir em sa&uacute;de, praticidade e conectividade no dia a dia.</p>
+<p>Se voc&ecirc; est&aacute; procurando um lugar para comprar seu <a href="https://lojamdcstore.com.br/amazfit/" target="_blank" rel="noopener">Amazfit em Campinas</a>, saber onde encontrar lojas f&iacute;sicas, revendedores autorizados e at&eacute; op&ccedil;&otilde;es online que entregam rapidamente na regi&atilde;o pode fazer toda a diferen&ccedil;a para garantir uma compra segura e vantajosa. A seguir, veja um guia completo com as melhores op&ccedil;&otilde;es e dicas para escolher o modelo ideal para voc&ecirc;.</p>
+<h2>Por Que Escolher Um Smartwatch Amazfit?</h2>
+<p>Antes de entender onde comprar, &eacute; importante destacar os motivos que fazem dos rel&oacute;gios Amazfit uma escolha popular entre consumidores de diferentes perfis. A marca, pertencente &agrave; Huami, empresa parceira da Xiaomi, oferece dispositivos com design moderno, funcionalidades avan&ccedil;adas e pre&ccedil;os competitivos.</p>
+<h3>Funcionalidades que se destacam</h3>
+<p>Os smartwatches da Amazfit contam com diversas fun&ccedil;&otilde;es que atendem desde usu&aacute;rios casuais at&eacute; atletas e pessoas que monitoram a sa&uacute;de de perto. Entre os principais recursos, destacam-se:</p>
+<p>- <strong>Monitoramento de frequ&ecirc;ncia card&iacute;aca 24 horas</strong></p>
+<p>- <strong>GPS integrado para atividades ao ar livre</strong></p>
+<p>- <strong>Medi&ccedil;&atilde;o de oxig&ecirc;nio no sangue (SpO2)</strong></p>
+<p>- <strong>Resist&ecirc;ncia &agrave; &aacute;gua para uso durante nata&ccedil;&atilde;o</strong></p>
+<p>- <strong>Notifica&ccedil;&otilde;es inteligentes, controle de m&uacute;sica e chamadas</strong></p>
+<p>- <strong>Bateria de longa dura&ccedil;&atilde;o, que pode chegar a semanas</strong></p>
+<p>Essas caracter&iacute;sticas tornam os rel&oacute;gios Amazfit ideais para quem busca um dispositivo vers&aacute;til, que acompanhe diferentes rotinas e estilos de vida.</p>
+<h3>Variedade de modelos para todos os gostos</h3>
+<p>A linha Amazfit &eacute; ampla, incluindo modelos como o Amazfit Bip, Amazfit GTS, Amazfit Stratos e Amazfit T-Rex, cada um com suas particularidades e focos espec&iacute;ficos, como esportes, uso casual ou robustez para atividades extremas. Essa diversidade amplia as chances de encontrar um smartwatch que se encaixe perfeitamente &agrave;s suas necessidades.</p>
+<h2>Op&ccedil;&otilde;es De Lojas F&iacute;sicas Em Campinas Para Comprar Amazfit</h2>
+<p>Comprar em uma loja f&iacute;sica pode ser a melhor alternativa para quem prefere experimentar o produto, receber atendimento personalizado e ter facilidade na troca ou assist&ecirc;ncia t&eacute;cnica. Campinas, sendo um polo tecnol&oacute;gico e comercial importante do interior paulista, oferece boas alternativas para quem deseja adquirir um smartwatch Amazfit.</p>
+<h3>Lojas especializadas em eletr&ocirc;nicos e tecnologia</h3>
+<p>Na cidade, algumas lojas especializadas em eletr&ocirc;nicos e tecnologia contam com o cat&aacute;logo de smartwatches Amazfit. Esses estabelecimentos geralmente possuem vendedores treinados que podem auxiliar na escolha do modelo ideal e esclarecer d&uacute;vidas t&eacute;cnicas.</p>
+<p>- <strong>Kalunga Campinas:</strong> Tradicional no mercado de inform&aacute;tica e eletr&ocirc;nicos, a Kalunga oferece uma sele&ccedil;&atilde;o de gadgets e rel&oacute;gios inteligentes, incluindo modelos Amazfit. O diferencial &eacute; a possibilidade de comprar com garantia e suporte em loja.</p>
+<p>- <strong>Fast Shop Campinas:</strong> Conhecida por seus produtos de alta tecnologia, a Fast Shop disp&otilde;e de smartwatches de v&aacute;rias marcas, incluindo a Amazfit, com possibilidade de test&aacute;-los na loja e parcelar a compra.</p>
+<p>- <strong>Lojas de redes de varejo como Magazine Luiza e Casas Bahia:</strong> Essas redes possuem unidades importantes em Campinas e oferecem smartwatches Amazfit tanto na loja f&iacute;sica quanto online, facilitando a retirada r&aacute;pida e o suporte local.</p>
+<h3>Lojas de produtos esportivos e wellness</h3>
+<p>Como os smartwatches Amazfit s&atilde;o muito usados para monitoramento de atividades f&iacute;sicas, algumas lojas de artigos esportivos tamb&eacute;m comercializam esses dispositivos. Al&eacute;m de rel&oacute;gios, &eacute; poss&iacute;vel encontrar acess&oacute;rios e receber orienta&ccedil;&otilde;es sobre como integrar o smartwatch &agrave; sua rotina de exerc&iacute;cios.</p>
+<p>- <strong>Centauro Campinas:</strong> Uma das maiores redes de artigos esportivos do Brasil, oferece modelos Amazfit em diversas unidades, com foco em modelos voltados para esportistas.</p>
+<p>- <strong>Decathlon Campinas:</strong> Com foco em esportes e sa&uacute;de, a Decathlon tamb&eacute;m inclui smartwatches em seu portf&oacute;lio, e os atendentes costumam ajudar na escolha do melhor produto para atividades espec&iacute;ficas.</p>
+<h2>Compras Online Com Entrega R&aacute;pida Para Campinas</h2>
+<p>Comprar online &eacute; uma op&ccedil;&atilde;o que alia comodidade e pre&ccedil;os competitivos, especialmente com a possibilidade de receber o produto diretamente em casa ou no trabalho. Para quem mora em Campinas, &eacute; importante escolher lojas que garantam entrega r&aacute;pida e suporte confi&aacute;vel.</p>
+<h3>Marketplaces confi&aacute;veis</h3>
+<p>- <strong>Amazon Brasil:</strong> A Amazon oferece uma ampla variedade de modelos Amazfit, com avalia&ccedil;&otilde;es de usu&aacute;rios e entrega &aacute;gil para Campinas, muitas vezes com frete gr&aacute;tis para assinantes Prime.</p>
+<p>- <strong>Mercado Livre:</strong> Uma plataforma muito popular para compra de eletr&ocirc;nicos, o Mercado Livre possui vendedores autorizados e op&ccedil;&otilde;es de garantia, al&eacute;m de possibilidades de pagamento facilitado.</p>
+<p>- <strong>Submarino e Americanas:</strong> Essas plataformas fazem parte do mesmo grupo e frequentemente contam com promo&ccedil;&otilde;es exclusivas, al&eacute;m de entregas eficientes para a regi&atilde;o de Campinas.</p>
+<h3>Lojas oficiais e autorizadas</h3>
+<p>Comprar diretamente em lojas oficiais ou revendedores autorizados pela Amazfit pode garantir produtos originais, suporte t&eacute;cnico especializado e garantia adequada.</p>
+<p>- <strong>Site oficial da Amazfit Brasil:</strong> Apesar de algumas limita&ccedil;&otilde;es em estoque, o site oficial oferece as &uacute;ltimas novidades e promo&ccedil;&otilde;es, al&eacute;m do suporte direto da marca.</p>
+<p>- <strong>Importadores autorizados:</strong> Algumas lojas online brasileiras, com sede em Campinas ou regi&atilde;o, trabalham como importadores autorizados e podem oferecer modelos exclusivos com garantia.</p>
+<h2>Dicas Para Escolher O Melhor Modelo De Smartwatch Amazfit</h2>
+<p>Antes de finalizar a compra, &eacute; fundamental analisar quais caracter&iacute;sticas s&atilde;o essenciais para o seu uso di&aacute;rio e estilo de vida. Isso evita arrependimentos e garante que o investimento traga satisfa&ccedil;&atilde;o e funcionalidade.</p>
+<h3>Avalie o uso pretendido</h3>
+<p>Pense nas principais fun&ccedil;&otilde;es que voc&ecirc; deseja do seu smartwatch:</p>
+<p>- <strong>Monitoramento de sa&uacute;de:</strong> Frequ&ecirc;ncia card&iacute;aca, oxigena&ccedil;&atilde;o do sangue, qualidade do sono.</p>
+<p>- <strong>Atividades f&iacute;sicas:</strong> GPS, modos esportivos variados, resist&ecirc;ncia &agrave; &aacute;gua.</p>
+<p>- <strong>Conectividade:</strong> Notifica&ccedil;&otilde;es, controle de m&uacute;sica, integra&ccedil;&atilde;o com smartphone.</p>
+<p>- <strong>Design e conforto:</strong> Tamanho da tela, peso, material da pulseira.</p>
+<h3>Verifique a compatibilidade com seu smartphone</h3>
+<p>Embora os Amazfit sejam compat&iacute;veis com Android e iOS, algumas funcionalidades podem variar dependendo do sistema operacional e da vers&atilde;o do aplicativo Zepp, que controla o smartwatch.</p>
+<h3>Considere a dura&ccedil;&atilde;o da bateria</h3>
+<p>Cada modelo apresenta autonomia diferente. Se voc&ecirc; busca um rel&oacute;gio que n&atilde;o precise ser carregado diariamente, opte por vers&otilde;es com bateria de longa dura&ccedil;&atilde;o, como o Amazfit Bip U, que pode durar at&eacute; nove dias.</p>
+<h3>Pesquise avalia&ccedil;&otilde;es e comparativos</h3>
+<p>Antes de decidir, consultar avalia&ccedil;&otilde;es de usu&aacute;rios, v&iacute;deos de review e comparativos entre modelos pode esclarecer d&uacute;vidas e ajudar a escolher o smartwatch que melhor se adapta ao seu perfil.</p>
+<h2>Assist&ecirc;ncia T&eacute;cnica E Garantia Na Regi&atilde;o De Campinas</h2>
+<p>Comprar em lojas autorizadas e com bom servi&ccedil;o de p&oacute;s-venda &eacute; fundamental para garantir suporte caso algum problema aconte&ccedil;a. Na regi&atilde;o de Campinas, existem centros de assist&ecirc;ncia t&eacute;cnica especializada que trabalham com a linha Amazfit.</p>
+<h3>Centro de suporte oficial</h3>
+<p>A Huami, fabricante dos rel&oacute;gios Amazfit, possui canais oficiais de atendimento e parcerias com assist&ecirc;ncias t&eacute;cnicas que realizam consertos e substitui&ccedil;&atilde;o de pe&ccedil;as originais. Verifique com a loja onde comprar se h&aacute; suporte local dispon&iacute;vel.</p>
+<h3>Servi&ccedil;os de assist&ecirc;ncia t&eacute;cnica multimarcas</h3>
+<p>Campinas conta com diversas oficinas especializadas em eletr&ocirc;nicos e smartwatches, que podem realizar diagn&oacute;sticos e reparos, muitas vezes com agilidade. Confirmar a reputa&ccedil;&atilde;o e a experi&ecirc;ncia desses servi&ccedil;os &eacute; essencial para evitar transtornos.</p>
+<h2>Vantagens De Comprar Em Campinas</h2>
+<p>Adquirir seu smartwatch Amazfit em Campinas oferece benef&iacute;cios que v&atilde;o al&eacute;m do pre&ccedil;o e da variedade de modelos. A proximidade com o local de compra facilita o acesso a assist&ecirc;ncia, troca e suporte, al&eacute;m de permitir que voc&ecirc; tenha contato direto com vendedores especializados para tirar d&uacute;vidas.</p>
+<p>Outro ponto positivo &eacute; a possibilidade de acompanhar promo&ccedil;&otilde;es locais em datas comemorativas, como Black Friday e Dia dos Pais, que costumam oferecer descontos especiais nas lojas f&iacute;sicas e online que atendem Campinas.</p>
+<h2>Considera&ccedil;&otilde;es Finais</h2>
+<p>Investir em um smartwatch Amazfit &eacute; apostar em tecnologia de ponta e praticidade para o dia a dia, seja para monitorar sua sa&uacute;de, melhorar seu desempenho esportivo ou facilitar a intera&ccedil;&atilde;o com seu smartphone. Morar em Campinas e seus arredores facilita o acesso a diversos pontos de venda confi&aacute;veis, tanto f&iacute;sicos quanto virtuais, que garantem seguran&ccedil;a, variedade e suporte p&oacute;s-compra.</p>
+<p>Ao escolher onde comprar, priorize lojas com boa reputa&ccedil;&atilde;o, que ofere&ccedil;am garantia e assist&ecirc;ncia t&eacute;cnica local, al&eacute;m de op&ccedil;&otilde;es de pagamento que se encaixem no seu or&ccedil;amento. Dessa forma, a experi&ecirc;ncia de adquirir seu smartwatch ser&aacute; tranquila e satisfat&oacute;ria, podendo aproveitar ao m&aacute;ximo tudo o que a linha Amazfit tem a oferecer.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

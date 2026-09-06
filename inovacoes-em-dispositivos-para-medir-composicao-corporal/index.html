@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inovações em dispositivos para medir composição corporal - Asterisco Lab</title>
+    <meta name="description" content="Descubra as últimas inovações em dispositivos para medir composição corporal com precisão e tecnologia avançada. Saiba mais aqui!">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/analises/" style="color:#ffffff;">Análises</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Inovações em dispositivos para medir composição corporal</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">Descubra as últimas inovações em dispositivos para medir composição corporal com precisão e tecnologia avançada. Saiba mais aqui!</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-09-08" style="color: var(--text-muted);">
+                        08/09/2026 00:00
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/inovacoes-em-dispositivos-para-medir-composicao-corporal.jpg" alt="Inovações em dispositivos para medir composição corporal">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>A <strong>composi&ccedil;&atilde;o corporal</strong> &eacute; um dos indicadores mais relevantes para avaliar a sa&uacute;de e o desempenho f&iacute;sico de indiv&iacute;duos, desde atletas at&eacute; pacientes em processos cl&iacute;nicos. Nos &uacute;ltimos anos, avan&ccedil;os tecnol&oacute;gicos significativos trouxeram ao mercado dispositivos cada vez mais precisos, acess&iacute;veis e r&aacute;pidos para medir essa composi&ccedil;&atilde;o, revolucionando a forma como profissionais da sa&uacute;de e do fitness monitoram o corpo humano.</p>
+<p>Este conte&uacute;do aborda as principais <strong>inova&ccedil;&otilde;es em dispositivos para medir composi&ccedil;&atilde;o corporal</strong>, destacando tecnologias emergentes, metodologias aprimoradas e tend&ecirc;ncias que prometem transformar a avalia&ccedil;&atilde;o corporal nos pr&oacute;ximos anos.</p>
+<h2>Import&acirc;ncia Da Medi&ccedil;&atilde;o Da Composi&ccedil;&atilde;o Corporal</h2>
+<p>Antes de conhecer os dispositivos mais modernos, &eacute; fundamental compreender o porqu&ecirc; da medi&ccedil;&atilde;o da composi&ccedil;&atilde;o corporal ser t&atilde;o importante. Diferente do peso corporal bruto, a composi&ccedil;&atilde;o corporal analisa a propor&ccedil;&atilde;o entre massa magra, gordura, &aacute;gua e ossos. Esses dados s&atilde;o essenciais para:</p>
+<p>- Avaliar riscos de doen&ccedil;as metab&oacute;licas e cardiovasculares.</p>
+<p>- Acompanhar a efic&aacute;cia de programas de emagrecimento ou ganho muscular.</p>
+<p>- Ajustar planos nutricionais e de treinamento personalizados.</p>
+<p>- Monitorar a sa&uacute;de em pacientes com condi&ccedil;&otilde;es cr&ocirc;nicas.</p>
+<p>Apesar de m&eacute;todos cl&aacute;ssicos como a medi&ccedil;&atilde;o de dobras cut&acirc;neas e a pesagem hidrost&aacute;tica serem tradicionais, eles apresentam limita&ccedil;&otilde;es em termos de precis&atilde;o, praticidade e conforto. Por isso, a inova&ccedil;&atilde;o tecnol&oacute;gica tem sido fundamental para superar esses desafios.</p>
+<h2>Principais Tecnologias Para Medir Composi&ccedil;&atilde;o Corporal</h2>
+<h3>1. Bioimped&acirc;ncia El&eacute;trica (BIA)</h3>
+<p>A <strong>bioimped&acirc;ncia el&eacute;trica</strong> &eacute; uma das t&eacute;cnicas mais populares atualmente. Ela funciona atrav&eacute;s da passagem de uma corrente el&eacute;trica de baixa intensidade pelo corpo, medindo a resist&ecirc;ncia dos tecidos. A &aacute;gua corporal, que conduz eletricidade, tem influ&ecirc;ncia direta no resultado, permitindo estimar a quantidade de massa magra e gordura.</p>
+<p>#### Avan&ccedil;os Recentes em Bioimped&acirc;ncia</p>
+<p>A evolu&ccedil;&atilde;o da bioimped&acirc;ncia trouxe dispositivos port&aacute;teis e inteligentes, com sensores multifrequ&ecirc;ncia capazes de diferenciar melhor os compartimentos corporais. Al&eacute;m disso, softwares integrados com intelig&ecirc;ncia artificial proporcionam an&aacute;lises mais detalhadas e relat&oacute;rios personalizados.</p>
+<p>Um exemplo pr&aacute;tico &eacute; o <a href="https://drmurillobrandaojr.com.br/bioimpedancia-goiania/" target="_blank" rel="noopener">exame de bioimped&acirc;ncia Goi&acirc;nia</a>, que utiliza equipamentos modernos para proporcionar resultados r&aacute;pidos e confi&aacute;veis, auxiliando profissionais da sa&uacute;de na tomada de decis&otilde;es.</p>
+<h3>2. Densitometria por Absor&ccedil;&atilde;o de Raios X de Dupla Energia (DEXA)</h3>
+<p>O <strong>DEXA</strong> &eacute; considerado um dos m&eacute;todos mais precisos para avalia&ccedil;&atilde;o da composi&ccedil;&atilde;o corporal e densidade &oacute;ssea. Utiliza raios X com duas energias diferentes para separar os tecidos magros, gordurosos e &oacute;sseos.</p>
+<p>#### Inova&ccedil;&otilde;es no DEXA</p>
+<p>Apesar de tradicional, o DEXA passou por inova&ccedil;&otilde;es na qualidade da imagem e redu&ccedil;&atilde;o da exposi&ccedil;&atilde;o &agrave; radia&ccedil;&atilde;o. Novos modelos s&atilde;o mais r&aacute;pidos e com software aprimorado, facilitando a interpreta&ccedil;&atilde;o dos dados e a integra&ccedil;&atilde;o com outras m&eacute;tricas corporais.</p>
+<h3>3. Ultrassonografia para Composi&ccedil;&atilde;o Corporal</h3>
+<p>A aplica&ccedil;&atilde;o da <strong>ultrassonografia</strong> na avalia&ccedil;&atilde;o da composi&ccedil;&atilde;o corporal &eacute; uma tend&ecirc;ncia crescente. O m&eacute;todo usa ondas sonoras para medir a espessura e qualidade dos tecidos, principalmente a gordura subcut&acirc;nea e m&uacute;sculos.</p>
+<p>#### Tecnologias Emergentes em Ultrassom</p>
+<p>Dispositivos port&aacute;teis com resolu&ccedil;&atilde;o aprimorada e software de an&aacute;lise autom&aacute;tica t&ecirc;m permitido que a ultrassonografia se popularize para uso em cl&iacute;nicas, academias e at&eacute; no campo esportivo. Al&eacute;m disso, aparelhos conectados a smartphones facilitam a coleta e o monitoramento cont&iacute;nuo dos dados.</p>
+<h3>4. Tomografia Computadorizada (TC) e Resson&acirc;ncia Magn&eacute;tica (RM)</h3>
+<p>Embora mais comuns em ambientes hospitalares, a <strong>tomografia computadorizada</strong> e a <strong>resson&acirc;ncia magn&eacute;tica</strong> oferecem imagens tridimensionais detalhadas, possibilitando a an&aacute;lise da composi&ccedil;&atilde;o corporal com alta precis&atilde;o.</p>
+<p>#### Avan&ccedil;os e Aplica&ccedil;&otilde;es Cl&iacute;nicas</p>
+<p>Novas t&eacute;cnicas de segmenta&ccedil;&atilde;o de imagens e algoritmos de intelig&ecirc;ncia artificial t&ecirc;m otimizado a an&aacute;lise dessas imagens, reduzindo o tempo de processamento e aumentando a precis&atilde;o da avalia&ccedil;&atilde;o. Apesar do custo elevado, eles s&atilde;o fundamentais em casos que exigem diagn&oacute;stico detalhado, como em doen&ccedil;as musculares e obesidade m&oacute;rbida.</p>
+<h2>Dispositivos Port&aacute;teis E Wearables: O Futuro Da Avalia&ccedil;&atilde;o Corporal</h2>
+<p>A populariza&ccedil;&atilde;o dos <strong>wearables</strong> e dispositivos port&aacute;teis transformou a forma como a composi&ccedil;&atilde;o corporal &eacute; avaliada no dia a dia. Equipamentos compactos, que podem ser usados em casa ou em ambientes n&atilde;o cl&iacute;nicos, oferecem maior autonomia para o usu&aacute;rio e maior quantidade de dados para profissionais.</p>
+<h3>Balan&ccedil;as Inteligentes com Bioimped&acirc;ncia</h3>
+<p>As balan&ccedil;as inteligentes que utilizam bioimped&acirc;ncia est&atilde;o entre os dispositivos mais acess&iacute;veis e utilizados. Elas fornecem informa&ccedil;&otilde;es sobre peso, percentual de gordura, massa muscular, &aacute;gua corporal e at&eacute; &iacute;ndice metab&oacute;lico basal.</p>
+<p>#### Tend&ecirc;ncias em Balan&ccedil;as Inteligentes</p>
+<p>- Conectividade com aplicativos m&oacute;veis para acompanhamento cont&iacute;nuo.</p>
+<p>- Algoritmos personalizados que consideram idade, sexo e n&iacute;vel de atividade f&iacute;sica.</p>
+<p>- Integra&ccedil;&atilde;o com outros dispositivos de sa&uacute;de, como medidores de press&atilde;o arterial e monitores de glicemia.</p>
+<h3>Dispositivos de Bioimped&acirc;ncia de M&uacute;ltiplos Segmentos</h3>
+<p>Para uma an&aacute;lise mais detalhada, surgiram dispositivos que medem a composi&ccedil;&atilde;o corporal em segmentos espec&iacute;ficos, como membros superiores, inferiores e tronco. Isso possibilita um diagn&oacute;stico mais preciso de assimetrias musculares e gordura localizada.</p>
+<h2>Intelig&ecirc;ncia Artificial E Big Data Na Medi&ccedil;&atilde;o Da Composi&ccedil;&atilde;o Corporal</h2>
+<p>A incorpora&ccedil;&atilde;o de <strong>intelig&ecirc;ncia artificial (IA)</strong> e an&aacute;lise de grandes volumes de dados tem permitido que os dispositivos de composi&ccedil;&atilde;o corporal ofere&ccedil;am diagn&oacute;sticos mais precisos e personalizados. Algoritmos aprendem com padr&otilde;es de diferentes perfis e ajustam as interpreta&ccedil;&otilde;es conforme caracter&iacute;sticas individuais.</p>
+<h3>Benef&iacute;cios da IA na Avalia&ccedil;&atilde;o Corporal</h3>
+<p>- Previs&atilde;o de riscos de doen&ccedil;as associadas &agrave; composi&ccedil;&atilde;o corporal.</p>
+<p>- Recomenda&ccedil;&atilde;o personalizada de interven&ccedil;&otilde;es nutricionais e exerc&iacute;cios.</p>
+<p>- Monitoramento em tempo real com alertas para mudan&ccedil;as significativas.</p>
+<h3>Aplica&ccedil;&otilde;es Pr&aacute;ticas</h3>
+<p>Empresas de tecnologia em sa&uacute;de desenvolvem plataformas integradas que conectam dispositivos de medi&ccedil;&atilde;o com sistemas de prontu&aacute;rio eletr&ocirc;nico, facilitando a gest&atilde;o cl&iacute;nica e o acompanhamento longitudinal dos pacientes.</p>
+<h2>Novas Metodologias E Protocolos De Medi&ccedil;&atilde;o</h2>
+<p>Al&eacute;m dos avan&ccedil;os em hardware e software, surgem metodologias que otimizam a coleta e interpreta&ccedil;&atilde;o dos dados da composi&ccedil;&atilde;o corporal. Essas metodologias buscam reduzir erros, padronizar procedimentos e aumentar a confiabilidade dos resultados.</p>
+<h3>Protocolos de Medi&ccedil;&atilde;o Padronizados</h3>
+<p>Organiza&ccedil;&otilde;es internacionais t&ecirc;m estabelecido diretrizes para a realiza&ccedil;&atilde;o de exames, incluindo postura do paciente, hidrata&ccedil;&atilde;o, hor&aacute;rio e preparo, garantindo maior comparabilidade entre resultados.</p>
+<h3>Inclus&atilde;o de Dados Complementares</h3>
+<p>Combinar dados de composi&ccedil;&atilde;o corporal com indicadores metab&oacute;licos, gen&eacute;ticos e de atividade f&iacute;sica tem se mostrado uma abordagem eficaz para personalizar tratamentos e melhorar resultados cl&iacute;nicos e esportivos.</p>
+<h2>Desafios E Perspectivas Futuras</h2>
+<p>Apesar dos avan&ccedil;os, existem desafios a serem superados para que a medi&ccedil;&atilde;o da composi&ccedil;&atilde;o corporal seja ainda mais precisa e acess&iacute;vel.</p>
+<h3>Limita&ccedil;&otilde;es Atuais</h3>
+<p>- Varia&ccedil;&atilde;o dos resultados conforme hidrata&ccedil;&atilde;o e condi&ccedil;&otilde;es do indiv&iacute;duo.</p>
+<p>- Custo elevado de equipamentos mais precisos como DEXA e RM.</p>
+<p>- Necessidade de treinamento especializado para a interpreta&ccedil;&atilde;o de alguns m&eacute;todos.</p>
+<h3>Perspectivas Futuras</h3>
+<p>A expectativa &eacute; que o desenvolvimento de sensores mais avan&ccedil;ados, combinados com IA e conectividade 5G, possibilite avalia&ccedil;&otilde;es mais r&aacute;pidas, n&atilde;o invasivas e integradas ao cotidiano do usu&aacute;rio. Al&eacute;m disso, a democratiza&ccedil;&atilde;o dessas tecnologias poder&aacute; ampliar o acesso a avalia&ccedil;&otilde;es de qualidade em diferentes regi&otilde;es, aumentando a preven&ccedil;&atilde;o e o monitoramento da sa&uacute;de p&uacute;blica.</p>
+<h2>Considera&ccedil;&otilde;es Finais</h2>
+<p>As <strong>inova&ccedil;&otilde;es em dispositivos para medir composi&ccedil;&atilde;o corporal</strong> representam um avan&ccedil;o significativo para a sa&uacute;de e o bem-estar. A converg&ecirc;ncia entre tecnologias de bioimped&acirc;ncia, imagem, intelig&ecirc;ncia artificial e dispositivos port&aacute;teis cria um ecossistema robusto para avalia&ccedil;&otilde;es cada vez mais precisas e acess&iacute;veis.</p>
+<p>Investir em m&eacute;todos confi&aacute;veis e modernos permite n&atilde;o apenas entender melhor o corpo, mas tamb&eacute;m agir de forma preventiva e personalizada, melhorando a qualidade de vida das pessoas. Para quem busca um diagn&oacute;stico confi&aacute;vel com tecnologia de ponta, o exame de bioimped&acirc;ncia Goi&acirc;nia &eacute; um exemplo de servi&ccedil;o que alia inova&ccedil;&atilde;o e precis&atilde;o para resultados efetivos.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>
