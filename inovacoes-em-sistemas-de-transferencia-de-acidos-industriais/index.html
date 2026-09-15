@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inovações em sistemas de transferência de ácidos industriais - Asterisco Lab</title>
+    <meta name="description" content="Descubra as últimas inovações em sistemas de transferência de ácidos industriais para segurança e eficiência máxima no seu processo.">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/aplicativos/" style="color:#ffffff;">Aplicativos</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Inovações em sistemas de transferência de ácidos industriais</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">Descubra as últimas inovações em sistemas de transferência de ácidos industriais para segurança e eficiência máxima no seu processo.</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-09-15" style="color: var(--text-muted);">
+                        15/09/2026 00:00
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/inovacoes-em-sistemas-de-transferencia-de-acidos-industriais.jpg" alt="Inovações em sistemas de transferência de ácidos industriais">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>A manipula&ccedil;&atilde;o e o transporte de &aacute;cidos industriais exigem cuidados rigorosos devido &agrave; natureza corrosiva e reativa dessas subst&acirc;ncias. A efici&ecirc;ncia e a seguran&ccedil;a desses processos s&atilde;o fundamentais para garantir a integridade dos equipamentos, a sa&uacute;de dos trabalhadores e a qualidade dos produtos finais. Com o avan&ccedil;o tecnol&oacute;gico, diversas <strong>inova&ccedil;&otilde;es em sistemas de transfer&ecirc;ncia de &aacute;cidos industriais</strong> t&ecirc;m surgido, proporcionando melhorias significativas na automa&ccedil;&atilde;o, resist&ecirc;ncia dos materiais e controle operacional.</p>
+<p>Um dos principais desafios enfrentados na ind&uacute;stria qu&iacute;mica &eacute; a escolha adequada de equipamentos que suportem ambientes agressivos, como aquelas que envolvem a movimenta&ccedil;&atilde;o de &aacute;cidos fortes. Por exemplo, a <a href="https://3ahbombas.com.br/bomba-para-acido-sulfurico-na-industria-quimica/" target="_blank" rel="noopener">bomba para &aacute;cido sulf&uacute;rico na ind&uacute;stria qu&iacute;mica</a> precisa n&atilde;o apenas ser resistente &agrave; corros&atilde;o, mas tamb&eacute;m garantir um fluxo est&aacute;vel e seguro para evitar vazamentos e contamina&ccedil;&otilde;es. A crescente demanda por processos mais sustent&aacute;veis e eficientes impulsiona o desenvolvimento de tecnologias que atendem a essas especifica&ccedil;&otilde;es rigorosas.</p>
+<h2>Desafios Na Transfer&ecirc;ncia De &Aacute;cidos Industriais</h2>
+<h3>Natureza corrosiva dos &aacute;cidos</h3>
+<p>Os &aacute;cidos industriais, como o &aacute;cido sulf&uacute;rico, n&iacute;trico, clor&iacute;drico e fosf&oacute;rico, possuem alta capacidade corrosiva. Isso implica que os sistemas de transfer&ecirc;ncia devem ser constru&iacute;dos com materiais que resistam &agrave; degrada&ccedil;&atilde;o qu&iacute;mica, evitando falhas prematuras e contamina&ccedil;&atilde;o do processo. Materiais comuns, como a&ccedil;o carbono, geralmente n&atilde;o s&atilde;o adequados sem revestimentos especiais.</p>
+<h3>Seguran&ccedil;a operacional</h3>
+<p>O manuseio de &aacute;cidos concentrados envolve riscos como vazamentos, rea&ccedil;&otilde;es qu&iacute;micas inesperadas e exposi&ccedil;&atilde;o de trabalhadores a subst&acirc;ncias t&oacute;xicas. Portanto, os sistemas devem incorporar dispositivos que minimizem esses riscos, garantindo veda&ccedil;&atilde;o eficaz e monitoramento constante.</p>
+<h3>Efici&ecirc;ncia energ&eacute;tica</h3>
+<p>A movimenta&ccedil;&atilde;o de l&iacute;quidos corrosivos pode demandar bombas e tubula&ccedil;&otilde;es espec&iacute;ficas, que muitas vezes consomem mais energia devido &agrave; necessidade de manter a integridade estrutural e operacional. Otimizar o consumo energ&eacute;tico sem comprometer a seguran&ccedil;a &eacute; um desafio constante.</p>
+<h2>Materiais Avan&ccedil;ados Para Sistemas De Transfer&ecirc;ncia</h2>
+<h3>Pol&iacute;meros de alta performance</h3>
+<p>Para resistir &agrave; corros&atilde;o provocada pelos &aacute;cidos, muitos sistemas atuais utilizam pol&iacute;meros como <strong>polipropileno (PP), polietileno de alta densidade (PEAD)</strong> e <strong>PVDF (polivinilideno fluoreto)</strong>. Esses materiais oferecem excelente resist&ecirc;ncia qu&iacute;mica, durabilidade e baixo peso, facilitando a instala&ccedil;&atilde;o e manuten&ccedil;&atilde;o.</p>
+<p>O uso de <strong>tubula&ccedil;&otilde;es revestidas com fluoropol&iacute;meros</strong> tamb&eacute;m tem se popularizado, devido &agrave; sua capacidade de resistir a temperaturas elevadas e ataques qu&iacute;micos agressivos. Esses revestimentos prolongam a vida &uacute;til dos equipamentos, reduzindo custos com substitui&ccedil;&otilde;es frequentes.</p>
+<h3>Ligas met&aacute;licas especiais</h3>
+<p>Embora os metais tradicionais n&atilde;o suportem bem ambientes &aacute;cidos, ligas especiais como <strong>a&ccedil;os inoxid&aacute;veis austen&iacute;ticos, ligas de tit&acirc;nio e Hastelloy</strong> s&atilde;o alternativas eficazes. Elas combinam resist&ecirc;ncia mec&acirc;nica com prote&ccedil;&atilde;o contra corros&atilde;o, sendo indicadas para aplica&ccedil;&otilde;es que exigem maior press&atilde;o e temperatura.</p>
+<h3>Revestimentos cer&acirc;micos e nanotecnol&oacute;gicos</h3>
+<p>Avan&ccedil;os recentes incluem o desenvolvimento de revestimentos cer&acirc;micos aplicados em bombas e v&aacute;lvulas que transferem &aacute;cidos, oferecendo barreiras quase impenetr&aacute;veis &agrave; corros&atilde;o. Al&eacute;m disso, nanotecnologias possibilitam a cria&ccedil;&atilde;o de superf&iacute;cies autolimpantes e com propriedades antimicrobianas, aumentando a seguran&ccedil;a do sistema.</p>
+<h2>Tecnologias Emergentes Em Bombas Para L&iacute;quidos Corrosivos</h2>
+<h3>Bombas magn&eacute;ticas sem selo</h3>
+<p>Uma das principais inova&ccedil;&otilde;es &eacute; o uso de <strong>bombas magn&eacute;ticas</strong>, que eliminam a necessidade de selos mec&acirc;nicos, reduzindo significativamente o risco de vazamentos. Esse tipo de bomba utiliza um acoplamento magn&eacute;tico para transmitir o movimento do motor ao impulsor, mantendo o fluido confinado e protegido.</p>
+<p>Essas bombas s&atilde;o especialmente indicadas para l&iacute;quidos altamente corrosivos, como o &aacute;cido sulf&uacute;rico concentrado, pois aumentam a seguran&ccedil;a operacional e diminuem a necessidade de manuten&ccedil;&atilde;o.</p>
+<h3>Bombas de diafragma com materiais avan&ccedil;ados</h3>
+<p>Bombas de diafragma constru&iacute;das com materiais resistentes a &aacute;cidos t&ecirc;m ganhado espa&ccedil;o em processos industriais delicados. Elas operam com movimentos pulsantes, possibilitando o transporte controlado de l&iacute;quidos em baixas vaz&otilde;es ou press&otilde;es, ideal para dosagens precisas.</p>
+<h3>Bombas centr&iacute;fugas com design otimizado</h3>
+<p>O aprimoramento do design hidr&aacute;ulico das bombas centr&iacute;fugas permite maior efici&ecirc;ncia energ&eacute;tica e redu&ccedil;&atilde;o do desgaste interno. Novas geometrias de impulsores, combinadas com revestimentos especiais, asseguram maior vida &uacute;til e opera&ccedil;&atilde;o est&aacute;vel mesmo em condi&ccedil;&otilde;es severas.</p>
+<h2>Automa&ccedil;&atilde;o E Monitoramento Inteligente</h2>
+<h3>Sensores de vazamento e integridade</h3>
+<p>A integra&ccedil;&atilde;o de sensores inteligentes nos sistemas de transfer&ecirc;ncia tem revolucionado a seguran&ccedil;a e o controle. Detectores de vazamento, sensores de press&atilde;o, temperatura e fluxo permitem identificar falhas em tempo real, acionando protocolos de emerg&ecirc;ncia ou ajustes autom&aacute;ticos.</p>
+<h3>Controle remoto e sistemas SCADA</h3>
+<p>Sistemas Supervis&oacute;rios SCADA (Supervisory Control and Data Acquisition) possibilitam o monitoramento remoto dos processos de transfer&ecirc;ncia, aumentando a efici&ecirc;ncia operacional e reduzindo a exposi&ccedil;&atilde;o humana aos riscos. O acompanhamento cont&iacute;nuo permite interven&ccedil;&otilde;es r&aacute;pidas e planejamento de manuten&ccedil;&atilde;o preventiva.</p>
+<h3>Intelig&ecirc;ncia artificial para manuten&ccedil;&atilde;o preditiva</h3>
+<p>A aplica&ccedil;&atilde;o de algoritmos de intelig&ecirc;ncia artificial e machine learning em dados coletados dos sistemas auxilia na detec&ccedil;&atilde;o precoce de falhas e no planejamento da manuten&ccedil;&atilde;o preditiva. Isso reduz paradas n&atilde;o programadas e aumenta a confiabilidade dos equipamentos.</p>
+<h2>Impacto Ambiental E Sustentabilidade</h2>
+<h3>Redu&ccedil;&atilde;o de desperd&iacute;cios e vazamentos</h3>
+<p>Sistemas modernos s&atilde;o projetados para minimizar perdas de &aacute;cidos durante o transporte, reduzindo o impacto ambiental e custos com insumos. A veda&ccedil;&atilde;o aprimorada e o monitoramento cont&iacute;nuo contribuem para evitar contamina&ccedil;&otilde;es do solo e corpos d&rsquo;&aacute;gua.</p>
+<h3>Uso de materiais recicl&aacute;veis e sustent&aacute;veis</h3>
+<p>A ind&uacute;stria tem buscado solu&ccedil;&otilde;es que incorporem materiais recicl&aacute;veis ou de menor impacto ambiental, sem comprometer a resist&ecirc;ncia qu&iacute;mica. A sele&ccedil;&atilde;o consciente de componentes e fornecedores alinhados a pr&aacute;ticas sustent&aacute;veis &eacute; uma tend&ecirc;ncia crescente.</p>
+<h3>Otimiza&ccedil;&atilde;o do consumo energ&eacute;tico</h3>
+<p>A ado&ccedil;&atilde;o de bombas e sistemas mais eficientes contribui para a redu&ccedil;&atilde;o da pegada de carbono das opera&ccedil;&otilde;es industriais. A gest&atilde;o energ&eacute;tica inteligente, aliada a tecnologias de recupera&ccedil;&atilde;o de energia, proporciona processos mais verdes.</p>
+<h2>Casos De Aplica&ccedil;&atilde;o E Tend&ecirc;ncias Futuras</h2>
+<h3>Ind&uacute;stria qu&iacute;mica e petroqu&iacute;mica</h3>
+<p>O setor qu&iacute;mico, respons&aacute;vel pela produ&ccedil;&atilde;o de diversos &aacute;cidos industriais, &eacute; um dos maiores beneficiados pelas inova&ccedil;&otilde;es em transfer&ecirc;ncia. Equipamentos mais seguros e dur&aacute;veis permitem maior confiabilidade nos processos, impactando positivamente a produ&ccedil;&atilde;o e a seguran&ccedil;a.</p>
+<h3>Setor farmac&ecirc;utico e aliment&iacute;cio</h3>
+<p>Embora em menor escala, a manipula&ccedil;&atilde;o controlada de &aacute;cidos &eacute; essencial em processos farmac&ecirc;uticos e aliment&iacute;cios. A demanda por sistemas compactos e de alta precis&atilde;o fomenta o desenvolvimento de bombas dosadoras e tubula&ccedil;&otilde;es especiais.</p>
+<h3>Perspectivas tecnol&oacute;gicas</h3>
+<p>As tend&ecirc;ncias apontam para sistemas cada vez mais integrados, combinando materiais avan&ccedil;ados, automa&ccedil;&atilde;o e an&aacute;lise de dados para otimizar a transfer&ecirc;ncia de &aacute;cidos. Pesquisas em novos materiais, como pol&iacute;meros biodegrad&aacute;veis com alta resist&ecirc;ncia qu&iacute;mica, e aplica&ccedil;&atilde;o de rob&oacute;tica para inspe&ccedil;&atilde;o prometem revolucionar o setor.</p>
+<h2>Conclus&atilde;o</h2>
+<p>As <strong>inova&ccedil;&otilde;es em sistemas de transfer&ecirc;ncia de &aacute;cidos industriais</strong> transformam o modo como a ind&uacute;stria qu&iacute;mica e setores correlatos operam, garantindo maior seguran&ccedil;a, efici&ecirc;ncia e sustentabilidade. A evolu&ccedil;&atilde;o dos materiais, o avan&ccedil;o tecnol&oacute;gico em bombas e o uso da automa&ccedil;&atilde;o inteligente colaboram para superar os desafios impostos pela corrosividade e toxicidade dos &aacute;cidos. Investir em tecnologias modernas n&atilde;o apenas protege os ativos e o meio ambiente, mas tamb&eacute;m impulsiona a competitividade e a conformidade regulat&oacute;ria das empresas. Dessa forma, o futuro da transfer&ecirc;ncia de &aacute;cidos industriais se apresenta mais seguro, eficiente e alinhado &agrave;s demandas globais por processos sustent&aacute;veis.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>
