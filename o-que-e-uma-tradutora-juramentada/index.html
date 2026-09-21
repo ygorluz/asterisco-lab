@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O que é uma tradutora juramentada? - Asterisco Lab</title>
+    <meta name="description" content="Descubra o que é uma tradutora juramentada, suas funções essenciais e quando você precisa desse serviço oficial e reconhecido legalmente.">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/outros/" style="color:#ffffff;">Outros</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">O que é uma tradutora juramentada?</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">Descubra o que é uma tradutora juramentada, suas funções essenciais e quando você precisa desse serviço oficial e reconhecido legalmente.</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-09-21" style="color: var(--text-muted);">
+                        21/09/2026 00:00
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/o-que-e-uma-tradutora-juramentada.jpg" alt="O que é uma tradutora juramentada?">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>No universo da tradu&ccedil;&atilde;o, existem diversas especializa&ccedil;&otilde;es que atendem a diferentes necessidades e contextos. Entre essas, destaca-se a figura da <strong>tradutora juramentada</strong>, profissional essencial para garantir a validade legal de documentos traduzidos. Mas afinal, o que caracteriza uma tradutora juramentada? Quais s&atilde;o suas fun&ccedil;&otilde;es, como obter essa certifica&ccedil;&atilde;o e em que situa&ccedil;&otilde;es seus servi&ccedil;os s&atilde;o indispens&aacute;veis?</p>
+<p>A <a href="https://roxotranslations.com/pt/br/mato-grosso-do-sul/" target="_blank" rel="noopener">tradu&ccedil;&atilde;o juramentada no Mato Grosso do Sul</a> tem ganhado destaque, especialmente devido &agrave; crescente demanda por autentica&ccedil;&atilde;o de documentos oficiais, como certid&otilde;es, contratos e diplomas, que precisam ser apresentados em &oacute;rg&atilde;os p&uacute;blicos, institui&ccedil;&otilde;es educacionais e empresas. Compreender o papel da tradutora juramentada &eacute; fundamental para evitar problemas legais e assegurar a correta interpreta&ccedil;&atilde;o de documentos importantes.</p>
+<h2>O Que &Eacute; Uma Tradutora Juramentada?</h2>
+<p>Uma <strong>tradutora juramentada</strong> &eacute; uma profissional habilitada e certificada para realizar tradu&ccedil;&otilde;es oficiais de documentos p&uacute;blicos e privados que exigem validade legal. Tamb&eacute;m conhecida como tradutora p&uacute;blica, ela possui f&eacute; p&uacute;blica, ou seja, seus servi&ccedil;os s&atilde;o reconhecidos e aceitos por &oacute;rg&atilde;os governamentais, tribunais e institui&ccedil;&otilde;es em geral.</p>
+<h3>Diferen&ccedil;a entre tradu&ccedil;&atilde;o comum e juramentada</h3>
+<p>Enquanto uma tradu&ccedil;&atilde;o comum pode ser feita por qualquer tradutor, a tradu&ccedil;&atilde;o juramentada possui valor legal e deve seguir normas espec&iacute;ficas. Documentos traduzidos por uma tradutora juramentada apresentam um carimbo oficial, assinatura e um certificado que validam a tradu&ccedil;&atilde;o como verdadeira e fiel ao original.</p>
+<p>Isso &eacute; fundamental em situa&ccedil;&otilde;es como processos judiciais, registros p&uacute;blicos, imigra&ccedil;&atilde;o, estudos no exterior, entre outros. Sem essa certifica&ccedil;&atilde;o, a tradu&ccedil;&atilde;o pode ser considerada inv&aacute;lida e rejeitada pelas autoridades.</p>
+<h2>Como Se Torna Uma Tradutora Juramentada?</h2>
+<p>Para atuar como tradutora juramentada, &eacute; necess&aacute;rio passar por um processo de habilita&ccedil;&atilde;o oficial, que varia de acordo com o pa&iacute;s e, no Brasil, com o estado. A seguir, est&atilde;o os principais passos para alcan&ccedil;ar essa certifica&ccedil;&atilde;o:</p>
+<h3>Exame de profici&ecirc;ncia</h3>
+<p>No Brasil, a habilita&ccedil;&atilde;o de tradutores e int&eacute;rpretes p&uacute;blicos &eacute; realizada pelas Juntas Comerciais dos estados. O candidato deve ser aprovado em um exame que avalia sua compet&ecirc;ncia lingu&iacute;stica e conhecimento t&eacute;cnico. Este exame normalmente envolve tradu&ccedil;&atilde;o de textos t&eacute;cnicos, jur&iacute;dicos e administrativos, al&eacute;m de interpreta&ccedil;&atilde;o oral.</p>
+<h3>Registro oficial</h3>
+<p>Ap&oacute;s aprova&ccedil;&atilde;o no exame, o profissional deve se registrar na Junta Comercial do estado onde pretende atuar. Este registro confere a ele o t&iacute;tulo de tradutor p&uacute;blico e int&eacute;rprete p&uacute;blico, autorizando-o a realizar tradu&ccedil;&otilde;es juramentadas dentro da jurisdi&ccedil;&atilde;o estadual.</p>
+<h3>Responsabilidades e &eacute;tica profissional</h3>
+<p>A tradutora juramentada deve seguir um c&oacute;digo de &eacute;tica r&iacute;gido, garantindo a fidelidade da tradu&ccedil;&atilde;o e o sigilo das informa&ccedil;&otilde;es contidas nos documentos. A responsabilidade &eacute; grande, pois qualquer erro pode comprometer a validade do documento traduzido e causar preju&iacute;zos legais.</p>
+<h2>Quais Documentos Podem Ser Traduzidos Por Uma Tradutora Juramentada?</h2>
+<p>A atua&ccedil;&atilde;o da tradutora juramentada &eacute; especialmente requisitada para documentos que exigem validade jur&iacute;dica em outro idioma. Entre os mais comuns, destacam-se:</p>
+<p>- Certid&otilde;es de nascimento, casamento e &oacute;bito</p>
+<p>- Diplomas e hist&oacute;ricos escolares</p>
+<p>- Contratos sociais e documentos empresariais</p>
+<p>- Procura&ccedil;&otilde;es e documentos notariais</p>
+<p>- Documentos judiciais e processos</p>
+<p>- Cartas de refer&ecirc;ncia e documentos pessoais para imigra&ccedil;&atilde;o</p>
+<h3>Import&acirc;ncia da tradu&ccedil;&atilde;o juramentada para documentos oficiais</h3>
+<p>Quando um documento precisa ser apresentado a uma autoridade estrangeira ou mesmo a &oacute;rg&atilde;os p&uacute;blicos brasileiros, a tradu&ccedil;&atilde;o juramentada &eacute; indispens&aacute;vel para garantir que o conte&uacute;do seja compreendido e aceito sem questionamentos. Por exemplo, ao solicitar visto, validar diploma no exterior ou participar de processos judiciais, a tradu&ccedil;&atilde;o deve ser feita por uma profissional devidamente autorizada.</p>
+<h2>&Aacute;reas De Atua&ccedil;&atilde;o Da Tradutora Juramentada</h2>
+<p>Al&eacute;m da tradu&ccedil;&atilde;o de documentos, a tradutora juramentada pode atuar em outras &aacute;reas relacionadas &agrave; tradu&ccedil;&atilde;o oficial, como:</p>
+<h3>Interpreta&ccedil;&atilde;o p&uacute;blica</h3>
+<p>Algumas tradutoras juramentadas tamb&eacute;m s&atilde;o habilitadas para atuar como int&eacute;rpretes p&uacute;blicos, prestando servi&ccedil;os de interpreta&ccedil;&atilde;o em audi&ecirc;ncias judiciais, reuni&otilde;es oficiais, eventos diplom&aacute;ticos, entre outros.</p>
+<h3>Tradu&ccedil;&atilde;o t&eacute;cnica e jur&iacute;dica</h3>
+<p>Embora a tradu&ccedil;&atilde;o juramentada seja focada em documentos oficiais, a experi&ecirc;ncia da profissional em &aacute;reas t&eacute;cnicas e jur&iacute;dicas &eacute; fundamental para garantir precis&atilde;o terminol&oacute;gica e adequada interpreta&ccedil;&atilde;o do texto.</p>
+<h3>Consultoria lingu&iacute;stica</h3>
+<p>A tradutora juramentada pode oferecer consultoria para empresas e indiv&iacute;duos que precisam entender requisitos legais em outra l&iacute;ngua, auxiliando na prepara&ccedil;&atilde;o de documentos para tradu&ccedil;&atilde;o ou revis&atilde;o.</p>
+<h2>A Import&acirc;ncia Da Localiza&ccedil;&atilde;o Geogr&aacute;fica Na Tradu&ccedil;&atilde;o Juramentada</h2>
+<p>Como mencionado, a habilita&ccedil;&atilde;o da tradutora juramentada ocorre em n&iacute;vel estadual. Portanto, uma profissional registrada em S&atilde;o Paulo est&aacute; autorizada a realizar tradu&ccedil;&otilde;es juramentadas v&aacute;lidas dentro daquele estado, mas para atuar em outro estado, como o Mato Grosso do Sul, &eacute; necess&aacute;rio registro local ou parceria com profissionais locais.</p>
+<p>Isso explica a relev&acirc;ncia da <strong>tradu&ccedil;&atilde;o juramentada no Mato Grosso do Sul</strong>, pois a regi&atilde;o demanda tradutores p&uacute;blicos credenciados que conhe&ccedil;am as especificidades e exig&ecirc;ncias da Junta Comercial local, garantindo a aceita&ccedil;&atilde;o dos documentos traduzidos em &oacute;rg&atilde;os p&uacute;blicos e privados da regi&atilde;o.</p>
+<h2>Como Escolher Uma Tradutora Juramentada Confi&aacute;vel?</h2>
+<p>A escolha de uma tradutora juramentada deve ser feita com cuidado para assegurar a qualidade e a validade da tradu&ccedil;&atilde;o. Alguns crit&eacute;rios importantes incluem:</p>
+<h3>Verificar o registro oficial</h3>
+<p>Sempre confirme se a profissional est&aacute; registrada na Junta Comercial do estado correspondente. Esta informa&ccedil;&atilde;o pode ser consultada diretamente no site da Junta Comercial ou atrav&eacute;s de contato telef&ocirc;nico.</p>
+<h3>Experi&ecirc;ncia e especializa&ccedil;&atilde;o</h3>
+<p>Considere profissionais com experi&ecirc;ncia na &aacute;rea espec&iacute;fica do documento a ser traduzido, seja jur&iacute;dica, t&eacute;cnica, m&eacute;dica ou acad&ecirc;mica. A especializa&ccedil;&atilde;o garante maior precis&atilde;o e adequa&ccedil;&atilde;o terminol&oacute;gica.</p>
+<h3>Avalia&ccedil;&otilde;es e recomenda&ccedil;&otilde;es</h3>
+<p>Buscar refer&ecirc;ncias e opini&otilde;es de clientes anteriores pode ajudar a identificar profissionais confi&aacute;veis e com boa reputa&ccedil;&atilde;o.</p>
+<h3>Transpar&ecirc;ncia e formaliza&ccedil;&atilde;o</h3>
+<p>Uma tradutora juramentada s&eacute;ria fornece or&ccedil;amento detalhado, prazos claros e contrato de presta&ccedil;&atilde;o de servi&ccedil;os, al&eacute;m de emitir nota fiscal e garantir confidencialidade.</p>
+<h2>Custos E Prazos Da Tradu&ccedil;&atilde;o Juramentada</h2>
+<p>Os valores para tradu&ccedil;&atilde;o juramentada variam conforme o tipo de documento, volume de p&aacute;ginas, idioma e complexidade do texto. Em geral, o pre&ccedil;o &eacute; calculado por lauda (uma lauda corresponde a aproximadamente 1.000 caracteres com espa&ccedil;os).</p>
+<h3>Fatores que influenciam o custo</h3>
+<p>- <strong>Idioma</strong>: tradu&ccedil;&otilde;es para idiomas menos comuns podem ter custo maior devido &agrave; menor oferta de profissionais habilitados.</p>
+<p>- <strong>Urg&ecirc;ncia</strong>: prazos curtos podem gerar acr&eacute;scimos no valor final.</p>
+<p>- <strong>Formato do documento</strong>: documentos que exigem formata&ccedil;&atilde;o especial, digitaliza&ccedil;&atilde;o ou apostilamento podem implicar custos adicionais.</p>
+<h3>Prazo m&eacute;dio para entrega</h3>
+<p>Dependendo do volume, uma tradu&ccedil;&atilde;o juramentada pode levar de alguns dias at&eacute; semanas para ser conclu&iacute;da. &Eacute; fundamental planejar a solicita&ccedil;&atilde;o com anteced&ecirc;ncia para evitar contratempos, principalmente para processos legais ou acad&ecirc;micos.</p>
+<h2>A Digitaliza&ccedil;&atilde;o E O Futuro Da Tradu&ccedil;&atilde;o Juramentada</h2>
+<p>Com o avan&ccedil;o da tecnologia, a tradu&ccedil;&atilde;o juramentada tamb&eacute;m tem passado por transforma&ccedil;&otilde;es. A digitaliza&ccedil;&atilde;o dos processos, envio de documentos por meio eletr&ocirc;nico e at&eacute; mesmo a assinatura digital da tradu&ccedil;&atilde;o s&atilde;o tend&ecirc;ncias que v&ecirc;m sendo adotadas para agilizar e facilitar o servi&ccedil;o.</p>
+<p>No entanto, &eacute; essencial que a tradutora juramentada esteja atenta &agrave;s normas e legisla&ccedil;&otilde;es locais para garantir a validade desses procedimentos digitais, que ainda s&atilde;o tratados com cautela por algumas institui&ccedil;&otilde;es.</p>
+<h2>Considera&ccedil;&otilde;es Finais</h2>
+<p>A tradutora juramentada desempenha um papel crucial na comunica&ccedil;&atilde;o oficial entre idiomas, garantindo que documentos essenciais tenham validade legal e sejam reconhecidos por autoridades nacionais e internacionais. Com a crescente mobilidade global e a necessidade de autenticar documentos para diversas finalidades, contar com uma profissional certificada &eacute; garantia de seguran&ccedil;a e confian&ccedil;a.</p>
+<p>A compreens&atilde;o sobre o funcionamento dessa especializa&ccedil;&atilde;o e o reconhecimento da necessidade da tradu&ccedil;&atilde;o juramentada em diferentes regi&otilde;es, como no Mato Grosso do Sul, ajudam a evitar erros que podem atrasar processos e causar transtornos. Investir em um servi&ccedil;o qualificado &eacute; fundamental para assegurar que a tradu&ccedil;&atilde;o seja aceita e respeitada em qualquer situa&ccedil;&atilde;o.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>
