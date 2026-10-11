@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quais as vantagens das soluções para consulta de CNPJ online? - Asterisco Lab</title>
+    <meta name="description" content="Descubra as principais vantagens das soluções para consulta de CNPJ online e facilite suas decisões com rapidez, segurança e praticidade.">
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/outros/" style="color:#ffffff;">Outros</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Quais as vantagens das soluções para consulta de CNPJ online?</h1>
+            
+            
+                <p style="font-size: 1.25rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 2rem; line-height: 1.5;">Descubra as principais vantagens das soluções para consulta de CNPJ online e facilite suas decisões com rapidez, segurança e praticidade.</p>
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-10-11" style="color: var(--text-muted);">
+                        11/10/2026 00:00
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/quais-as-vantagens-das-solucoes-para-consulta-de-cnpj-online.jpg" alt="Quais as vantagens das soluções para consulta de CNPJ online?">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>No mundo empresarial atual, a <strong>consulta de CNPJ online</strong> tornou-se uma ferramenta essencial para diversos setores, desde pequenos empreendedores at&eacute; grandes corpora&ccedil;&otilde;es. Com a digitaliza&ccedil;&atilde;o dos processos e o aumento da necessidade de informa&ccedil;&otilde;es r&aacute;pidas e confi&aacute;veis, as solu&ccedil;&otilde;es digitais para consultar o Cadastro Nacional da Pessoa Jur&iacute;dica (CNPJ) oferecem uma s&eacute;rie de benef&iacute;cios que otimizam a tomada de decis&atilde;o, aumentam a seguran&ccedil;a das opera&ccedil;&otilde;es e facilitam a gest&atilde;o empresarial.</p>
+<p>Este conte&uacute;do apresenta as principais vantagens de utilizar as solu&ccedil;&otilde;es para consulta de CNPJ online, detalhando como elas impactam positivamente o dia a dia das empresas e dos profissionais que dependem desses dados.</p>
+<h2>O Que &Eacute; A Consulta De Cnpj Online?</h2>
+<p>Antes de abordar as vantagens, &eacute; importante entender o que significa a <strong>consulta de CNPJ online</strong>. O CNPJ &eacute; o n&uacute;mero que identifica uma empresa perante a Receita Federal do Brasil. Consultar o CNPJ significa verificar os dados cadastrais de uma empresa, como nome, endere&ccedil;o, situa&ccedil;&atilde;o cadastral, atividades econ&ocirc;micas, entre outras informa&ccedil;&otilde;es relevantes.</p>
+<p>Realizar essa consulta de forma online permite o acesso imediato a esses dados de maneira pr&aacute;tica, segura e atualizada, diferente dos processos tradicionais que exigiam deslocamento e burocracia.</p>
+<h2>Vantagens Das Solu&ccedil;&otilde;es Para Consulta De Cnpj Online</h2>
+<h3>1. Agilidade no acesso &agrave;s informa&ccedil;&otilde;es</h3>
+<p>Uma das maiores vantagens da <strong>consulta de CNPJ online</strong> &eacute; a rapidez. Em poucos segundos, &eacute; poss&iacute;vel obter dados completos e atualizados sobre qualquer empresa registrada no Brasil. Essa agilidade &eacute; fundamental para profissionais que precisam tomar decis&otilde;es r&aacute;pidas, como analistas de cr&eacute;dito, vendedores, gestores e investidores.</p>
+<p>Al&eacute;m disso, a consulta online elimina a necessidade de filas, formul&aacute;rios f&iacute;sicos ou contatos telef&ocirc;nicos, tornando o processo mais eficiente.</p>
+<h3>2. Redu&ccedil;&atilde;o de riscos e fraudes</h3>
+<p>O acesso imediato e confi&aacute;vel &agrave;s informa&ccedil;&otilde;es cadastrais das empresas ajuda a reduzir os riscos de neg&oacute;cios fraudulentos. Com a consulta de CNPJ, &eacute; poss&iacute;vel verificar se uma empresa est&aacute; ativa, se possui pend&ecirc;ncias ou irregularidades que possam comprometer uma parceria comercial.</p>
+<p>Essa seguran&ccedil;a aumenta a confian&ccedil;a nas rela&ccedil;&otilde;es comerciais, protegendo as empresas contra golpes e fraudes que poderiam causar preju&iacute;zos financeiros e danos &agrave; reputa&ccedil;&atilde;o.</p>
+<h3>3. Facilidade de integra&ccedil;&atilde;o com sistemas empresariais</h3>
+<p>As solu&ccedil;&otilde;es para consulta de CNPJ online frequentemente oferecem <strong>APIs</strong> que permitem a integra&ccedil;&atilde;o direta com sistemas internos das empresas, como ERPs, CRMs e plataformas de vendas. Isso possibilita a automatiza&ccedil;&atilde;o do processo de consulta e a atualiza&ccedil;&atilde;o constante dos dados cadastrais, otimizando fluxos de trabalho e reduzindo erros manuais.</p>
+<p>Por exemplo, a <a href="https://www.hubdodesenvolvedor.com.br/" target="_blank" rel="noopener"><strong>API CNPJ hubdodesenvolvedor.com.br</strong></a> &eacute; uma ferramenta que permite essa integra&ccedil;&atilde;o, facilitando o acesso &agrave;s informa&ccedil;&otilde;es em tempo real e aumentando a produtividade das equipes.</p>
+<h3>4. Economia de custos</h3>
+<p>Ao utilizar solu&ccedil;&otilde;es digitais para consulta de CNPJ, as empresas economizam recursos que seriam gastos em processos manuais, como deslocamentos, impress&atilde;o de documentos e contrata&ccedil;&atilde;o de terceiros para obten&ccedil;&atilde;o dessas informa&ccedil;&otilde;es.</p>
+<p>A disponibilidade online e a possibilidade de consultas ilimitadas, dependendo do servi&ccedil;o contratado, tornam essa alternativa muito mais econ&ocirc;mica e vantajosa para o or&ccedil;amento empresarial.</p>
+<h3>5. Atualiza&ccedil;&atilde;o constante dos dados</h3>
+<p>Os bancos de dados das solu&ccedil;&otilde;es online s&atilde;o alimentados diretamente pelas fontes oficiais, como a Receita Federal, garantindo que as informa&ccedil;&otilde;es disponibilizadas estejam sempre atualizadas. Isso &eacute; crucial para evitar decis&otilde;es baseadas em dados desatualizados, que podem gerar problemas futuros.</p>
+<p>Essa atualiza&ccedil;&atilde;o cont&iacute;nua &eacute; uma das grandes vantagens em compara&ccedil;&atilde;o com m&eacute;todos tradicionais, onde os dados podem ficar obsoletos rapidamente.</p>
+<h3>6. Acesso facilitado para diferentes perfis de usu&aacute;rios</h3>
+<p>As plataformas de consulta de CNPJ online s&atilde;o desenvolvidas para serem intuitivas e acess&iacute;veis tanto para usu&aacute;rios t&eacute;cnicos quanto para aqueles com pouca familiaridade em tecnologia. Isso amplia o alcance da ferramenta, permitindo que empreendedores, contadores e profissionais de diversas &aacute;reas possam utilizar o recurso com facilidade.</p>
+<p>Al&eacute;m disso, muitas solu&ccedil;&otilde;es oferecem suporte t&eacute;cnico e materiais educativos para auxiliar no uso eficiente da ferramenta.</p>
+<h2>Aplica&ccedil;&otilde;es Pr&aacute;ticas Das Solu&ccedil;&otilde;es Para Consulta De Cnpj Online</h2>
+<h3>An&aacute;lise de cr&eacute;dito e aprova&ccedil;&atilde;o de contratos</h3>
+<p>Empresas que oferecem cr&eacute;dito ou firmam contratos comerciais precisam validar a idoneidade das empresas parceiras. A consulta de CNPJ online permite verificar a situa&ccedil;&atilde;o cadastral, se a empresa est&aacute; ativa ou inapta, al&eacute;m de analisar dados como o capital social e a situa&ccedil;&atilde;o fiscal, fundamentais para a avalia&ccedil;&atilde;o de riscos.</p>
+<h3>Due diligence em processos de fus&otilde;es e aquisi&ccedil;&otilde;es</h3>
+<p>Em opera&ccedil;&otilde;es complexas como fus&otilde;es, aquisi&ccedil;&otilde;es e investimentos, a an&aacute;lise detalhada dos dados cadastrais das empresas envolvidas &eacute; imprescind&iacute;vel. A consulta online fornece informa&ccedil;&otilde;es confi&aacute;veis que auxiliam na due diligence, garantindo que as decis&otilde;es sejam tomadas com base em dados precisos.</p>
+<h3>Controle e compliance</h3>
+<p>Organiza&ccedil;&otilde;es que precisam cumprir normas regulat&oacute;rias e pol&iacute;ticas internas podem utilizar a consulta de CNPJ para verificar fornecedores, parceiros e clientes, assegurando que todos estejam em conformidade com as exig&ecirc;ncias legais e &eacute;ticas do mercado.</p>
+<h3>Gest&atilde;o de cadastros e relacionamento com clientes</h3>
+<p>Empresas que mant&ecirc;m grandes bases de clientes e fornecedores podem utilizar as solu&ccedil;&otilde;es online para atualizar e validar seus cadastros, evitando erros e facilitando a comunica&ccedil;&atilde;o e o relacionamento comercial.</p>
+<h2>Como Escolher A Melhor Solu&ccedil;&atilde;o Para Consulta De Cnpj Online?</h2>
+<h3>Seguran&ccedil;a e confiabilidade dos dados</h3>
+<p>A escolha de uma plataforma que ofere&ccedil;a dados atualizados e confi&aacute;veis &eacute; fundamental. &Eacute; importante verificar se a solu&ccedil;&atilde;o integra informa&ccedil;&otilde;es diretamente das fontes oficiais, como a Receita Federal, e se possui mecanismos de seguran&ccedil;a para proteger as informa&ccedil;&otilde;es acessadas.</p>
+<h3>Facilidade de uso e integra&ccedil;&atilde;o</h3>
+<p>Optar por solu&ccedil;&otilde;es que sejam intuitivas e ofere&ccedil;am possibilidade de integra&ccedil;&atilde;o via API facilita a implementa&ccedil;&atilde;o e o uso no dia a dia. Verifique se a plataforma disp&otilde;e de documenta&ccedil;&atilde;o clara e suporte t&eacute;cnico para auxiliar em eventuais d&uacute;vidas.</p>
+<h3>Custo-benef&iacute;cio</h3>
+<p>Avaliar o custo dos servi&ccedil;os em rela&ccedil;&atilde;o &agrave;s funcionalidades oferecidas ajuda a encontrar uma solu&ccedil;&atilde;o que atenda &agrave;s necessidades sem comprometer o or&ccedil;amento. Muitas plataformas oferecem planos escal&aacute;veis e testes gratuitos para que o usu&aacute;rio possa experimentar antes de contratar.</p>
+<h3>Suporte e atualiza&ccedil;&atilde;o</h3>
+<p>Ter acesso a suporte t&eacute;cnico eficiente e atualiza&ccedil;&otilde;es constantes garante que a ferramenta estar&aacute; sempre alinhada &agrave;s mudan&ccedil;as legais e tecnol&oacute;gicas, proporcionando uma experi&ecirc;ncia mais segura e confi&aacute;vel.</p>
+<h2>O Futuro Das Consultas De Cnpj Online</h2>
+<p>Com o avan&ccedil;o da tecnologia, as solu&ccedil;&otilde;es para consulta de CNPJ online tendem a se tornar cada vez mais sofisticadas, utilizando intelig&ecirc;ncia artificial e machine learning para oferecer an&aacute;lises preditivas, detec&ccedil;&atilde;o autom&aacute;tica de fraudes e integra&ccedil;&atilde;o com outras bases de dados relevantes.</p>
+<p>Essa evolu&ccedil;&atilde;o contribuir&aacute; para um ambiente de neg&oacute;cios mais transparente, &aacute;gil e seguro, beneficiando todos os envolvidos nas rela&ccedil;&otilde;es comerciais.</p>
+<h2>Considera&ccedil;&otilde;es Finais</h2>
+<p>As solu&ccedil;&otilde;es para consulta de CNPJ online trazem in&uacute;meros benef&iacute;cios para o ambiente empresarial, destacando-se pela agilidade, seguran&ccedil;a, economia e facilidade de uso. A possibilidade de acessar informa&ccedil;&otilde;es confi&aacute;veis e atualizadas em tempo real transforma a maneira como as empresas gerenciam seus processos, tomam decis&otilde;es e estabelecem parcerias.</p>
+<p>A transforma&ccedil;&atilde;o digital no campo das consultas cadastrais &eacute; uma realidade que veio para ficar, e investir em ferramentas adequadas &eacute; fundamental para garantir competitividade e efici&ecirc;ncia no mercado atual. A integra&ccedil;&atilde;o dessas solu&ccedil;&otilde;es, como a <strong>API CNPJ hubdodesenvolvedor.com.br</strong>, representa um avan&ccedil;o significativo na automatiza&ccedil;&atilde;o e qualidade das informa&ccedil;&otilde;es utilizadas pelas empresas.</p>
+<p>Assim, aproveitar essas tecnologias &eacute; essencial para quem deseja estar &agrave; frente, minimizando riscos e potencializando oportunidades de neg&oacute;cio com base em dados precisos e acess&iacute;veis.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>
