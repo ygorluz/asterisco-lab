@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Como apps de gestão facilitam o aluguel de brinquedos? - Asterisco Lab</title>
+    <meta name="description" content="">
+    
+    
+    <link rel="canonical" href="https://asteriscolab.digital/como-apps-de-gestão-facilitam-o-aluguel-de-brinquedos/" />
+    
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/mundo-digital/" style="color:#ffffff;">Mundo Digital</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Como apps de gestão facilitam o aluguel de brinquedos?</h1>
+            
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/zenit/" style="color: var(--accent-color);">Zenit</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-10-15" style="color: var(--text-muted);">
+                        15/10/2026 00:51
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/como-apps-de-gestao-facilitam-o-aluguel-de-brinquedos.webp?v=1792025510" alt="Como apps de gestão facilitam o aluguel de brinquedos?">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>O mercado de aluguel de brinquedos tem ganhado cada vez mais espa&ccedil;o, especialmente em eventos voltados para crian&ccedil;as, onde a variedade e qualidade dos brinquedos fazem toda a diferen&ccedil;a para o sucesso da comemora&ccedil;&atilde;o. Com a crescente demanda por servi&ccedil;os pr&aacute;ticos e eficientes, os <strong>apps de gest&atilde;o</strong> surgem como ferramentas indispens&aacute;veis para quem deseja organizar, alugar e gerenciar brinquedos de maneira inteligente e descomplicada.</p>
+<p>Quando se trata de planejar uma <a href="https://castelinhokids.com.br/" target="_blank" rel="noopener">festa de anivers&aacute;rio infantil / aluguel de brinquedos</a> adequado, a log&iacute;stica pode ser um desafio. Desde o controle do estoque at&eacute; a entrega e devolu&ccedil;&atilde;o dos itens, tudo precisa ser coordenado com precis&atilde;o para evitar erros, atrasos e insatisfa&ccedil;&atilde;o dos clientes. Os aplicativos de gest&atilde;o foram desenvolvidos para atender essas necessidades, automatizando processos e otimizando o tempo dos empreendedores e dos clientes.</p>
+<h2>Vantagens Dos Apps De Gest&atilde;o Para O Mercado De Aluguel De Brinquedos</h2>
+<h3>Organiza&ccedil;&atilde;o e controle de estoque em tempo real</h3>
+<p>Um dos maiores desafios no aluguel de brinquedos &eacute; manter o controle do estoque dispon&iacute;vel. &Eacute; comum que empresas enfrentem dificuldades para saber quais brinquedos est&atilde;o dispon&iacute;veis para loca&ccedil;&atilde;o, quais est&atilde;o em manuten&ccedil;&atilde;o ou j&aacute; reservados para datas espec&iacute;ficas.</p>
+<p>Os <strong>apps de gest&atilde;o</strong> oferecem uma vis&atilde;o em tempo real do invent&aacute;rio, permitindo atualizar o status de cada brinquedo instantaneamente. Isso evita conflitos de reserva e garante que o cliente tenha acesso a informa&ccedil;&otilde;es precisas sobre a disponibilidade dos itens.</p>
+<h3>Automa&ccedil;&atilde;o de processos e redu&ccedil;&atilde;o de erros</h3>
+<p>Alugar brinquedos envolve v&aacute;rias etapas: cadastro de clientes, reserva de produtos, confirma&ccedil;&atilde;o de pagamentos, organiza&ccedil;&atilde;o da entrega e recebimento dos itens. Fazer tudo manualmente pode gerar erros, atrasos e retrabalho.</p>
+<p>Com um app de gest&atilde;o, essas rotinas s&atilde;o automatizadas. O sistema envia notifica&ccedil;&otilde;es autom&aacute;ticas para clientes sobre datas de entrega e devolu&ccedil;&atilde;o, gera contratos eletr&ocirc;nicos e controla os pagamentos de forma segura, reduzindo a possibilidade de falhas humanas.</p>
+<h3>Facilidade para agendar entregas e retiradas</h3>
+<p>A log&iacute;stica &eacute; um ponto crucial no aluguel de brinquedos, pois os itens precisam estar dispon&iacute;veis no local e hor&aacute;rio combinados, al&eacute;m de serem recolhidos ap&oacute;s o evento. Os apps de gest&atilde;o permitem organizar esses agendamentos de forma pr&aacute;tica, com calend&aacute;rios integrados e lembretes para a equipe respons&aacute;vel.</p>
+<p>Essa organiza&ccedil;&atilde;o minuciosa evita confus&otilde;es, atrasos e garante que o cliente tenha uma experi&ecirc;ncia positiva, aumentando as chances de fideliza&ccedil;&atilde;o e indica&ccedil;&otilde;es.</p>
+<h2>Benef&iacute;cios Para Os Clientes E Para Os Propriet&aacute;rios</h2>
+<h3>Experi&ecirc;ncia do cliente aprimorada</h3>
+<p>A rapidez e a transpar&ecirc;ncia no processo de reserva s&atilde;o aspectos valorizados pelos clientes. Com os apps de gest&atilde;o, os usu&aacute;rios podem consultar o cat&aacute;logo de brinquedos dispon&iacute;veis, realizar reservas online, acompanhar o status do pedido e receber confirma&ccedil;&otilde;es autom&aacute;ticas, tudo pelo celular ou computador.</p>
+<p>Al&eacute;m disso, a possibilidade de pagamentos digitais e contratos eletr&ocirc;nicos torna o processo mais seguro e conveniente. A clareza nas informa&ccedil;&otilde;es e o atendimento eficiente aumentam a confian&ccedil;a do cliente no servi&ccedil;o.</p>
+<h3>Otimiza&ccedil;&atilde;o do tempo e aumento da produtividade dos propriet&aacute;rios</h3>
+<p>Para os donos do neg&oacute;cio, a gest&atilde;o digital elimina a necessidade de controles em papel, planilhas manuais e liga&ccedil;&otilde;es constantes para confirmar reservas. Isso libera tempo para focar em outras &aacute;reas estrat&eacute;gicas, como o atendimento personalizado, a expans&atilde;o do cat&aacute;logo e o marketing.</p>
+<p>Al&eacute;m disso, com dados organizados e relat&oacute;rios gerenciais, fica mais f&aacute;cil identificar quais brinquedos s&atilde;o mais procurados, quais per&iacute;odos t&ecirc;m maior demanda e quais estrat&eacute;gias funcionam melhor para aumentar o faturamento.</p>
+<h2>Funcionalidades Essenciais Dos Apps De Gest&atilde;o Para Aluguel De Brinquedos</h2>
+<h3>Cat&aacute;logo digital e personaliza&ccedil;&atilde;o de produtos</h3>
+<p>Ter um cat&aacute;logo digital atualizado &eacute; fundamental para que os clientes possam escolher os brinquedos que desejam alugar. Os apps de gest&atilde;o permitem criar listas detalhadas, com fotos, descri&ccedil;&otilde;es, faixas et&aacute;rias recomendadas e valores de aluguel.</p>
+<p>Alguns sistemas tamb&eacute;m oferecem a op&ccedil;&atilde;o de personalizar os brinquedos para eventos especiais, como temas de personagens, cores espec&iacute;ficas ou pacotes combinados, facilitando a escolha e aumentando o valor agregado do servi&ccedil;o.</p>
+<h3>Controle financeiro integrado</h3>
+<p>Manter as finan&ccedil;as organizadas &eacute; vital para a sa&uacute;de do neg&oacute;cio. Os aplicativos de gest&atilde;o contam com m&oacute;dulos para controlar recebimentos, pagamentos, emiss&atilde;o de notas fiscais e fluxo de caixa.</p>
+<p>Essa integra&ccedil;&atilde;o ajuda a evitar esquecimentos, possibilita o acompanhamento em tempo real dos resultados financeiros e facilita a presta&ccedil;&atilde;o de contas para contadores ou s&oacute;cios.</p>
+<h3>Gest&atilde;o de contratos e pol&iacute;ticas de aluguel</h3>
+<p>A formaliza&ccedil;&atilde;o do aluguel &eacute; importante para garantir a seguran&ccedil;a tanto do propriet&aacute;rio quanto do cliente. Os apps de gest&atilde;o oferecem modelos de contratos digitais que podem ser assinados eletronicamente, al&eacute;m de permitir a configura&ccedil;&atilde;o de regras para o aluguel, como prazos, multas por atraso e cuidados com os brinquedos.</p>
+<p>Essas funcionalidades evitam conflitos e asseguram que todos os termos sejam cumpridos, promovendo uma rela&ccedil;&atilde;o transparente e profissional.</p>
+<h2>Impacto Dos Aplicativos No Crescimento Do Mercado De Aluguel De Brinquedos</h2>
+<h3>Expans&atilde;o das possibilidades de neg&oacute;cio</h3>
+<p>Com o suporte dos apps de gest&atilde;o, pequenos e m&eacute;dios empreendedores conseguem estruturar melhor suas opera&ccedil;&otilde;es e atender a um n&uacute;mero maior de clientes sem perder a qualidade do servi&ccedil;o. Isso abre portas para atuar em diferentes nichos, como escolas, buffets, espa&ccedil;os de lazer e eventos corporativos com foco infantil.</p>
+<h3>Sustentabilidade e economia compartilhada</h3>
+<p>O aluguel de brinquedos &eacute; uma alternativa sustent&aacute;vel, pois evita o consumo excessivo e o descarte precoce de produtos. Os apps de gest&atilde;o facilitam a circula&ccedil;&atilde;o dos brinquedos entre diferentes usu&aacute;rios, promovendo a reutiliza&ccedil;&atilde;o e reduzindo o impacto ambiental.</p>
+<p>Al&eacute;m disso, ao otimizar a log&iacute;stica e o uso dos recursos, esses aplicativos contribuem para a economia compartilhada, um modelo que vem ganhando for&ccedil;a em diversos setores da economia.</p>
+<h2>Como Escolher O Melhor App De Gest&atilde;o Para Aluguel De Brinquedos?</h2>
+<h3>Avaliar funcionalidades espec&iacute;ficas para o segmento</h3>
+<p>Nem todos os aplicativos de gest&atilde;o s&atilde;o adequados para o aluguel de brinquedos. &Eacute; fundamental escolher uma plataforma que ofere&ccedil;a recursos espec&iacute;ficos, como controle de estoque por lote, agendamento de entregas, controle de contratos e integra&ccedil;&atilde;o com meios de pagamento.</p>
+<h3>Interface intuitiva e suporte t&eacute;cnico eficiente</h3>
+<p>Um app com interface amig&aacute;vel facilita a ado&ccedil;&atilde;o por toda a equipe, reduzindo a curva de aprendizado e aumentando a produtividade. Al&eacute;m disso, o suporte t&eacute;cnico deve ser r&aacute;pido e eficiente, para solucionar poss&iacute;veis problemas e garantir o funcionamento cont&iacute;nuo do sistema.</p>
+<h3>Custo-benef&iacute;cio e escalabilidade</h3>
+<p>O investimento em um aplicativo de gest&atilde;o deve ser compat&iacute;vel com o porte do neg&oacute;cio. &Eacute; importante analisar os planos dispon&iacute;veis, condi&ccedil;&otilde;es de pagamento e possibilidades de expans&atilde;o, para que a ferramenta cres&ccedil;a junto com a empresa.</p>
+<h2>Tend&ecirc;ncias Tecnol&oacute;gicas Que Podem Revolucionar O Aluguel De Brinquedos</h2>
+<h3>Intelig&ecirc;ncia artificial e recomenda&ccedil;&atilde;o personalizada</h3>
+<p>O uso de algoritmos que analisam o perfil do cliente e sugerem brinquedos ideais para o tipo de evento pode tornar o processo de escolha ainda mais &aacute;gil e assertivo. Isso aumenta a satisfa&ccedil;&atilde;o do cliente e melhora a taxa de convers&atilde;o.</p>
+<h3>Internet das Coisas (IoT) para monitoramento dos brinquedos</h3>
+<p>Sensores acoplados aos brinquedos podem informar sobre o uso, localiza&ccedil;&atilde;o e condi&ccedil;&otilde;es dos itens, facilitando a manuten&ccedil;&atilde;o preventiva e garantindo a seguran&ccedil;a das crian&ccedil;as durante o uso.</p>
+<h3>Pagamentos e contratos totalmente digitais e integrados</h3>
+<p>A tend&ecirc;ncia &eacute; que todos os processos financeiros e documentais sejam feitos diretamente pelo app, com assinaturas eletr&ocirc;nicas e pagamentos instant&acirc;neos, aumentando a agilidade e reduzindo a burocracia.</p>
+<h2>Conclus&atilde;o</h2>
+<p>Os <strong>apps de gest&atilde;o</strong> s&atilde;o ferramentas que transformam o aluguel de brinquedos em uma atividade mais organizada, eficiente e rent&aacute;vel. Atrav&eacute;s da automa&ccedil;&atilde;o de processos, controle preciso do estoque, gest&atilde;o financeira integrada e facilita&ccedil;&atilde;o da comunica&ccedil;&atilde;o com os clientes, esses aplicativos eliminam muitos dos desafios enfrentados por empreendedores do setor.</p>
+<p>Al&eacute;m de melhorar a experi&ecirc;ncia do cliente, os apps contribuem para a profissionaliza&ccedil;&atilde;o do mercado e para o crescimento sustent&aacute;vel do neg&oacute;cio. Adotar essas tecnologias &eacute; um passo essencial para quem deseja se destacar no competitivo segmento de aluguel de brinquedos e oferecer servi&ccedil;os de alta qualidade para eventos infantis e outras ocasi&otilde;es especiais.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

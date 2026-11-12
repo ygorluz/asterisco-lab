@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Melhores soluções de rede sem fio para empresas em BH - Asterisco Lab</title>
+    <meta name="description" content="">
+    
+    
+    <link rel="canonical" href="https://asteriscolab.digital/melhores-soluções-de-rede-sem-fio-para-empresas-em-bh/" />
+    
+    
+    
+    
+    <link rel="icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/uploads/asterisco-lab-icone-favicon.webp?v=1788665402">
+    
+
+    <link rel="stylesheet" href="/themes/gshow_pop_v2/assets/css/style.css?v=2.0">
+    <!-- Bootstrap Icons (Usado internamente pelo CMS e para redes sociais) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Algumas lógicas do CMS dependem de classes Bootstrap puras (RaioX). Injetamos a versão ultra-leve do bootstrap apenas para os blocos do CMS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Sistema de Paletas de Cores -->
+    
+    <style>
+        :root {
+            --accent-color: #c4170c !important;
+            --accent-hover: #9c1209 !important;
+            --accent-dark: #750d07 !important;
+        }
+    </style>
+    
+
+    
+</head>
+<body>
+<header class="gs-header">
+    <div class="gs-header__container">
+        <!-- Lado Esquerdo -->
+        <div class="gs-header__left">
+            <button class="gs-header__menu-btn" id="gs-menu-toggle" aria-label="Abrir Menu">
+                <i class="bi bi-list"></i>
+                <span class="gs-header__menu-text">MENU</span>
+            </button>
+
+            <a href="/" class="gs-header__logo">
+                
+                    <img src="/static/uploads/asteriscolab_logoh-colorida-branco.png" alt="Asterisco Lab">
+                
+            </a>
+        </div>
+
+        <!-- Centro: Nome do Site com fonte fina -->
+        <a href="/" class="gs-header__center">
+            Asterisco Lab
+        </a>
+
+        <!-- Lado Direito: Buscar -->
+        <div class="gs-header__right">
+            <button class="gs-header__right-item" id="gs-search-toggle" aria-label="Pesquisar" style="background:none; border:none; color:#fff;">
+                <i class="bi bi-search"></i>
+                <span style="text-transform: uppercase;">Buscar</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Overlay de Busca (Search Modal) -->
+<div class="gs-search-overlay" id="gs-search-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; padding:2rem;">
+    <button id="gs-search-close" style="position:absolute; top:20px; right:30px; background:none; border:none; color:#fff; font-size:2rem; cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+    <div style="max-width:600px; margin: 4rem auto 0; text-align:center;">
+        <input type="text" id="gs-search-input" placeholder="O que você está procurando?" style="width:100%; padding:1rem; font-size:1.5rem; border:none; border-bottom:2px solid var(--accent-color); background:transparent; color:#fff; outline:none; font-family:var(--font-ui);">
+        <div id="gs-search-results" style="margin-top:2rem; text-align:left; max-height:60vh; overflow-y:auto; font-family:var(--font-ui);"></div>
+    </div>
+</div>
+
+<!-- Sub-Barra de Categoria (Rosa Escuro) -->
+<div class="gs-header__subbar">
+    
+        <a href="/categoria/mundo-digital/" style="color:#ffffff;">Mundo Digital</a>
+    
+</div>
+
+<!-- Overlay Escuro do Menu -->
+<div class="gs-overlay" id="gs-overlay"></div>
+
+<!-- Menu Oculto (Offcanvas) -->
+<nav class="gs-nav-offcanvas" id="gs-offcanvas">
+    <button class="gs-nav-offcanvas__close" id="gs-menu-close" aria-label="Fechar Menu">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <br><br>
+    
+        <a href="/">INÍCIO</a>
+        
+            <a href="/categoria/analises/">Análises</a>
+        
+            <a href="/categoria/aplicativos/">Aplicativos</a>
+        
+            <a href="/categoria/fixo/">Fixo</a>
+        
+            <a href="/categoria/lancamentos/">Lançamentos</a>
+        
+            <a href="/categoria/mundo-digital/">Mundo Digital</a>
+        
+            <a href="/categoria/noticias/">Notícias</a>
+        
+            <a href="/categoria/outros/">Outros</a>
+        
+    
+</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- MENU HAMBURGUER LOGIC ---
+        const toggleBtn = document.getElementById('gs-menu-toggle');
+        const closeBtn = document.getElementById('gs-menu-close');
+        const offcanvas = document.getElementById('gs-offcanvas');
+        const overlay = document.getElementById('gs-overlay');
+
+        function openMenu() {
+            offcanvas.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            offcanvas.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
+
+        // --- SEARCH LOGIC ---
+        const searchToggle = document.getElementById('gs-search-toggle');
+        const searchOverlay = document.getElementById('gs-search-overlay');
+        const searchClose = document.getElementById('gs-search-close');
+        const searchInput = document.getElementById('gs-search-input');
+        const searchResults = document.getElementById('gs-search-results');
+        let postsData = [];
+
+        if (searchToggle && searchOverlay) {
+            searchToggle.addEventListener('click', function() {
+                searchOverlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                searchInput.focus();
+                
+                // Fetch posts.json only once
+                if (postsData.length === 0) {
+                    fetch('/posts.json')
+                        .then(response => response.json())
+                        .then(data => { postsData = data; })
+                        .catch(err => console.error('Erro ao carregar pesquisa', err));
+                }
+            });
+            
+            searchClose.addEventListener('click', function() {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            searchInput.addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                searchResults.innerHTML = '';
+                if (query.length < 2) return;
+                
+                const filtered = postsData.filter(post => post.title.toLowerCase().includes(query));
+                
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<p style="color:#aaa; text-align:center; padding:1rem;">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                filtered.forEach(post => {
+                    const link = document.createElement('a');
+                    link.href = '/' + post.slug + '/';
+                    link.style.display = 'flex';
+                    link.style.gap = '15px';
+                    link.style.alignItems = 'center';
+                    link.style.padding = '10px 0';
+                    link.style.borderBottom = '1px solid #333';
+                    link.style.color = '#fff';
+                    link.style.textDecoration = 'none';
+                    
+                    let imgHtml = post.image ? `<img src="${post.image}" style="width:60px; height:60px; object-fit:cover; border-radius:4px;">` : `<div style="width:60px; height:60px; background:#444; border-radius:4px;"></div>`;
+                    
+                    link.innerHTML = imgHtml + `<div><div style="font-size:0.8rem; color:#aaa;">${post.date || ''}</div><div style="font-weight:700;">${post.title}</div></div>`;
+                    searchResults.appendChild(link);
+                });
+            });
+        }
+    });
+</script>
+
+<main class="container" style="padding-top: 3rem;">
+    <article>
+        <header class="post-header">
+            
+            <h1 class="post-title">Melhores soluções de rede sem fio para empresas em BH</h1>
+            
+            
+
+            <div class="post-meta" style="margin-top: 1rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; max-width: 760px; margin-left: auto; margin-right: auto;">
+                
+                    <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                        
+                            <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-muted);"></i>
+                        
+                        <span style="font-weight: 700; color: var(--text-main);">Por <a href="/autor/alex-kerber/" style="color: var(--accent-color);">Alex Kerber</a></span>
+                    </div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; flex: 1 1 auto;">
+                    <time datetime="2026-10-08" style="color: var(--text-muted);">
+                        08/10/2026 19:05
+                    </time>
+                    <div style="display: flex; gap: 15px; font-size: 1.3rem; color: var(--accent-color);">
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        
+            <figure class="post-featured-image">
+                <img src="/static/uploads/melhores-solucoes-de-rede-sem-fio-para-empresas-em-bh.webp?v=1791486309" alt="Melhores soluções de rede sem fio para empresas em BH">
+            </figure>
+        
+
+        
+
+        <div class="post-content">
+            <p>A conectividade &eacute; um dos pilares fundamentais para o sucesso de qualquer neg&oacute;cio na era digital. Em Belo Horizonte, a demanda por <strong>redes sem fio eficientes e seguras</strong> cresce a cada dia, acompanhando o avan&ccedil;o tecnol&oacute;gico e as necessidades das empresas locais. Desde startups at&eacute; grandes corpora&ccedil;&otilde;es, a escolha da infraestrutura de rede correta pode influenciar diretamente na produtividade, seguran&ccedil;a e expans&atilde;o dos neg&oacute;cios.</p>
+<p>Investir em <strong>solu&ccedil;&otilde;es de rede sem fio</strong> adequadas garante n&atilde;o apenas maior mobilidade para os colaboradores, mas tamb&eacute;m oferece suporte para dispositivos m&oacute;veis, equipamentos IoT e outras tecnologias emergentes. Al&eacute;m disso, a velocidade e a estabilidade da conex&atilde;o s&atilde;o fatores decisivos para opera&ccedil;&otilde;es que exigem tr&aacute;fego intenso de dados, videoconfer&ecirc;ncias e acesso remoto a sistemas corporativos.</p>
+<p>A crescente demanda por <a href="https://elephantitech.com.br/wi-fi-corporativo/" target="_blank" rel="noopener">wifi corporativo na regi&atilde;o metropolitana de BH</a> evidencia a import&acirc;ncia de escolher tecnologias que atendam &agrave;s particularidades do ambiente empresarial local, como densidade de usu&aacute;rios, interfer&ecirc;ncias e escalabilidade. Com uma infraestrutura bem planejada, as empresas podem desfrutar de conex&otilde;es seguras, r&aacute;pidas e com alta disponibilidade, essenciais para manter a competitividade no mercado atual.</p>
+<h2>Import&acirc;ncia De Uma Rede Sem Fio Robusta Para Empresas</h2>
+<p>Ter uma rede sem fio confi&aacute;vel vai al&eacute;m da simples conex&atilde;o com a internet. No ambiente corporativo, essa rede suporta opera&ccedil;&otilde;es cr&iacute;ticas, integra sistemas e possibilita a comunica&ccedil;&atilde;o interna e externa de forma &aacute;gil. Uma falha na rede pode causar preju&iacute;zos financeiros, perda de dados e comprometimento da imagem da empresa.</p>
+<p>Al&eacute;m disso, a mobilidade proporcionada pelo wireless facilita a implementa&ccedil;&atilde;o de modelos de trabalho flex&iacute;veis, como o home office e o trabalho h&iacute;brido, cada vez mais comuns em BH e demais cidades brasileiras. Isso demonstra que a <strong>rede sem fio corporativa</strong> &eacute; um investimento estrat&eacute;gico, que impacta diretamente na efici&ecirc;ncia e continuidade do neg&oacute;cio.</p>
+<h2>Principais Tecnologias De Rede Sem Fio Para Empresas</h2>
+<h3>Wi-Fi 6: O futuro do wireless corporativo</h3>
+<p>O <strong>Wi-Fi 6</strong> representa a mais recente evolu&ccedil;&atilde;o dos padr&otilde;es de rede sem fio, trazendo melhorias significativas em velocidade, capacidade de conex&atilde;o simult&acirc;nea e efici&ecirc;ncia energ&eacute;tica. Para empresas em Belo Horizonte, &eacute; uma solu&ccedil;&atilde;o que atende &agrave; crescente demanda por dispositivos conectados e aplica&ccedil;&otilde;es que exigem alta performance, como streaming em alta defini&ccedil;&atilde;o, videoconfer&ecirc;ncias e ambientes com muitos usu&aacute;rios.</p>
+<p>Entre os principais benef&iacute;cios do Wi-Fi 6 est&atilde;o a redu&ccedil;&atilde;o da lat&ecirc;ncia, melhor gest&atilde;o de congestionamento e maior alcance, aspectos essenciais para ambientes corporativos din&acirc;micos e espa&ccedil;os amplos, como escrit&oacute;rios, coworkings e ind&uacute;strias.</p>
+<h3>Redes mesh para cobertura ampliada e est&aacute;vel</h3>
+<p>Empresas que necessitam de uma cobertura extensa, como galp&otilde;es, f&aacute;bricas ou grandes escrit&oacute;rios em BH, podem se beneficiar das <strong>redes mesh</strong>. Essa tecnologia permite a cria&ccedil;&atilde;o de uma malha cont&iacute;nua de pontos de acesso, garantindo sinal consistente em todos os cantos do ambiente.</p>
+<p>Com a rede mesh, a conex&atilde;o permanece est&aacute;vel mesmo quando os colaboradores se deslocam dentro da empresa, eliminando zonas de sombra e minimizando quedas na conex&atilde;o. Essa solu&ccedil;&atilde;o &eacute; altamente escal&aacute;vel, permitindo a inclus&atilde;o de novos pontos de acesso conforme o crescimento do neg&oacute;cio.</p>
+<h3>Redes h&iacute;bridas: combinando fio e wireless para m&aacute;xima performance</h3>
+<p>Embora a rede sem fio ofere&ccedil;a mobilidade e facilidade de instala&ccedil;&atilde;o, algumas aplica&ccedil;&otilde;es empresariais demandam a estabilidade e velocidade das conex&otilde;es cabeadas. As redes h&iacute;bridas, que combinam infraestrutura com e sem fio, s&atilde;o ideais para ambientes empresariais que precisam do melhor dos dois mundos.</p>
+<p>Por exemplo, servidores e esta&ccedil;&otilde;es de trabalho cr&iacute;ticas podem ser conectados via cabo, enquanto dispositivos m&oacute;veis e visitantes usam a rede wireless, garantindo seguran&ccedil;a e performance otimizadas.</p>
+<h2>Seguran&ccedil;a Em Redes Sem Fio Corporativas</h2>
+<h3>Protocolos de seguran&ccedil;a essenciais</h3>
+<p>A seguran&ccedil;a &eacute; um aspecto indispens&aacute;vel para redes sem fio empresariais. O uso de protocolos atualizados, como o <strong>WPA3</strong>, &eacute; fundamental para proteger a rede contra invas&otilde;es, intercepta&ccedil;&atilde;o de dados e ataques cibern&eacute;ticos.</p>
+<p>Al&eacute;m disso, a segmenta&ccedil;&atilde;o da rede atrav&eacute;s de VLANs e a implementa&ccedil;&atilde;o de autentica&ccedil;&atilde;o robusta, como o 802.1X, garantem que apenas usu&aacute;rios autorizados tenham acesso aos recursos corporativos.</p>
+<h3>Monitoramento e gest&atilde;o de rede</h3>
+<p>Empresas em BH que investem em solu&ccedil;&otilde;es de rede sem fio precisam tamb&eacute;m considerar ferramentas que possibilitam o monitoramento constante do ambiente, identifica&ccedil;&atilde;o de dispositivos conectados e an&aacute;lise de tr&aacute;fego. Essas pr&aacute;ticas ajudam a detectar anomalias, prevenir ataques e otimizar o desempenho da rede.</p>
+<p>Solu&ccedil;&otilde;es integradas de gest&atilde;o facilitam a administra&ccedil;&atilde;o da rede, permitindo controlar o acesso de usu&aacute;rios, atualizar firmware de dispositivos e configurar pol&iacute;ticas de uso, tudo de forma centralizada e simplificada.</p>
+<h2>Fornecedores E Instaladores Locais Especializados</h2>
+<h3>Import&acirc;ncia de escolher parceiros experientes</h3>
+<p>A implementa&ccedil;&atilde;o de uma rede sem fio eficiente demanda conhecimento t&eacute;cnico e experi&ecirc;ncia, sobretudo em uma cidade como Belo Horizonte, onde a topografia e o ambiente urbano podem influenciar na qualidade do sinal.</p>
+<p>Optar por fornecedores e instaladores locais que conhe&ccedil;am as caracter&iacute;sticas da regi&atilde;o e as necessidades espec&iacute;ficas das empresas de BH pode fazer toda a diferen&ccedil;a na hora de planejar e executar o projeto. Al&eacute;m disso, o suporte p&oacute;s-venda e a manuten&ccedil;&atilde;o cont&iacute;nua s&atilde;o pontos que garantem a longevidade e a performance da rede.</p>
+<h3>Destaques do mercado em Belo Horizonte</h3>
+<p>No mercado de BH, h&aacute; diversas empresas que oferecem solu&ccedil;&otilde;es completas de rede sem fio, desde o planejamento at&eacute; a implementa&ccedil;&atilde;o e suporte. Essas empresas geralmente trabalham com equipamentos das principais marcas mundiais, garantindo qualidade e compatibilidade com as tecnologias mais recentes.</p>
+<p>A escolha de parceiros que fornecem consultoria personalizada, an&aacute;lise de infraestrutura atual e planos de expans&atilde;o &eacute; essencial para que a rede acompanhe o crescimento do neg&oacute;cio, evitando investimentos desnecess&aacute;rios e garantindo o m&aacute;ximo retorno.</p>
+<h2>Benef&iacute;cios De Uma Rede Sem Fio Otimizada Para Empresas Em Bh</h2>
+<h3>Aumento da produtividade e colabora&ccedil;&atilde;o</h3>
+<p>Com uma rede sem fio est&aacute;vel e de alta performance, os colaboradores conseguem acessar sistemas corporativos, compartilhar arquivos e participar de videoconfer&ecirc;ncias sem interrup&ccedil;&otilde;es, facilitando a comunica&ccedil;&atilde;o e o trabalho em equipe.</p>
+<h3>Flexibilidade e mobilidade</h3>
+<p>A mobilidade oferecida pela rede wireless permite que os funcion&aacute;rios trabalhem de qualquer lugar dentro da empresa, utilizando dispositivos como laptops, tablets e smartphones para executar suas tarefas. Essa flexibilidade contribui para um ambiente de trabalho mais din&acirc;mico e adapt&aacute;vel.</p>
+<h3>Redu&ccedil;&atilde;o de custos operacionais</h3>
+<p>Redes sem fio bem planejadas podem reduzir custos relacionados &agrave; infraestrutura f&iacute;sica, como cabeamento e manuten&ccedil;&atilde;o de pontos fixos. Al&eacute;m disso, a agilidade na instala&ccedil;&atilde;o e expans&atilde;o facilita atualiza&ccedil;&otilde;es e adapta&ccedil;&otilde;es conforme as necessidades da empresa mudam.</p>
+<h3>Seguran&ccedil;a refor&ccedil;ada</h3>
+<p>Com a aplica&ccedil;&atilde;o de protocolos modernos e pol&iacute;ticas de seguran&ccedil;a, a rede sem fio corporativa protege informa&ccedil;&otilde;es sens&iacute;veis e evita vulnerabilidades que poderiam comprometer o neg&oacute;cio.</p>
+<h2>Dicas Para Escolher A Melhor Solu&ccedil;&atilde;o De Rede Sem Fio Para Sua Empresa Em Bh</h2>
+<h3>Avalie o ambiente e as necessidades espec&iacute;ficas</h3>
+<p>Cada empresa possui caracter&iacute;sticas &uacute;nicas, seja pelo tamanho, quantidade de usu&aacute;rios ou tipo de aplica&ccedil;&atilde;o. Realizar um levantamento detalhado do ambiente, considerando obst&aacute;culos f&iacute;sicos, interfer&ecirc;ncias e demanda de dispositivos, &eacute; o primeiro passo para definir a melhor tecnologia.</p>
+<h3>Priorize equipamentos de qualidade e atualizados</h3>
+<p>Investir em equipamentos compat&iacute;veis com as &uacute;ltimas normas, como Wi-Fi 6, assegura maior durabilidade e melhor desempenho da rede, evitando a necessidade de substitui&ccedil;&otilde;es frequentes.</p>
+<h3>Considere a escalabilidade</h3>
+<p>A rede deve ser planejada para crescer junto com a empresa, permitindo a inclus&atilde;o de novos pontos de acesso e a amplia&ccedil;&atilde;o da cobertura sem grandes reformas ou custos elevados.</p>
+<h3>Busque suporte t&eacute;cnico especializado</h3>
+<p>Ter acesso a suporte t&eacute;cnico local e &aacute;gil &eacute; fundamental para resolver problemas e garantir a continuidade das opera&ccedil;&otilde;es.</p>
+<h2>Conclus&atilde;o</h2>
+<p>A escolha de <strong>solu&ccedil;&otilde;es de rede sem fio eficientes, seguras e adaptadas &agrave; realidade das empresas em Belo Horizonte</strong> &eacute; um diferencial competitivo que impacta diretamente na produtividade, mobilidade e seguran&ccedil;a dos neg&oacute;cios. Com a evolu&ccedil;&atilde;o das tecnologias e o aumento da demanda por conectividade, investir em uma infraestrutura wireless moderna e bem planejada &eacute; essencial para acompanhar as transforma&ccedil;&otilde;es do mercado e garantir o sucesso a longo prazo.</p>
+<p>Empresas que adotam as melhores pr&aacute;ticas e contam com parceiros especializados conseguem n&atilde;o apenas melhorar sua conectividade, mas tamb&eacute;m criar ambientes de trabalho mais colaborativos, flex&iacute;veis e preparados para os desafios da era digital. A rede sem fio corporativa, quando bem estruturada, torna-se um ativo estrat&eacute;gico indispens&aacute;vel para qualquer neg&oacute;cio que deseja crescer e inovar em BH.</p>
+        </div>
+
+        
+    </article>
+</main>
+
+<footer class="gs-footer">
+    <div class="container">
+        <div class="gs-footer__social">
+            
+            
+            
+            
+        </div>
+        
+        <ul class="gs-footer__menu">
+            
+        </ul>
+        
+        <div class="gs-footer__description" style="max-width: 600px; margin: 0 auto 2rem; color: var(--text-muted); font-size: 0.95rem; font-family: var(--font-ui);">
+            Um espaço dedicado a compartilhar ideias, artigos e tutoriais. Nossa missão é entregar conteúdo de valor e com qualidade para todos os nossos leitores.
+        </div>
+        
+        
+        <div class="gs-footer__copyright">
+            @ 2026
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Carrossel nativo simplificado (substituto das chamadas de script originais caso tenha blocos CMS)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const btnPrev = e.target.closest('.btn-carousel-prev');
+            if (btnPrev) {
+                const wrapper = btnPrev.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft <= 5) { track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+            const btnNext = e.target.closest('.btn-carousel-next');
+            if (btnNext) {
+                const wrapper = btnNext.closest('div[id^="carrossel-"]');
+                const track = wrapper.querySelector('.dsc-track');
+                const item = track.querySelector('.dsc-item');
+                if (track && item) {
+                    const scrollAmount = item.offsetWidth + 20;
+                    if (track.scrollLeft + track.offsetWidth >= track.scrollWidth - 5) { track.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                    else { track.scrollBy({ left: scrollAmount, behavior: 'smooth' }); }
+                }
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>
